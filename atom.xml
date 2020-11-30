@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://caozhiyi.github.io</id>
     <title>Gridea</title>
-    <updated>2020-11-30T15:17:24.751Z</updated>
+    <updated>2020-11-30T15:25:47.750Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://caozhiyi.github.io"/>
     <link rel="self" href="https://caozhiyi.github.io/atom.xml"/>
@@ -11,12 +11,53 @@
     <icon>https://caozhiyi.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
     <entry>
-        <title type="html"><![CDATA[# envoy-doc]]></title>
+        <title type="html"><![CDATA[# envoy 启动过程]]></title>
         <id>https://caozhiyi.github.io/post/hello-gridea/</id>
         <link href="https://caozhiyi.github.io/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
-        <content type="html"><![CDATA[<p>envoy 源码学习笔记</p>
+        <content type="html"><![CDATA[<p>首先我们猜想一下envoy启动过程所做的事情：</p>
+<ol>
+<li>解析输入的命令行</li>
+<li>启动主线程循环和其他worker线程</li>
+<li>启动主线程xDS监听端口</li>
+<li>根据启动配置文件启动初始listener即其他</li>
+<li>热重启</li>
+</ol>
+<p>接下来我们就沿着main接口，找一下上述的几个过程都是在哪里实现的：</p>
+<p>首先，入口函数在exe/main.cc文件中，在main函数中调用</p>
+<pre><code>Envoy::MainCommon::main
+</code></pre>
+<p>在这里创建了Envoy::MainCommon对象，在其构造函数中，会创建Envoy::OptionsImpl对象和MainCommonBase对象。接下来我们分别进入这两个类的构造函数中：</p>
+<ul>
+<li>
+<p>首先是OptionsImpl的构造函数，在这个构造函数中，主要工作有：</p>
+<ul>
+<li>通过TCLAP库解析命令行参数，这些参数中包含启动的配置文件路径</li>
+<li>设置log日志等级与格式</li>
+</ul>
+</li>
+<li>
+<p>接着是MainCommonBase构造函数，注意上述的Envoy::OptionsImpl实例会作为参数传递给MainCommonBase的构造函数，其主要的工作有：</p>
+<ul>
+<li>根据启动模式的不同执行不同的逻辑</li>
+<li>如果是正常启动流程，则创建Server::HotRestartImpl实例</li>
+<li>如果是正常启动流程，则创建Server::InstanceImpl实例</li>
+<li>创建</li>
+</ul>
+</li>
+<li>
+<p>接下来进入Server::InstanceImpl的构造函数，Server::HotRestartImpl的实例也会作为参数传入Server::InstanceImpl的构造函数</p>
+<ul>
+<li>InstanceImpl是envoy的全局服务实例，在构造函数中会创建一些全局的基础组件，包括主线成的dispatcher</li>
+<li>如果是热重启，则在HotRestartingParent::initialize会创建一个DomainSocket监听HotRestartMessage消息</li>
+<li>接着在InstanceImpl::initialize函数中，加载启动时的配置文件，配置文件路径通过main函数的参数解析获取</li>
+</ul>
+</li>
+</ul>
+<pre><code>  InstanceUtil::loadBootstrapConfig
+</code></pre>
+<pre><code>这个函数会解析传入的配置文件数据到envoy::config::bootstrap::v3::Bootstrap类型实例中</code></pre>
 ]]></content>
     </entry>
 </feed>
