@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://zy-blog.github.io</id>
+    <id>https://caozhiyi.github.io</id>
     <title>Gridea</title>
-    <updated>2020-11-30T15:11:57.077Z</updated>
+    <updated>2020-11-30T15:13:35.097Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://zy-blog.github.io"/>
-    <link rel="self" href="https://zy-blog.github.io/atom.xml"/>
+    <link rel="alternate" href="https://caozhiyi.github.io"/>
+    <link rel="self" href="https://caozhiyi.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
-    <logo>https://zy-blog.github.io/images/avatar.png</logo>
-    <icon>https://zy-blog.github.io/favicon.ico</icon>
+    <logo>https://caozhiyi.github.io/images/avatar.png</logo>
+    <icon>https://caozhiyi.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
     <entry>
         <title type="html"><![CDATA[# envoy-doc]]></title>
-        <id>https://zy-blog.github.io/post/hello-gridea/</id>
-        <link href="https://zy-blog.github.io/post/hello-gridea/">
+        <id>https://caozhiyi.github.io/post/hello-gridea/</id>
+        <link href="https://caozhiyi.github.io/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
         <content type="html"><![CDATA[<p>envoy 源码学习笔记</p>
