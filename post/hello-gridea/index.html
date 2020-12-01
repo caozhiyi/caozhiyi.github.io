@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" >
 
-<title># envoy 启动过程 | czy-blog</title>
+<title>曹某人 | czy-blog</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://caozhiyi.github.io/favicon.ico?v=1606750670199">
+<link rel="shortcut icon" href="https://caozhiyi.github.io/favicon.ico?v=1606834507589">
 <link rel="stylesheet" href="https://caozhiyi.github.io/styles/main.css">
 
 
@@ -18,15 +18,9 @@
 
 
 
-    <meta name="description" content="首先我们猜想一下envoy启动过程所做的事情：
-
-解析输入的命令行
-启动主线程循环和其他worker线程
-启动主线程xDS监听端口
-根据启动配置文件启动初始listener即其他
-热重启
-
-接下来我们就沿着main接口，找一下上述的几个过程..." />
+    <meta name="description" content="日出扶桑一丈高，人间细事多如毛。
+野夫怒见不平处，磨损胸中万古刀。
+" />
     <meta name="keywords" content="Gridea" />
   </head>
   <body>
@@ -36,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://caozhiyi.github.io">
-        <img src="https://caozhiyi.github.io/images/avatar.png?v=1606750670199" class="site-logo">
+        <img src="https://caozhiyi.github.io/images/avatar.png?v=1606834507589" class="site-logo">
         <h1 class="site-title">czy-blog</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -98,55 +92,15 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title"># envoy 启动过程</h2>
+            <h2 class="post-title">曹某人</h2>
             <div class="post-date">2018-12-12</div>
             
               <div class="feature-container" style="background-image: url('https://caozhiyi.github.io/post-images/hello-gridea.png')">
               </div>
             
             <div class="post-content" v-pre>
-              <p>首先我们猜想一下envoy启动过程所做的事情：</p>
-<ol>
-<li>解析输入的命令行</li>
-<li>启动主线程循环和其他worker线程</li>
-<li>启动主线程xDS监听端口</li>
-<li>根据启动配置文件启动初始listener即其他</li>
-<li>热重启</li>
-</ol>
-<p>接下来我们就沿着main接口，找一下上述的几个过程都是在哪里实现的：</p>
-<p>首先，入口函数在exe/main.cc文件中，在main函数中调用</p>
-<pre><code>Envoy::MainCommon::main
-</code></pre>
-<p>在这里创建了Envoy::MainCommon对象，在其构造函数中，会创建Envoy::OptionsImpl对象和MainCommonBase对象。接下来我们分别进入这两个类的构造函数中：</p>
-<ul>
-<li>
-<p>首先是OptionsImpl的构造函数，在这个构造函数中，主要工作有：</p>
-<ul>
-<li>通过TCLAP库解析命令行参数，这些参数中包含启动的配置文件路径</li>
-<li>设置log日志等级与格式</li>
-</ul>
-</li>
-<li>
-<p>接着是MainCommonBase构造函数，注意上述的Envoy::OptionsImpl实例会作为参数传递给MainCommonBase的构造函数，其主要的工作有：</p>
-<ul>
-<li>根据启动模式的不同执行不同的逻辑</li>
-<li>如果是正常启动流程，则创建Server::HotRestartImpl实例</li>
-<li>如果是正常启动流程，则创建Server::InstanceImpl实例</li>
-<li>创建</li>
-</ul>
-</li>
-<li>
-<p>接下来进入Server::InstanceImpl的构造函数，Server::HotRestartImpl的实例也会作为参数传入Server::InstanceImpl的构造函数</p>
-<ul>
-<li>InstanceImpl是envoy的全局服务实例，在构造函数中会创建一些全局的基础组件，包括主线成的dispatcher</li>
-<li>如果是热重启，则在HotRestartingParent::initialize会创建一个DomainSocket监听HotRestartMessage消息</li>
-<li>接着在InstanceImpl::initialize函数中，加载启动时的配置文件，配置文件路径通过main函数的参数解析获取</li>
-</ul>
-</li>
-</ul>
-<pre><code>  InstanceUtil::loadBootstrapConfig
-</code></pre>
-<pre><code>这个函数会解析传入的配置文件数据到envoy::config::bootstrap::v3::Bootstrap类型实例中</code></pre>
+              <p>日出扶桑一丈高，人间细事多如毛。<br>
+野夫怒见不平处，磨损胸中万古刀。</p>
 
             </div>
             

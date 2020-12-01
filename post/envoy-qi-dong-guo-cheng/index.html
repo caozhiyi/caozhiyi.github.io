@@ -1,22 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://caozhiyi.github.io</id>
-    <title>czy-blog</title>
-    <updated>2020-12-01T14:56:07.088Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://caozhiyi.github.io"/>
-    <link rel="self" href="https://caozhiyi.github.io/atom.xml"/>
-    <subtitle>会写代码的莫扎特</subtitle>
-    <logo>https://caozhiyi.github.io/images/avatar.png</logo>
-    <icon>https://caozhiyi.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, czy-blog</rights>
-    <entry>
-        <title type="html"><![CDATA[envoy 启动过程]]></title>
-        <id>https://caozhiyi.github.io/post/envoy-qi-dong-guo-cheng/</id>
-        <link href="https://caozhiyi.github.io/post/envoy-qi-dong-guo-cheng/">
-        </link>
-        <updated>2020-12-01T14:52:30.000Z</updated>
-        <content type="html"><![CDATA[<p>首先我们猜想一下envoy启动过程所做的事情：</p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>envoy 启动过程 | czy-blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://caozhiyi.github.io/favicon.ico?v=1606834507589">
+<link rel="stylesheet" href="https://caozhiyi.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="首先我们猜想一下envoy启动过程所做的事情：
+
+解析输入的命令行
+启动主线程循环和其他worker线程
+启动主线程xDS监听端口
+根据启动配置文件启动初始listener即其他
+热重启
+
+接下来我们就沿着main接口，找一下上述的几个过程..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://caozhiyi.github.io">
+        <img src="https://caozhiyi.github.io/images/avatar.png?v=1606834507589" class="site-logo">
+        <h1 class="site-title">czy-blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      会写代码的莫扎特
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://caozhiyi.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">envoy 启动过程</h2>
+            <div class="post-date">2020-12-01</div>
+            
+            <div class="post-content" v-pre>
+              <p>首先我们猜想一下envoy启动过程所做的事情：</p>
 <ol>
 <li>解析输入的命令行</li>
 <li>启动主线程循环和其他worker线程</li>
@@ -76,16 +162,46 @@
 </ul>
 <p>说了这么多，才执行完<code>Envoy::MainCommon</code>的构造函数，接下来进入<code>run()</code>函数：<br>
 这个函数中依然先判断一下启动的模式，如果是正常启动模式，则会进入<code>InstanceImpl::run()</code>在这里，会开始执行主线程和worker线程主循环，即dispatcher的run</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[曹某人]]></title>
-        <id>https://caozhiyi.github.io/post/hello-gridea/</id>
-        <link href="https://caozhiyi.github.io/post/hello-gridea/">
-        </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
-        <content type="html"><![CDATA[<p>日出扶桑一丈高，人间细事多如毛。<br>
-野夫怒见不平处，磨损胸中万古刀。</p>
-]]></content>
-    </entry>
-</feed>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://caozhiyi.github.io/post/hello-gridea/">
+                  <h3 class="post-title">
+                    曹某人
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
