@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://caozhiyi.github.io</id>
     <title>czy-blog</title>
-    <updated>2020-12-01T14:57:26.298Z</updated>
+    <updated>2020-12-02T14:07:01.277Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://caozhiyi.github.io"/>
     <link rel="self" href="https://caozhiyi.github.io/atom.xml"/>
@@ -22,13 +22,12 @@
 <li>启动主线程循环和其他worker线程</li>
 <li>启动主线程xDS监听端口</li>
 <li>根据启动配置文件启动初始listener即其他</li>
-<li>热重启</li>
 </ol>
 <p>接下来我们就沿着main接口，找一下上述的几个过程都是在哪里实现的：</p>
 <p>首先，入口函数在exe/main.cc文件中，在main函数中调用</p>
 <pre><code class="language-c++">Envoy::MainCommon::main
 </code></pre>
-<p>在这里创建<code>了Envoy::MainCommon</code>对象，在其构造函数中，会创建<code>Envoy::OptionsImpl</code>对象和<code>MainCommonBase</code>对象。接下来我们分别进入这两个类的构造函数中：</p>
+<p>在这里创建了<code>Envoy::MainCommon</code>对象，在其构造函数中，会创建<code>Envoy::OptionsImpl</code>对象和<code>MainCommonBase</code>对象。接下来我们分别进入这两个类的构造函数中：</p>
 <ul>
 <li>
 <p>首先是<code>OptionsImpl</code>的构造函数，在这个构造函数中，主要工作有：</p>
@@ -53,14 +52,18 @@
 <li>如果是热重启，则在<code>HotRestartingParent::initialize</code>会创建一个<code>DomainSocket</code>监听<code>HotRestartMessage</code>消息</li>
 <li>接着在<code>InstanceImpl::initialize</code>函数中，加载启动时的配置文件，配置文件路径通过main函数的参数解析获取
 <ol>
-<li><code>InstanceUtil::loadBootstrapConfig</code>函数会解析传入的配置文件数据到envoy::config::bootstrap::v3::Bootstrap类型实例中。</li>
-<li>然后会创建ListenerManagerImpl实例，而在ListenerManagerImpl的构造函数中，会创建worker线程对象：<pre><code class="language-c++">
-  for (uint32_t i = 0; i &lt; server.options().concurrency(); i++) {
+<li><code>InstanceUtil::loadBootstrapConfig</code>函数会解析传入的配置文件数据到<code>envoy::config::bootstrap::v3::Bootstrap</code>类型实例中。</li>
+<li>然后会创建<code>ListenerManagerImpl</code>实例，而在<code>ListenerManagerImpl</code>的构造函数中，会创建worker线程对象：<pre><code class="language-c++">
+for (uint32_t i = 0; i &lt; server.options().concurrency(); i++) {
     workers_.emplace_back(
     worker_factory.createWorker(i, server.overloadManager(), absl::StrCat(&quot;worker_&quot;, i)));
-    }
+}
 </code></pre>
 创建的<code>WorkerImpl</code>实例是工作线程的封装，其构造函数中会创建该线程的dispatcher，但是还没有将worker启动起来。</li>
+<li>通过工厂创建cluster manager，具体的执行代码在<code>MainImpl::initialize</code>中<pre><code class="language-c++">cluster_manager_ = cluster_manager_factory.clusterManagerFromProto(bootstrap);
+</code></pre>
+最终会调用到<code>ClusterManagerImpl::ClusterManagerImpl</code>构造函数，在这个函数中会读取启动配置文件中设置的静态cluster。<br>
+同样，在<code>MainImpl::initialize</code>中，将启动配置文件中设置的listener配置设置到listener manager中。</li>
 <li>启动admin线程http服务<pre><code class="language-c++">admin_-&gt;startHttpListener(initial_config.admin().accessLogPath(), options.adminAddressPath(),
                       initial_config.admin().address(),
                       initial_config.admin().socketOptions(),
@@ -76,6 +79,22 @@
 </ul>
 <p>说了这么多，才执行完<code>Envoy::MainCommon</code>的构造函数，接下来进入<code>run()</code>函数：<br>
 这个函数中依然先判断一下启动的模式，如果是正常启动模式，则会进入<code>InstanceImpl::run()</code>在这里，会开始执行主线程和worker线程主循环，即dispatcher的run</p>
+<ul>
+<li>在<code>InstanceImpl::startWorkers()</code>中，将之前创建的listener传递给所有的worker线程，然后调用<code>WorkerImpl::start</code>创建对应的线程对象。</li>
+<li>启动主线程循环<pre><code class="language-c++">  dispatcher_-&gt;run(Event::Dispatcher::RunType::Block);
+</code></pre>
+</li>
+</ul>
+<p>调用流程示意图：</p>
+<pre><code class="language-c++">Envoy::MainCommon::main
+  |-&gt; Envoy::MainCommon 
+      |-&gt; Envoy::OptionsImpl 解析命令行参数
+      |-&gt; MainCommonBase::MainCommonBase
+          |-&gt; Server::InstanceImpl 
+              |-&gt; InstanceImpl::initialize 解析启动配置，创建listener manager, worker对象, cluster manager，启动admin http服务
+  |-&gt; MainCommonBase::run
+      |-&gt;InstanceImpl::run 启动worker线程循环，启动主线程循环
+</code></pre>
 ]]></content>
     </entry>
     <entry>
