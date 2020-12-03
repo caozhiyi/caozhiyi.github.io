@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>envoy的线程本地存储(TLS) | czy-blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://caozhiyi.github.io/favicon.ico?v=1607011180639">
+<link rel="stylesheet" href="https://caozhiyi.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="接口类
+
+SlotAllocator 线程本地存储的solt构造接口
+Slot 线程本地存储的solt接口，定义了solt支持的操作
+TypedSlot
+Instance 线程与TLS绑定的注册接口
+ThreadLocalObject 线程..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://caozhiyi.github.io">
+        <img src="https://caozhiyi.github.io/images/avatar.png?v=1607011180639" class="site-logo">
+        <h1 class="site-title">czy-blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      会写代码的莫扎特
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://caozhiyi.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">envoy的线程本地存储(TLS)</h2>
+            <div class="post-date">2020-12-03</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="接口类">接口类</h2>
+<ul>
+<li><code>SlotAllocator</code> 线程本地存储的solt构造接口</li>
+<li><code>Slot</code> 线程本地存储的solt接口，定义了solt支持的操作</li>
+<li><code>TypedSlot</code></li>
+<li><code>Instance</code> 线程与TLS绑定的注册接口</li>
+<li><code>ThreadLocalObject</code> 线程本地存储的接口<br>
+接口类只有以上几种。</li>
+</ul>
+<h2 id="实现类">实现类</h2>
+<h3 id="instanceimpl">InstanceImpl</h3>
+<p>继承于<code>Instance</code>接口，实现了TLS的所有操作，envoy在<code>MainCommonBase::MainCommonBase</code>构造函数中创建</p>
+<pre><code class="language-c++">tls_ = std::make_unique&lt;ThreadLocal::InstanceImpl&gt;();
+</code></pre>
+<p>所以全局只有一个。<br>
+首先看下申明的成员变量：</p>
+<pre><code class="language-c++">// 线程本地存储变量类型定义
+struct ThreadLocalData {
+    // 存储本地线程的dispatcher
+    Event::Dispatcher* dispatcher_{};
+    // 每个线程都单独持有的ThreadLocalObject
+    std::vector&lt;ThreadLocalObjectSharedPtr&gt; data_;
+};
+// 实现TLS存储的核心变量
+static thread_local ThreadLocalData thread_local_data_;
+
+// solt构造池，每创建一个solt都在这里存一个裸指针，
+// 删除时只置为nilltr,因为构造的solt生存周期实际由智能指针管理
+// 只能在主线程中构造solt，所以访问此两边不需要加锁
+std::vector&lt;Slot*&gt; slots_;
+// 空闲index存储，指向slots_移除之后的索引
+std::list&lt;uint32_t&gt; free_slot_indexes_;
+// 所有注册到TLS的dispatcher(不包括主线程的)。每个线程都有一个
+std::list&lt;std::reference_wrapper&lt;Event::Dispatcher&gt;&gt; registered_threads_;
+// 主线程id，用于检测当前执行线程是否是主线程
+std::thread::id main_thread_id_;
+// 主线程dispatcher
+Event::Dispatcher* main_thread_dispatcher_{}; 
+// 标识TLS系统是否关闭
+std::atomic&lt;bool&gt; shutdown_{};
+</code></pre>
+<p>知道了成员变量的作用，接口的实现就会明了：</p>
+<ul>
+<li><code>allocateSlot</code> 只能在主线程上执行，构造一个solt，如果<code>free_slot_indexes_</code>为空，则增长<code>slots_</code>, 否则使用<code>free_slot_indexes_</code>中的索引</li>
+<li><code>registerThread</code> 只能在主线程上执行，将非主线程的dispatcher添加到<code>registered_threads_</code>中，将主线程的dispatcher赋值给<code>main_thread_dispatcher_</code></li>
+<li><code>shutdownGlobalThreading</code> 只能在主线程上执行, 设置<code>shutdown_</code>标识</li>
+<li><code>shutdownThread</code> 只能在<code>shutdownGlobalThreading</code>之后调用，释放本地线程存储的<code>thread_local_data_</code></li>
+<li><code>dispatcher</code> 返回本线程的dispatcher</li>
+<li><code>removeSlot</code> 只能在主线程上执行，将参数的solt索引对应的<code>slots_</code>置空，并添加到<code>free_slot_indexes_</code>中，接着将所有线程的<code>thread_local_data_.data_</code>对应索引位置置空</li>
+<li><code>runOnAllThreads</code> 只能在主线程上执行，遍历<code>registered_threads_</code>, 调用<code>dispatcher.post</code>将回调函数在所有线程上执行，包括主线<br>
+还有一个重载的<code>runOnAllThreads</code>支持回调函数在所有线程执行完成之后再通过回调函数通知回主线程<pre><code class="language-c++">void InstanceImpl::runOnAllThreads(Event::PostCb cb, Event::PostCb all_threads_complete_cb) {
+    //...
+    // 首先在主线程中执行
+    cb();
+
+    // 用智能指针包一下cb，并设置一个智能指针的析构器，在析构器中调用主线程的dispatcher-&gt;post将回调通知函数发送到主线程中执行
+    Event::PostCbSharedPtr cb_guard(new Event::PostCb(cb),
+                                [this, all_threads_complete_cb](Event::PostCb* cb) {
+                                  main_thread_dispatcher_-&gt;post(all_threads_complete_cb);
+                                  delete cb;
+                                });
+
+    for (Event::Dispatcher&amp; dispatcher : registered_threads_) {
+         dispatcher.post([cb_guard]() -&gt; void { (*cb_guard)(); });
+      }
+    }
+</code></pre>
+</li>
+<li><code>setThreadLocal</code> 设置线程本地存储，每个线程都只操作本地线程</li>
+</ul>
+<p>以上就是<code>InstanceImpl</code>的全部实现，原理其实很简单，引起变更的删除添加操作都只能在主线程中执行，然后通过<code>dispatcher.post</code>将数据变更操作分发到其他线程中，而其他线程只读取TLS，从而实现线程间的数据传递，而不用对数据进行加锁。<br>
+接下来，我们看下<code>SlotImpl</code>的实现。</p>
+<h3 id="slotimpl">SlotImpl</h3>
+<p><code>SlotImpl</code>继承自<code>Slot</code>接口，定义了线程本地存储对象的一些操作，还是先看一下成员变量</p>
+<pre><code class="language-c++">// 全局唯一的`InstanceImpl`引用
+InstanceImpl&amp; parent_;
+// 自己在slots_和thread_local_data_.data_中的位置索引
+const uint32_t index_;
+// 线程间回调函数执行时检测本solt是否还有效
+std::shared_ptr&lt;bool&gt; still_alive_guard_;
+</code></pre>
+<p>我们可以看到，虽然<code>SlotImpl</code>是对<code>ThreadLocalObject</code>的一层包装，但是并没有持有<code>ThreadLocalObject</code>的变量，而是存储了一个指向本地线程存储队列的索引，通过此索引访问本地线程存储的对象数据。</p>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://caozhiyi.github.io/post/envoy-qi-dong-guo-cheng/">
+                  <h3 class="post-title">
+                    envoy 启动过程
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
