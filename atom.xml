@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://caozhiyi.github.io</id>
     <title>czy-blog</title>
-    <updated>2020-12-03T15:59:43.265Z</updated>
+    <updated>2020-12-05T02:50:13.753Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://caozhiyi.github.io"/>
     <link rel="self" href="https://caozhiyi.github.io/atom.xml"/>
@@ -10,6 +10,16 @@
     <logo>https://caozhiyi.github.io/images/avatar.png</logo>
     <icon>https://caozhiyi.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, czy-blog</rights>
+    <entry>
+        <title type="html"><![CDATA[no one]]></title>
+        <id>https://caozhiyi.github.io/post/no-one/</id>
+        <link href="https://caozhiyi.github.io/post/no-one/">
+        </link>
+        <updated>2020-12-05T02:45:09.000Z</updated>
+        <content type="html"><![CDATA[<p>日出扶桑一丈高，人间万事细如毛。<br>
+野夫怒见不平处，磨损胸中万古刀。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[envoy的线程本地存储(TLS)]]></title>
         <id>https://caozhiyi.github.io/post/envoy-de-xian-cheng-ben-di-cun-chu-tls/</id>
@@ -97,7 +107,20 @@ const uint32_t index_;
 // 线程间回调函数执行时检测本solt是否还有效
 std::shared_ptr&lt;bool&gt; still_alive_guard_;
 </code></pre>
-<p>我们可以看到，虽然<code>SlotImpl</code>是对<code>ThreadLocalObject</code>的一层包装，但是并没有持有<code>ThreadLocalObject</code>的变量，而是存储了一个指向本地线程存储队列的索引，通过此索引访问本地线程存储的对象数据。</p>
+<p>我们可以看到，虽然<code>SlotImpl</code>是对<code>ThreadLocalObject</code>的一层包装，但是并没有持有<code>ThreadLocalObject</code>的变量，而是存储了一个指向本地线程存储队列的索引。</p>
+<ul>
+<li><code>dataCallback</code> 在cb回调函数上再包装一层，在执行前判断本solt是否已经析构</li>
+<li><code>runOnAllThreads</code> 将回调函数在本地线程存储的队列，还是调用<code>InstanceImpl</code>的<code>runOnAllThreads</code>函数<br>
+上述函数传递的回调参数函数类型为：</li>
+</ul>
+<pre><code class="language-c++">using UpdateCb = std::function&lt;void(ThreadLocalObjectSharedPtr)&gt;;
+</code></pre>
+<p>用于访问修改线程本地存储的数据</p>
+<ul>
+<li><code>set</code> solt的初始化方法，只能在主线程中调用。将传入的回调函数传入各个线程执行</li>
+<li><code>get</code> 获取本地线程存储的<code>ThreadLocalObjectSharedPtr</code></li>
+</ul>
+<h2 id="使用">使用</h2>
 ]]></content>
     </entry>
     <entry>
@@ -185,16 +208,6 @@ for (uint32_t i = 0; i &lt; server.options().concurrency(); i++) {
   |-&gt; MainCommonBase::run
       |-&gt;InstanceImpl::run 启动worker线程循环，启动主线程循环
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[曹某人]]></title>
-        <id>https://caozhiyi.github.io/post/hello-gridea/</id>
-        <link href="https://caozhiyi.github.io/post/hello-gridea/">
-        </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
-        <content type="html"><![CDATA[<p>日出扶桑一丈高，人间万事细如毛。<br>
-野夫怒见不平处，磨损胸中万古刀。</p>
 ]]></content>
     </entry>
 </feed>
