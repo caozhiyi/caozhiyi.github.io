@@ -94,7 +94,7 @@ const fullScreenLayouts = [
     </div>
 
     <nav class="fullscreen-review-nav" aria-label="全屏布局评审导航">
-      <a class="fullscreen-review-brand" href="/zh/">返回当前首页</a>
+      <a class="fullscreen-review-brand" href={`${import.meta.env.BASE_URL}zh/`}>返回当前首页</a>
       <div style="display: flex; align-items: center; gap: 10px;">
         {fullScreenLayouts.map((item) => (
           <a href={item.href}><span>{item.label}</span>{item.name}</a>
@@ -313,7 +313,7 @@ const fullScreenLayouts = [
                       <span class="bp-article-date">{item.date}</span>
                       <span class="bp-article-series">[{item.series}]</span>
                     </div>
-                    <h3><a href="/zh/articles/">{item.title}</a></h3>
+                    <h3><a href={`${import.meta.env.BASE_URL}zh/articles/`}>{item.title}</a></h3>
                     <p>{item.description}</p>
                   </div>
                 ))}
@@ -381,7 +381,7 @@ const fullScreenLayouts = [
                       <span class="bp-article-date">{item.date}</span>
                       <span class="bp-article-series">[{item.series}]</span>
                     </div>
-                    <h3><a href="/en/articles/">{item.title}</a></h3>
+                    <h3><a href={`${import.meta.env.BASE_URL}en/articles/`}>{item.title}</a></h3>
                     <p>{item.description}</p>
                   </div>
                 ))}

@@ -10,7 +10,7 @@
       const saved = localStorage.getItem("preferred-locale");
       const browser = navigator.language.toLowerCase();
       const target = saved ?? (browser.startsWith("zh") ? "zh" : "en");
-      window.location.replace(`/${target}/`);
+      window.location.replace(`${import.meta.env.BASE_URL}${target}/`);
     </script>
   </body>
 </html>
