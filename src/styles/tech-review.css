@@ -1,0 +1,418 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300&display=swap');
+
+/* --- MONOCHROME PLAIN DESIGN TOKENS --- */
+:root {
+  /* Day Mode (Default) */
+  --tech-bg: #ffffff;
+  --tech-bg-panel: #ffffff;
+  --tech-border: rgba(9, 9, 11, 0.08); /* Minimal zinc border */
+  --tech-border-strong: rgba(9, 9, 11, 0.16);
+  --tech-text: #09090b; /* Zinc 950 */
+  --tech-text-muted: #71717a; /* Zinc 500 */
+  --tech-tag-bg: rgba(9, 9, 11, 0.03);
+}
+
+/* Night Mode Support */
+:root[data-theme="dark"],
+html[data-theme="dark"] {
+  --tech-bg: #09090b; /* Zinc 950 */
+  --tech-bg-panel: #09090b;
+  --tech-border: rgba(244, 244, 245, 0.08); /* Zinc 100 border */
+  --tech-border-strong: rgba(244, 244, 245, 0.16);
+  --tech-text: #f4f4f5; /* Zinc 100 */
+  --tech-text-muted: #a1a1aa; /* Zinc 400 */
+  --tech-tag-bg: rgba(244, 244, 245, 0.04);
+}
+
+/* ==========================================================================
+   CANDIDATE 05: MODERN PLAIN GRID (数智网格 - Plain Blueprint Grid)
+   ========================================================================== */
+
+.tech-blueprint {
+  background: var(--tech-bg) !important;
+  color: var(--tech-text) !important;
+  font-family: 'Space Grotesk', var(--font-sans), sans-serif;
+  position: relative;
+  box-shadow: none !important;
+}
+
+.bp-grid-container {
+  display: grid;
+  gap: 24px;
+}
+
+/* Simplified Border Grid */
+.tech-border {
+  position: relative;
+  border: 1px solid var(--tech-border);
+  background: var(--tech-bg-panel);
+  border-radius: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.tech-border:hover {
+  border-color: var(--tech-border-strong);
+}
+
+/* Blueprint Header Layout */
+.bp-header {
+  padding: 32px;
+  display: grid;
+  gap: 16px;
+}
+
+.bp-header-meta {
+  display: flex;
+  gap: 8px;
+}
+
+.bp-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--tech-text-muted);
+  background: var(--tech-tag-bg);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--tech-border);
+}
+
+.bp-title {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: clamp(2rem, 4.5vw, 3.2rem) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.15 !important;
+  margin: 0;
+  color: var(--tech-text) !important;
+}
+
+.bp-subtitle {
+  font-size: 0.98rem !important;
+  line-height: 1.65 !important;
+  color: var(--tech-text-muted) !important;
+  max-width: 760px;
+  margin: 0 !important;
+}
+
+.bp-hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--tech-border);
+}
+
+.bp-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.bp-stat .num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--tech-text);
+}
+
+.bp-stat .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--tech-text-muted);
+}
+
+/* Blueprint Main Grid Columns */
+.bp-main-content {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.bp-section {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.bp-sec-header {
+  border-bottom: 1px solid var(--tech-border);
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+}
+
+.bp-sec-header h2 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  margin: 0 !important;
+  color: var(--tech-text) !important;
+  text-transform: uppercase;
+}
+
+/* Book Showcase (Flat Typographic Layout) */
+.bp-books-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bp-book-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--tech-border);
+  transition: border-color 0.2s ease;
+}
+
+.bp-book-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.bp-book-card:hover {
+  border-bottom-color: var(--tech-border-strong);
+}
+
+.bp-book-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bp-book-info h3 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  color: var(--tech-text) !important;
+  line-height: 1.35 !important;
+  transition: color 0.15s ease;
+}
+
+.bp-book-card:hover h3 {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.bp-book-info p {
+  font-size: 0.8rem !important;
+  color: var(--tech-text-muted) !important;
+  line-height: 1.55 !important;
+  margin: 0 !important;
+}
+
+.bp-book-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--tech-text-muted);
+  margin-top: 4px;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.bp-book-link:hover {
+  color: var(--tech-text);
+  border-bottom-color: var(--tech-text);
+}
+
+/* Projects Showcase (Minimal flat boxes) */
+.bp-projects-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bp-project-box {
+  border: 1px solid var(--tech-border);
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--tech-bg-panel);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.bp-project-box:hover {
+  border-color: var(--tech-border-strong);
+}
+
+.bp-project-header {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+}
+
+.bp-project-index {
+  color: var(--tech-text-muted);
+}
+
+.bp-project-status {
+  color: var(--tech-text-muted);
+}
+
+.bp-project-box h3 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  color: var(--tech-text) !important;
+}
+
+.bp-project-box:hover h3 {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.bp-project-box p {
+  font-size: 0.8rem !important;
+  line-height: 1.55 !important;
+  color: var(--tech-text-muted) !important;
+  margin: 0 !important;
+}
+
+.bp-project-specs {
+  display: flex;
+  gap: 8px;
+}
+
+.spec-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--tech-border);
+  color: var(--tech-text-muted);
+  background: var(--tech-tag-bg);
+}
+
+.bp-project-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--tech-text-muted);
+  align-self: flex-start;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.bp-project-link:hover {
+  color: var(--tech-text);
+  border-bottom-color: var(--tech-text);
+}
+
+/* Articles Feed Layout */
+.bp-articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bp-article-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px solid var(--tech-border);
+  padding-bottom: 14px;
+  transition: border-color 0.2s;
+}
+
+.bp-article-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.bp-article-item:hover {
+  border-bottom-color: var(--tech-border-strong);
+}
+
+.bp-article-meta {
+  display: flex;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+}
+
+.bp-article-date {
+  color: var(--tech-text-muted);
+}
+
+.bp-article-series {
+  color: var(--tech-text-muted);
+  font-weight: 500;
+}
+
+.bp-article-item h3 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  line-height: 1.35 !important;
+}
+
+.bp-article-item h3 a {
+  color: var(--tech-text) !important;
+  text-decoration: none;
+}
+
+.bp-article-item:hover h3 a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.bp-article-item p {
+  font-size: 0.8rem !important;
+  line-height: 1.55 !important;
+  color: var(--tech-text-muted) !important;
+  margin: 0 !important;
+}
+
+
+/* ==========================================================================
+   INTERACTIVE REVIEW NAV CONTROL STYLING
+   ========================================================================== */
+
+/* Day/Night Theme and Language toggle button controls in the top review bar */
+.review-control-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--line-strong) !important;
+  background: color-mix(in srgb, var(--bg) 95%, var(--text)) !important;
+  color: var(--text-muted) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.review-control-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--text) !important;
+  color: var(--text) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+
+:root[data-theme="dark"] .review-control-btn {
+  background: #18181b !important;
+}
+
+.review-control-btn span {
+  color: var(--accent) !important;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .bp-main-content {
+    grid-template-columns: 1fr;
+  }
+}

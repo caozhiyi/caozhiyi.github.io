@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="'SF Pro Display', 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <marker id="arrowSolid" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowNew" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowStep" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="440" rx="12" fill="url(#bgGrad4)"/>
+
+  <text x="410" y="30" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">三色标记的"漏标"陷阱：并发 GC 必须解决的核心问题</text>
+  <text x="410" y="50" text-anchor="middle" fill="#64748b" font-size="11">黑 = 已扫完  ·  灰 = 已发现待扫  ·  白 = 未访问（暂定回收）</text>
+
+  <!-- ===== Step 1 ===== -->
+  <g transform="translate(40, 80)">
+    <text x="120" y="0" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">① GC 扫描进行中</text>
+    <text x="120" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">A 已扫完染黑；C 灰色待处理；B 暂时是白色</text>
+
+    <rect x="0" y="28" width="240" height="170" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- A: black -->
+    <circle cx="60" cy="80" r="22" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="60" y="85" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">A</text>
+    <text x="60" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">黑</text>
+
+    <!-- C: gray -->
+    <circle cx="180" cy="80" r="22" fill="#94a3b8" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="180" y="85" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">C</text>
+    <text x="180" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">灰</text>
+
+    <!-- B: white -->
+    <circle cx="120" cy="160" r="22" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="165" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">B</text>
+    <text x="120" y="195" text-anchor="middle" fill="#cbd5e1" font-size="9">白</text>
+
+    <!-- Edge: C -> B (existing) -->
+    <line x1="170" y1="100" x2="135" y2="142" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arrowSolid)"/>
+    <text x="172" y="130" fill="#94a3b8" font-size="9">引用</text>
+  </g>
+
+  <!-- Arrow Step 1 -> 2 -->
+  <line x1="290" y1="180" x2="320" y2="180" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowStep)"/>
+  <text x="305" y="170" text-anchor="middle" fill="#fbbf24" font-size="9">业务</text>
+  <text x="305" y="200" text-anchor="middle" fill="#fbbf24" font-size="9">改引用</text>
+
+  <!-- ===== Step 2 ===== -->
+  <g transform="translate(330, 80)">
+    <text x="120" y="0" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">② 业务线程突然插一脚</text>
+    <text x="120" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">C 切断对 B 的引用；A（已黑）反而新引用了 B</text>
+
+    <rect x="0" y="28" width="240" height="170" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- A: black -->
+    <circle cx="60" cy="80" r="22" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="60" y="85" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">A</text>
+    <text x="60" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">黑（已扫完）</text>
+
+    <!-- C: gray -->
+    <circle cx="180" cy="80" r="22" fill="#94a3b8" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="180" y="85" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">C</text>
+    <text x="180" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">灰</text>
+
+    <!-- B: white -->
+    <circle cx="120" cy="160" r="22" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="165" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">B</text>
+    <text x="120" y="195" text-anchor="middle" fill="#cbd5e1" font-size="9">白</text>
+
+    <!-- Broken edge: C -> B -->
+    <line x1="170" y1="100" x2="135" y2="142" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.6"/>
+    <line x1="148" y1="115" x2="162" y2="129" stroke="#ef4444" stroke-width="2"/>
+    <line x1="162" y1="115" x2="148" y2="129" stroke="#ef4444" stroke-width="2"/>
+    <text x="200" y="135" fill="#ef4444" font-size="9">断开</text>
+
+    <!-- New edge: A -> B (new!) -->
+    <path d="M 70 100 Q 60 140 105 155" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowNew)"/>
+    <text x="40" y="140" fill="#ef4444" font-size="9" font-weight="600">新引用</text>
+  </g>
+
+  <!-- Arrow Step 2 -> 3 -->
+  <line x1="580" y1="180" x2="610" y2="180" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowStep)"/>
+  <text x="595" y="170" text-anchor="middle" fill="#fbbf24" font-size="9">GC</text>
+  <text x="595" y="200" text-anchor="middle" fill="#fbbf24" font-size="9">继续</text>
+
+  <!-- ===== Step 3 ===== -->
+  <g transform="translate(620, 80)">
+    <text x="80" y="0" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">③ GC 扫完发现"B 没人引用"</text>
+    <text x="80" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">A 已黑不会回头扫；C 找不到 B；B 被错误回收</text>
+
+    <rect x="0" y="28" width="160" height="170" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- A: black with B reference -->
+    <circle cx="40" cy="80" r="20" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="40" y="85" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="700">A</text>
+
+    <!-- C: black now -->
+    <circle cx="120" cy="80" r="20" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="85" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="700">C</text>
+
+    <!-- B: still white but with skull -->
+    <circle cx="80" cy="155" r="22" fill="#f1f5f9" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="3 2"/>
+    <text x="80" y="160" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="700">B 💀</text>
+
+    <!-- Edge A -> B (live but unseen) -->
+    <path d="M 50 100 Q 40 135 65 145" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="3 2"/>
+
+    <!-- Result label -->
+    <rect x="-10" y="210" width="180" height="44" rx="4" fill="#ef4444" fill-opacity="0.1" stroke="#ef4444" stroke-width="1"/>
+    <text x="80" y="228" text-anchor="middle" fill="#fca5a5" font-size="10" font-weight="700">活对象 B 被误回收</text>
+    <text x="80" y="244" text-anchor="middle" fill="#fca5a5" font-size="9">→ 程序访问到野指针，崩溃</text>
+  </g>
+
+  <!-- ===== Conditions box ===== -->
+  <g transform="translate(40, 290)">
+    <rect width="370" height="74" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="0.8" opacity="0.9"/>
+    <text x="14" y="18" fill="#fca5a5" font-size="11" font-weight="700">漏标的两个必要条件</text>
+    <text x="14" y="38" fill="#cbd5e1" font-size="10">① 一个白对象被某个黑对象重新引用</text>
+    <text x="14" y="56" fill="#cbd5e1" font-size="10">② 同时所有指向它的灰色引用全部被切断</text>
+    <text x="14" y="70" fill="#94a3b8" font-size="9" font-style="italic">两个条件同时满足 → 灰色路径找不到，黑色不会回头看</text>
+  </g>
+
+  <!-- ===== Solution box ===== -->
+  <g transform="translate(430, 290)">
+    <rect width="350" height="74" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="0.8" opacity="0.9"/>
+    <text x="14" y="18" fill="#6ee7b7" font-size="11" font-weight="700">Go 的解法：写屏障</text>
+    <text x="14" y="38" fill="#cbd5e1" font-size="10">编译器在每处指针赋值旁插一段检查代码</text>
+    <text x="14" y="56" fill="#cbd5e1" font-size="10">GC 标记期激活：把"被赋值方"和"原对象"都染灰</text>
+    <text x="14" y="70" fill="#94a3b8" font-size="9" font-style="italic">宁可错标也不漏标 — 错标只是这轮多扫，下轮再处理</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="410" y="402" text-anchor="middle" fill="#94a3b8" font-size="10">没有写屏障，就没法让 GC 真正与业务线程并发执行 — STW 才是不漏标的"野蛮"保证</text>
+  <text x="410" y="420" text-anchor="middle" fill="#475569" font-size="9" font-style="italic">这是 Go 把 STW 压到亚毫秒级、Java ZGC 也走类似路线的根本原因</text>
+</svg>

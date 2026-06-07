@@ -1,0 +1,404 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";
+import { siteContent, type Locale } from "../../../data/site";
+
+export function getStaticPaths() {
+  return (Object.keys(siteContent) as Locale[]).map((locale) => ({
+    params: { locale }
+  }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent[locale];
+
+if (!content) {
+  throw new Error(`Unsupported locale: ${locale}`);
+}
+
+const pageIntro = {
+  zh: {
+    title: "文章",
+    description: "按照主题分类的个人技术文章与行业感悟存根。",
+    sidebarTitle: "专题分类"
+  },
+  en: {
+    title: "Writing",
+    description: "A categorized archive of technical essays and industry reflections.",
+    sidebarTitle: "CATEGORIES"
+  }
+}[locale];
+
+const writingGroups = content.writingGroups || [];
+---
+
+<MainLayout content={content} pageTitle={pageIntro.title}>
+
+  <div class="articles-layout">
+    <!-- Main Content Area -->
+    <main class="articles-main">
+      {writingGroups.map((group, groupIndex) => {
+        if (!group.items || group.items.length === 0) return null;
+        return (
+          <section class="group-section" id={`group-${groupIndex}`}>
+            <div class="group-section-header">
+              <h2 class="group-section-title">{group.name}</h2>
+              <p class="group-section-desc">{group.description}</p>
+            </div>
+            <div class="articles-list">
+              {group.items.map((item, itemIndex) => (
+                <article class="article-row-card" id={`art-${groupIndex}-${itemIndex}`}>
+                  <div class="art-meta">{item.meta}</div>
+                  <h3 class="art-title">
+                    <a href={item.href}>{item.title}</a>
+                  </h3>
+                  <p class="art-desc">{item.description}</p>
+                  <a href={item.href} class="art-link">
+                    {locale === 'zh' ? '阅读全文' : 'Read article'} [READ] →
+                  </a>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+
+    </main>
+
+    <!-- Collapsible Sidebar Navigation -->
+    <aside class="articles-sidebar" aria-label={pageIntro.sidebarTitle}>
+      <div class="sidebar-panel">
+        <h3 class="sidebar-header">{pageIntro.sidebarTitle}</h3>
+        <ul class="sidebar-menu">
+          {writingGroups.map((group, groupIndex) => {
+            if (!group.items || group.items.length === 0) return null;
+            return (
+              <li class="menu-group" data-group-id={`group-${groupIndex}`}>
+                <button class="menu-group-header" type="button" aria-expanded="true">
+                  <span class="group-name">{group.name}</span>
+                  <span class="chevron" aria-hidden="true">▼</span>
+                </button>
+                <ul class="menu-items">
+                  {group.items.map((item, itemIndex) => (
+                    <li>
+                      <a href={`#art-${groupIndex}-${itemIndex}`} class="menu-item-link">
+                        {item.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <script define:vars={{ locale }}>
+    localStorage.setItem("preferred-locale", locale);
+  </script>
+
+  <script is:inline>
+    (() => {
+      // 1. Accordion folding logic
+      const groups = document.querySelectorAll('.menu-group');
+      groups.forEach(group => {
+        const header = group.querySelector('.menu-group-header');
+        if (header) {
+          header.addEventListener('click', () => {
+            const isCollapsed = group.classList.toggle('collapsed');
+            header.setAttribute('aria-expanded', !isCollapsed);
+          });
+        }
+      });
+
+      // 2. Smooth Scroll for sidebar anchor links
+      const links = document.querySelectorAll('.menu-item-link');
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Update URL hash
+            history.pushState(null, '', targetId);
+          }
+        });
+      });
+
+      // 3. ScrollSpy highlight logic
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            const groupEl = document.querySelector(`[data-group-id="${id}"]`);
+            if (groupEl) {
+              // Highlight active group in sidebar
+              document.querySelectorAll('.menu-group').forEach(g => {
+                g.classList.remove('active');
+              });
+              groupEl.classList.add('active');
+              
+              // Ensure active group is expanded
+              if (groupEl.classList.contains('collapsed')) {
+                groupEl.classList.remove('collapsed');
+                const btn = groupEl.querySelector('.menu-group-header');
+                if (btn) btn.setAttribute('aria-expanded', 'true');
+              }
+            }
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '-10% 0px -70% 0px'
+      });
+
+      document.querySelectorAll('.group-section').forEach(section => {
+        observer.observe(section);
+      });
+    })();
+  </script>
+</MainLayout>
+
+<style>
+  /* Layout setup */
+  .articles-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.75fr);
+    gap: 32px;
+    align-items: start;
+    margin-top: 40px;
+  }
+
+  .articles-main {
+    display: grid;
+    gap: 48px;
+  }
+
+  /* Main sections style */
+  .group-section {
+    scroll-margin-top: 100px;
+  }
+
+  .group-section-header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+  }
+
+  .group-section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin: 0 0 6px 0;
+  }
+
+  .group-section-desc {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .articles-list {
+    display: grid;
+    gap: 18px;
+  }
+
+  /* List row cards */
+  .article-row-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    scroll-margin-top: 100px;
+  }
+
+  .article-row-card:hover {
+    border-color: var(--line-strong);
+    box-shadow: inset 0 0 0 1px var(--line-strong), 0 4px 16px rgba(0, 0, 0, 0.02);
+  }
+
+  :root[data-theme="dark"] .article-row-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  }
+
+  .art-meta {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--text-soft);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .art-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+  }
+
+  .art-title a {
+    color: var(--text-strong);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .art-title a:hover {
+    color: var(--accent-strong);
+  }
+
+  .art-desc {
+    font-size: 0.92rem;
+    color: var(--text-soft);
+    margin: 0 0 14px 0;
+    line-height: 1.6;
+  }
+
+  .art-link {
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    color: var(--text-strong);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s ease;
+  }
+
+  .art-link:hover {
+    color: var(--accent-strong);
+  }
+
+  /* Sidebar Navigation styling */
+  .articles-sidebar {
+    position: sticky;
+    top: 100px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .sidebar-panel {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 24px;
+  }
+
+  .sidebar-header {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-soft);
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 14px;
+  }
+
+  .menu-group {
+    display: grid;
+    gap: 8px;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 12px;
+  }
+
+  .menu-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .menu-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 4px 0;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-strong);
+    transition: color 0.15s ease;
+  }
+
+  .menu-group-header:hover {
+    color: var(--accent-strong);
+  }
+
+  /* Indicator when group is scrolled into view */
+  .menu-group.active .menu-group-header {
+    color: var(--accent-strong);
+  }
+
+  .chevron {
+    font-size: 0.65rem;
+    transition: transform 0.2s ease;
+    color: var(--text-soft);
+  }
+
+  .menu-group.collapsed .chevron {
+    transform: rotate(-90deg);
+  }
+
+  .menu-items {
+    list-style: none;
+    padding: 0 0 0 12px;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+    border-left: 1px solid var(--line);
+    transition: max-height 0.25s ease, opacity 0.25s ease;
+  }
+
+  .menu-group.collapsed .menu-items {
+    display: none;
+  }
+
+  .menu-item-link {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    text-decoration: none;
+    line-height: 1.4;
+    padding: 2px 0;
+    transition: color 0.15s ease, padding-left 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .menu-item-link:hover {
+    color: var(--text-strong);
+    padding-left: 2px;
+  }
+
+  /* Responsive styling */
+  @media (max-width: 960px) {
+    .articles-layout {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    
+    .articles-sidebar {
+      position: static;
+      max-height: none;
+    }
+  }
+</style>

@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <marker id="arrowSolid" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowNew" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowStep" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="440" rx="12" fill="url(#bgGrad4)"/>
+
+  <text x="410" y="30" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">The "missed mark" trap in tri-color marking — the core hazard of any concurrent GC</text>
+  <text x="410" y="50" text-anchor="middle" fill="#64748b" font-size="11">Black = fully scanned  ·  Gray = discovered, pending  ·  White = unvisited (presumed dead)</text>
+
+  <!-- ===== Step 1 ===== -->
+  <g transform="translate(40, 80)">
+    <text x="120" y="0" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">① GC marking in progress</text>
+    <text x="120" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">A is fully scanned (black); C is gray; B is still white</text>
+
+    <rect x="0" y="28" width="240" height="170" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- A: black -->
+    <circle cx="60" cy="80" r="22" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="60" y="85" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">A</text>
+    <text x="60" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">black</text>
+
+    <!-- C: gray -->
+    <circle cx="180" cy="80" r="22" fill="#94a3b8" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="180" y="85" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">C</text>
+    <text x="180" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">gray</text>
+
+    <!-- B: white -->
+    <circle cx="120" cy="160" r="22" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="165" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">B</text>
+    <text x="120" y="195" text-anchor="middle" fill="#cbd5e1" font-size="9">white</text>
+
+    <!-- Edge: C -> B (existing) -->
+    <line x1="170" y1="100" x2="135" y2="142" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arrowSolid)"/>
+    <text x="172" y="130" fill="#94a3b8" font-size="9">ref</text>
+  </g>
+
+  <!-- Arrow Step 1 -> 2 -->
+  <line x1="290" y1="180" x2="320" y2="180" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowStep)"/>
+  <text x="305" y="170" text-anchor="middle" fill="#fbbf24" font-size="9">app</text>
+  <text x="305" y="200" text-anchor="middle" fill="#fbbf24" font-size="9">mutates</text>
+
+  <!-- ===== Step 2 ===== -->
+  <g transform="translate(330, 80)">
+    <text x="120" y="0" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">② Mutator suddenly steps in</text>
+    <text x="120" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">C drops its ref to B; A (already black) now refs B</text>
+
+    <rect x="0" y="28" width="240" height="170" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <circle cx="60" cy="80" r="22" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="60" y="85" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">A</text>
+    <text x="60" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">black (scanned)</text>
+
+    <circle cx="180" cy="80" r="22" fill="#94a3b8" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="180" y="85" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">C</text>
+    <text x="180" y="115" text-anchor="middle" fill="#cbd5e1" font-size="9">gray</text>
+
+    <circle cx="120" cy="160" r="22" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="165" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">B</text>
+    <text x="120" y="195" text-anchor="middle" fill="#cbd5e1" font-size="9">white</text>
+
+    <!-- Broken edge: C -> B -->
+    <line x1="170" y1="100" x2="135" y2="142" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.6"/>
+    <line x1="148" y1="115" x2="162" y2="129" stroke="#ef4444" stroke-width="2"/>
+    <line x1="162" y1="115" x2="148" y2="129" stroke="#ef4444" stroke-width="2"/>
+    <text x="200" y="135" fill="#ef4444" font-size="9">cut</text>
+
+    <!-- New edge: A -> B (new!) -->
+    <path d="M 70 100 Q 60 140 105 155" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowNew)"/>
+    <text x="35" y="140" fill="#ef4444" font-size="9" font-weight="600">new ref</text>
+  </g>
+
+  <!-- Arrow Step 2 -> 3 -->
+  <line x1="580" y1="180" x2="610" y2="180" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowStep)"/>
+  <text x="595" y="170" text-anchor="middle" fill="#fbbf24" font-size="9">GC</text>
+  <text x="595" y="200" text-anchor="middle" fill="#fbbf24" font-size="9">resumes</text>
+
+  <!-- ===== Step 3 ===== -->
+  <g transform="translate(620, 80)">
+    <text x="80" y="0" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">③ GC concludes "B has no refs"</text>
+    <text x="80" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">Black A isn't rescanned; C can't reach B; B is wrongly freed</text>
+
+    <rect x="0" y="28" width="160" height="170" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <circle cx="40" cy="80" r="20" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="40" y="85" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="700">A</text>
+
+    <circle cx="120" cy="80" r="20" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="85" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="700">C</text>
+
+    <circle cx="80" cy="155" r="22" fill="#f1f5f9" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="3 2"/>
+    <text x="80" y="160" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="700">B 💀</text>
+
+    <path d="M 50 100 Q 40 135 65 145" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="3 2"/>
+
+    <rect x="-10" y="210" width="180" height="44" rx="4" fill="#ef4444" fill-opacity="0.1" stroke="#ef4444" stroke-width="1"/>
+    <text x="80" y="228" text-anchor="middle" fill="#fca5a5" font-size="10" font-weight="700">Live object B reclaimed</text>
+    <text x="80" y="244" text-anchor="middle" fill="#fca5a5" font-size="9">→ dangling pointer → crash</text>
+  </g>
+
+  <!-- ===== Conditions box ===== -->
+  <g transform="translate(40, 290)">
+    <rect width="370" height="74" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="0.8" opacity="0.9"/>
+    <text x="14" y="18" fill="#fca5a5" font-size="11" font-weight="700">Two necessary conditions for a missed mark</text>
+    <text x="14" y="38" fill="#cbd5e1" font-size="10">① a white object is re-referenced by some black object</text>
+    <text x="14" y="56" fill="#cbd5e1" font-size="10">② AND every gray reference to it has been cut</text>
+    <text x="14" y="70" fill="#94a3b8" font-size="9" font-style="italic">Both at once: gray path can't find it, black won't look back</text>
+  </g>
+
+  <!-- ===== Solution box ===== -->
+  <g transform="translate(430, 290)">
+    <rect width="350" height="74" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="0.8" opacity="0.9"/>
+    <text x="14" y="18" fill="#6ee7b7" font-size="11" font-weight="700">Go's answer: write barriers</text>
+    <text x="14" y="38" fill="#cbd5e1" font-size="10">Compiler injects a check at every pointer assignment</text>
+    <text x="14" y="56" fill="#cbd5e1" font-size="10">Active during marking: shades both new and old targets gray</text>
+    <text x="14" y="70" fill="#94a3b8" font-size="9" font-style="italic">Better over-mark than miss-mark — over-marking just costs one extra round</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="410" y="402" text-anchor="middle" fill="#94a3b8" font-size="10">Without a write barrier, GC simply cannot run alongside the mutator — STW is the brute-force guarantee against missed marks</text>
+  <text x="410" y="420" text-anchor="middle" fill="#475569" font-size="9" font-style="italic">This is why Go pushes STW into sub-millisecond range, and why Java's ZGC takes a similar route</text>
+</svg>

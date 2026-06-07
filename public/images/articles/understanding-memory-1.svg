@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 480" font-family="'SF Pro Display', 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <marker id="arrowDown1" markerWidth="8" markerHeight="6" refX="4" refY="6" orient="auto">
+      <polygon points="0 0, 8 0, 4 6" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrowUp1" markerWidth="8" markerHeight="6" refX="4" refY="0" orient="auto">
+      <polygon points="0 6, 8 6, 4 0" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="720" height="480" rx="12" fill="url(#bgGrad1)"/>
+
+  <text x="360" y="30" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">进程的虚拟地址空间布局（64 位 Linux）</text>
+  <text x="360" y="50" text-anchor="middle" fill="#64748b" font-size="11">高地址在上，低地址在下；操作系统给每个进程的"独立假象"</text>
+
+  <!-- Address column -->
+  <g font-size="10" fill="#64748b" text-anchor="end" font-family="'SF Mono', monospace">
+    <text x="135" y="86">0xFFFF…FFFF</text>
+    <text x="135" y="120">0x7FFF…FFFF</text>
+    <text x="135" y="186">↓ 向低地址增长</text>
+    <text x="135" y="266">（动态映射区）</text>
+    <text x="135" y="346">↑ 向高地址增长</text>
+    <text x="135" y="438">0x0000…0000</text>
+  </g>
+
+  <!-- Memory layout column -->
+  <g transform="translate(150, 70)">
+
+    <!-- Kernel space -->
+    <rect x="0" y="0" width="420" height="36" rx="4" fill="#475569" fill-opacity="0.5" stroke="#64748b" stroke-width="0.8"/>
+    <text x="210" y="22" text-anchor="middle" fill="#cbd5e1" font-size="12" font-weight="600">内核空间（用户态不可访问）</text>
+
+    <!-- Stack -->
+    <rect x="0" y="44" width="420" height="60" rx="4" fill="#fbbf24" fill-opacity="0.12" stroke="#fbbf24" stroke-width="1"/>
+    <text x="20" y="68" fill="#fbbf24" font-size="13" font-weight="700">Stack — 栈</text>
+    <text x="20" y="86" fill="#fcd34d" font-size="10">函数调用帧 / 局部变量 / 返回地址</text>
+    <text x="20" y="100" fill="#fde68a" font-size="9" opacity="0.85">默认 8 MB · LIFO · 由 SP 寄存器管理</text>
+    <line x1="380" y1="56" x2="380" y2="96" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrowDown1)"/>
+
+    <!-- Gap -->
+    <rect x="0" y="110" width="420" height="14" rx="2" fill="#1e293b" stroke="#334155" stroke-width="0.5" stroke-dasharray="2 2"/>
+    <text x="210" y="121" text-anchor="middle" fill="#475569" font-size="9" font-style="italic">大段未映射的空洞</text>
+
+    <!-- mmap region -->
+    <rect x="0" y="130" width="420" height="60" rx="4" fill="#a78bfa" fill-opacity="0.12" stroke="#a78bfa" stroke-width="1"/>
+    <text x="20" y="154" fill="#a78bfa" font-size="13" font-weight="700">mmap 区</text>
+    <text x="20" y="172" fill="#c4b5fd" font-size="10">动态库 / 大块匿名映射 / 文件映射</text>
+    <text x="20" y="186" fill="#ddd6fe" font-size="9" opacity="0.85">大于 128 KB 的 malloc 走这里 · munmap 可立即归还</text>
+
+    <!-- Gap -->
+    <rect x="0" y="196" width="420" height="14" rx="2" fill="#1e293b" stroke="#334155" stroke-width="0.5" stroke-dasharray="2 2"/>
+
+    <!-- Heap -->
+    <rect x="0" y="216" width="420" height="60" rx="4" fill="#34d399" fill-opacity="0.12" stroke="#34d399" stroke-width="1"/>
+    <text x="20" y="240" fill="#34d399" font-size="13" font-weight="700">Heap — 堆</text>
+    <text x="20" y="258" fill="#6ee7b7" font-size="10">malloc / free 的主战场（brk 推动堆顶）</text>
+    <text x="20" y="272" fill="#a7f3d0" font-size="9" opacity="0.85">小于 128 KB 的分配走这里 · 单向生长 · 仅堆顶可归还</text>
+    <line x1="380" y1="268" x2="380" y2="228" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowUp1)"/>
+
+    <!-- BSS -->
+    <rect x="0" y="284" width="420" height="28" rx="4" fill="#3b82f6" fill-opacity="0.12" stroke="#3b82f6" stroke-width="1"/>
+    <text x="20" y="302" fill="#60a5fa" font-size="11" font-weight="700">BSS</text>
+    <text x="100" y="302" fill="#93c5fd" font-size="10">未初始化的全局/静态变量（默认置零）</text>
+
+    <!-- Data -->
+    <rect x="0" y="316" width="420" height="28" rx="4" fill="#06b6d4" fill-opacity="0.12" stroke="#06b6d4" stroke-width="1"/>
+    <text x="20" y="334" fill="#22d3ee" font-size="11" font-weight="700">Data</text>
+    <text x="100" y="334" fill="#67e8f9" font-size="10">已初始化的全局/静态变量</text>
+
+    <!-- Text -->
+    <rect x="0" y="348" width="420" height="32" rx="4" fill="#ef4444" fill-opacity="0.12" stroke="#ef4444" stroke-width="1"/>
+    <text x="20" y="368" fill="#f87171" font-size="11" font-weight="700">Text — 代码段</text>
+    <text x="160" y="368" fill="#fca5a5" font-size="10">编译后的机器指令（只读，防止误写）</text>
+  </g>
+
+  <!-- Side legend -->
+  <g transform="translate(590, 90)">
+    <text x="0" y="0" fill="#94a3b8" font-size="11" font-weight="600">关键观察</text>
+    <text x="0" y="22" fill="#cbd5e1" font-size="9.5">· 栈和堆相向而生</text>
+    <text x="0" y="38" fill="#cbd5e1" font-size="9.5">  栈向下，堆向上</text>
+    <text x="0" y="60" fill="#cbd5e1" font-size="9.5">· 中间的"洞"由 mmap</text>
+    <text x="0" y="74" fill="#cbd5e1" font-size="9.5">  按需填充</text>
+    <text x="0" y="96" fill="#cbd5e1" font-size="9.5">· 代码 / Data / BSS</text>
+    <text x="0" y="110" fill="#cbd5e1" font-size="9.5">  生命周期 = 进程</text>
+    <text x="0" y="132" fill="#cbd5e1" font-size="9.5">· 虚拟地址 ≠ 物理</text>
+    <text x="0" y="146" fill="#cbd5e1" font-size="9.5">  MMU + 页表翻译</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="360" y="468" text-anchor="middle" fill="#475569" font-size="9" font-style="italic">每个进程都看到这样一份完整的地址空间，但实际占用的物理内存远小于此</text>
+</svg>

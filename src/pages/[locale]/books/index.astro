@@ -1,0 +1,44 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";
+import { siteContent, type Locale } from "../../../data/site";
+
+export function getStaticPaths() {
+  return (Object.keys(siteContent) as Locale[]).map((locale) => ({
+    params: { locale }
+  }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent[locale];
+
+if (!content) {
+  throw new Error(`Unsupported locale: ${locale}`);
+}
+
+const pageTitle = locale === "zh" ? "书" : "Books";
+const openLabel = locale === "zh" ? "打开书籍" : "Open book";
+---
+
+<MainLayout content={content} pageTitle={pageTitle}>
+  <section class="page-section book-grid">
+    {content.books.map((item) => (
+      <article class="card book-card">
+        {item.cover && (
+          <a class="book-cover-link" href={item.href} aria-label={item.title}>
+            <img class="book-cover" src={item.cover.src} alt={item.cover.alt} loading="lazy" />
+          </a>
+        )}
+        <div class="book-card-body">
+          <p class="card-meta">{item.meta}</p>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+          <a class="card-link" href={item.href}>{openLabel}</a>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <script define:vars={{ locale }}>
+    localStorage.setItem("preferred-locale", locale);
+  </script>
+</MainLayout>

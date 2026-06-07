@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" font-family="'SF Pro Display', 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <marker id="arrowRed" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowGreen2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="760" height="420" rx="12" fill="url(#bgGrad2)"/>
+
+  <text x="380" y="30" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">brk 堆的碎片锁死：堆顶卡了一个小块，下面再多空闲也还不回操作系统</text>
+
+  <!-- ============== Scenario 1: ideal case ============== -->
+  <g transform="translate(40, 60)">
+    <text x="160" y="0" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700">理想情况：堆顶是空闲块</text>
+    <text x="160" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">brk 可以下移，把内存归还操作系统</text>
+
+    <!-- Heap container -->
+    <rect x="20" y="30" width="280" height="240" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- brk top label -->
+    <text x="310" y="42" fill="#fbbf24" font-size="9">brk 堆顶 →</text>
+    <line x1="20" y1="38" x2="300" y2="38" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3 2"/>
+
+    <!-- Free top -->
+    <rect x="30" y="44" width="260" height="50" rx="3" fill="#34d399" fill-opacity="0.18" stroke="#34d399" stroke-width="1" stroke-dasharray="3 2"/>
+    <text x="160" y="73" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="600">空闲块（已 free）</text>
+
+    <!-- Used -->
+    <rect x="30" y="100" width="260" height="40" rx="3" fill="#3b82f6" fill-opacity="0.18" stroke="#3b82f6" stroke-width="1"/>
+    <text x="160" y="124" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600">使用中</text>
+
+    <!-- Free -->
+    <rect x="30" y="146" width="260" height="40" rx="3" fill="#34d399" fill-opacity="0.18" stroke="#34d399" stroke-width="1" stroke-dasharray="3 2"/>
+    <text x="160" y="170" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="600">空闲块</text>
+
+    <!-- Used -->
+    <rect x="30" y="192" width="260" height="40" rx="3" fill="#3b82f6" fill-opacity="0.18" stroke="#3b82f6" stroke-width="1"/>
+    <text x="160" y="216" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600">使用中</text>
+
+    <!-- Heap base -->
+    <text x="310" y="252" fill="#64748b" font-size="9">堆底</text>
+    <line x1="20" y1="248" x2="300" y2="248" stroke="#64748b" stroke-width="0.8"/>
+
+    <!-- New brk arrow -->
+    <line x1="0" y1="69" x2="0" y2="120" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen2)"/>
+    <text x="-6" y="100" fill="#34d399" font-size="9" text-anchor="end">brk</text>
+    <text x="-6" y="112" fill="#34d399" font-size="9" text-anchor="end">下移</text>
+
+    <!-- Result -->
+    <rect x="0" y="285" width="320" height="32" rx="4" fill="#34d399" fill-opacity="0.1" stroke="#34d399" stroke-width="1"/>
+    <text x="160" y="305" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="600">✓ 顶部空闲段成功归还操作系统</text>
+  </g>
+
+  <!-- Divider -->
+  <line x1="380" y1="60" x2="380" y2="370" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+
+  <!-- ============== Scenario 2: stuck case ============== -->
+  <g transform="translate(420, 60)">
+    <text x="160" y="0" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">现实情况：堆顶是使用中的小块</text>
+    <text x="160" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">下方再多空闲也下不来，堆只增不减</text>
+
+    <!-- Heap container -->
+    <rect x="20" y="30" width="280" height="240" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- brk top -->
+    <text x="310" y="42" fill="#fbbf24" font-size="9">brk 堆顶 →</text>
+    <line x1="20" y1="38" x2="300" y2="38" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3 2"/>
+
+    <!-- Tiny used block at top - the culprit -->
+    <rect x="30" y="44" width="260" height="22" rx="3" fill="#ef4444" fill-opacity="0.25" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="160" y="59" text-anchor="middle" fill="#fca5a5" font-size="10" font-weight="700">⚠ 使用中的小块（卡住了堆顶）</text>
+
+    <!-- A long stretch of free below -->
+    <rect x="30" y="72" width="260" height="60" rx="3" fill="#34d399" fill-opacity="0.18" stroke="#34d399" stroke-width="1" stroke-dasharray="3 2"/>
+    <text x="160" y="106" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="600">大段空闲</text>
+
+    <rect x="30" y="138" width="260" height="40" rx="3" fill="#3b82f6" fill-opacity="0.18" stroke="#3b82f6" stroke-width="1"/>
+    <text x="160" y="162" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600">使用中</text>
+
+    <rect x="30" y="184" width="260" height="48" rx="3" fill="#34d399" fill-opacity="0.18" stroke="#34d399" stroke-width="1" stroke-dasharray="3 2"/>
+    <text x="160" y="212" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="600">空闲块</text>
+
+    <text x="310" y="252" fill="#64748b" font-size="9">堆底</text>
+    <line x1="20" y1="248" x2="300" y2="248" stroke="#64748b" stroke-width="0.8"/>
+
+    <!-- Locked / blocked indicator -->
+    <text x="-6" y="100" fill="#ef4444" font-size="9" text-anchor="end">brk</text>
+    <text x="-6" y="112" fill="#ef4444" font-size="9" text-anchor="end">动不了</text>
+    <line x1="0" y1="55" x2="20" y2="55" stroke="#ef4444" stroke-width="2"/>
+    <line x1="0" y1="55" x2="0" y2="155" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="6" y="180" fill="#ef4444" font-size="14" font-weight="700">✗</text>
+
+    <!-- Result -->
+    <rect x="0" y="285" width="320" height="32" rx="4" fill="#ef4444" fill-opacity="0.1" stroke="#ef4444" stroke-width="1"/>
+    <text x="160" y="305" text-anchor="middle" fill="#fca5a5" font-size="10" font-weight="600">✗ RSS 居高不下，下次 malloc 复用而非真正归还</text>
+  </g>
+
+  <!-- Bottom note -->
+  <g transform="translate(40, 380)">
+    <text x="340" y="0" text-anchor="middle" fill="#94a3b8" font-size="10">这就是为什么长跑服务的内存总在缓慢爬升——不一定是泄漏，多半是堆顶被一个不肯走的小对象占着</text>
+    <text x="340" y="16" text-anchor="middle" fill="#475569" font-size="9" font-style="italic">解药 1：大对象走 mmap，munmap 时直接归还；解药 2：用 jemalloc / tcmalloc 等碎片控制更好的分配器</text>
+  </g>
+</svg>

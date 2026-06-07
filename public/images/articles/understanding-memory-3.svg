@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" font-family="'SF Pro Display', 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <marker id="arrowGray3" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="380" rx="12" fill="url(#bgGrad3)"/>
+
+  <text x="410" y="30" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">GC 三步走：标记 → 清除 → 整理</text>
+  <text x="410" y="50" text-anchor="middle" fill="#64748b" font-size="11">Java GC 的核心动作；malloc 做不到的事情，GC 凭"引用全在掌控之下"做得到</text>
+
+  <!-- ===== Stage 1: Mark ===== -->
+  <g transform="translate(40, 80)">
+    <text x="120" y="0" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="700">① 标记 Mark</text>
+    <text x="120" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">从 GC Roots 出发追踪可达对象</text>
+
+    <!-- Heap area -->
+    <rect x="0" y="28" width="240" height="180" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- Objects: alive (green dot) and dead (gray) -->
+    <!-- Row 1 -->
+    <rect x="14" y="42" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1.2"/>
+    <text x="32" y="60" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">A✓</text>
+    <rect x="58" y="42" width="36" height="28" rx="3" fill="#475569" fill-opacity="0.4" stroke="#64748b" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="76" y="60" text-anchor="middle" fill="#94a3b8" font-size="9">B✗</text>
+    <rect x="102" y="42" width="56" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1.2"/>
+    <text x="130" y="60" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">C✓</text>
+    <rect x="166" y="42" width="36" height="28" rx="3" fill="#475569" fill-opacity="0.4" stroke="#64748b" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="184" y="60" text-anchor="middle" fill="#94a3b8" font-size="9">D✗</text>
+
+    <!-- Row 2 -->
+    <rect x="14" y="80" width="48" height="28" rx="3" fill="#475569" fill-opacity="0.4" stroke="#64748b" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="38" y="98" text-anchor="middle" fill="#94a3b8" font-size="9">E✗</text>
+    <rect x="70" y="80" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1.2"/>
+    <text x="88" y="98" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">F✓</text>
+    <rect x="114" y="80" width="48" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1.2"/>
+    <text x="138" y="98" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">G✓</text>
+    <rect x="170" y="80" width="36" height="28" rx="3" fill="#475569" fill-opacity="0.4" stroke="#64748b" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="188" y="98" text-anchor="middle" fill="#94a3b8" font-size="9">H✗</text>
+
+    <!-- Row 3 -->
+    <rect x="14" y="118" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1.2"/>
+    <text x="32" y="136" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">I✓</text>
+    <rect x="58" y="118" width="56" height="28" rx="3" fill="#475569" fill-opacity="0.4" stroke="#64748b" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="86" y="136" text-anchor="middle" fill="#94a3b8" font-size="9">J✗</text>
+    <rect x="122" y="118" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1.2"/>
+    <text x="140" y="136" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">K✓</text>
+
+    <!-- GC Roots indicator -->
+    <g transform="translate(8, 162)">
+      <circle cx="6" cy="6" r="5" fill="#fbbf24"/>
+      <text x="18" y="10" fill="#fbbf24" font-size="9" font-weight="600">GC Roots → 沿引用追踪</text>
+    </g>
+    <g transform="translate(8, 180)">
+      <rect width="10" height="10" rx="1.5" fill="#34d399" fill-opacity="0.35" stroke="#34d399"/>
+      <text x="20" y="9" fill="#cbd5e1" font-size="9">活</text>
+      <rect x="48" width="10" height="10" rx="1.5" fill="#475569" fill-opacity="0.4" stroke="#64748b" stroke-dasharray="2 2"/>
+      <text x="68" y="9" fill="#94a3b8" font-size="9">死</text>
+    </g>
+  </g>
+
+  <!-- Arrow 1 -->
+  <line x1="290" y1="170" x2="320" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray3)"/>
+
+  <!-- ===== Stage 2: Sweep ===== -->
+  <g transform="translate(330, 80)">
+    <text x="120" y="0" text-anchor="middle" fill="#a78bfa" font-size="12" font-weight="700">② 清除 Sweep</text>
+    <text x="120" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">死对象释放，留下空洞 → 外部碎片</text>
+
+    <rect x="0" y="28" width="240" height="180" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- Row 1 -->
+    <rect x="14" y="42" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1"/>
+    <text x="32" y="60" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">A</text>
+    <rect x="58" y="42" width="36" height="28" rx="3" fill="none" stroke="#475569" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <rect x="102" y="42" width="56" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1"/>
+    <text x="130" y="60" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">C</text>
+    <rect x="166" y="42" width="36" height="28" rx="3" fill="none" stroke="#475569" stroke-width="0.6" stroke-dasharray="2 2"/>
+
+    <!-- Row 2 -->
+    <rect x="14" y="80" width="48" height="28" rx="3" fill="none" stroke="#475569" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <rect x="70" y="80" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1"/>
+    <text x="88" y="98" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">F</text>
+    <rect x="114" y="80" width="48" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1"/>
+    <text x="138" y="98" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">G</text>
+    <rect x="170" y="80" width="36" height="28" rx="3" fill="none" stroke="#475569" stroke-width="0.6" stroke-dasharray="2 2"/>
+
+    <!-- Row 3 -->
+    <rect x="14" y="118" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1"/>
+    <text x="32" y="136" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">I</text>
+    <rect x="58" y="118" width="56" height="28" rx="3" fill="none" stroke="#475569" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <rect x="122" y="118" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.35" stroke="#34d399" stroke-width="1"/>
+    <text x="140" y="136" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="700">K</text>
+
+    <!-- Annotation: holes -->
+    <g transform="translate(0, 162)">
+      <text x="0" y="10" fill="#ef4444" font-size="9" font-weight="600">⚠ 总空闲多，但分散成小段</text>
+      <text x="0" y="24" fill="#fca5a5" font-size="9">需要 10 字节也可能找不到连续空间</text>
+    </g>
+  </g>
+
+  <!-- Arrow 2 -->
+  <line x1="580" y1="170" x2="610" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray3)"/>
+
+  <!-- ===== Stage 3: Compact ===== -->
+  <g transform="translate(620, 80)">
+    <text x="80" y="0" text-anchor="middle" fill="#34d399" font-size="12" font-weight="700">③ 整理 Compact</text>
+    <text x="80" y="16" text-anchor="middle" fill="#94a3b8" font-size="9">活对象搬到一端，碎片消失</text>
+
+    <rect x="0" y="28" width="160" height="180" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+    <!-- All live objects packed at top -->
+    <rect x="10" y="42" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.4" stroke="#34d399" stroke-width="1.2"/>
+    <text x="28" y="60" text-anchor="middle" fill="#a7f3d0" font-size="9" font-weight="700">A</text>
+    <rect x="50" y="42" width="56" height="28" rx="3" fill="#34d399" fill-opacity="0.4" stroke="#34d399" stroke-width="1.2"/>
+    <text x="78" y="60" text-anchor="middle" fill="#a7f3d0" font-size="9" font-weight="700">C</text>
+    <rect x="110" y="42" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.4" stroke="#34d399" stroke-width="1.2"/>
+    <text x="128" y="60" text-anchor="middle" fill="#a7f3d0" font-size="9" font-weight="700">F</text>
+
+    <rect x="10" y="76" width="48" height="28" rx="3" fill="#34d399" fill-opacity="0.4" stroke="#34d399" stroke-width="1.2"/>
+    <text x="34" y="94" text-anchor="middle" fill="#a7f3d0" font-size="9" font-weight="700">G</text>
+    <rect x="62" y="76" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.4" stroke="#34d399" stroke-width="1.2"/>
+    <text x="80" y="94" text-anchor="middle" fill="#a7f3d0" font-size="9" font-weight="700">I</text>
+    <rect x="102" y="76" width="36" height="28" rx="3" fill="#34d399" fill-opacity="0.4" stroke="#34d399" stroke-width="1.2"/>
+    <text x="120" y="94" text-anchor="middle" fill="#a7f3d0" font-size="9" font-weight="700">K</text>
+
+    <!-- One big free block -->
+    <rect x="10" y="112" width="140" height="86" rx="3" fill="#fbbf24" fill-opacity="0.08" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3 2"/>
+    <text x="80" y="148" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="700">连续空闲</text>
+    <text x="80" y="166" text-anchor="middle" fill="#fde68a" font-size="9">下次分配直接</text>
+    <text x="80" y="180" text-anchor="middle" fill="#fde68a" font-size="9">指针向下推进</text>
+
+    <!-- Note about JVM superpower -->
+    <g transform="translate(-10, 218)">
+      <text x="0" y="0" fill="#a78bfa" font-size="9" font-weight="600">为什么 GC 能整理而 malloc 不能？</text>
+      <text x="0" y="14" fill="#cbd5e1" font-size="8.5">所有引用都在 JVM 掌控下，对象搬</text>
+      <text x="0" y="26" fill="#cbd5e1" font-size="8.5">家后引用一并更新；malloc 没法这么干</text>
+    </g>
+  </g>
+
+  <!-- Bottom: algorithm matrix -->
+  <g transform="translate(40, 320)">
+    <rect width="740" height="40" rx="6" fill="#1e293b" stroke="#334155" stroke-width="0.8"/>
+    <text x="20" y="22" fill="#94a3b8" font-size="10" font-weight="600">算法组合：</text>
+    <text x="100" y="22" fill="#fbbf24" font-size="9.5">标记-清除（CMS）</text>
+    <text x="220" y="22" fill="#cbd5e1" font-size="9.5">·快但留碎片</text>
+    <text x="320" y="22" fill="#a78bfa" font-size="9.5">标记-整理（默认老年代）</text>
+    <text x="475" y="22" fill="#cbd5e1" font-size="9.5">·消除碎片但要搬对象</text>
+    <text x="615" y="22" fill="#34d399" font-size="9.5">复制（年轻代）</text>
+    <text x="20" y="34" fill="#475569" font-size="9" font-style="italic">真实 GC 算法都是这三步的不同组合 + 对 STW 的不同优化（CMS / G1 / ZGC ...）</text>
+  </g>
+</svg>

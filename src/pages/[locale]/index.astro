@@ -1,0 +1,98 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { siteContent, type Locale } from "../../data/site";
+
+export function getStaticPaths() {
+  return (Object.keys(siteContent) as Locale[]).map((locale) => ({
+    params: { locale }
+  }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent[locale];
+
+if (!content) {
+  throw new Error(`Unsupported locale: ${locale}`);
+}
+
+const articlesList = content.writings.slice(0, 3);
+---
+
+<MainLayout content={content} pageTitle={content.nav[0].label}>
+  <div class="tech-blueprint">
+    <div class="bp-grid-container">
+      <div class="bp-header tech-border">
+        <h1 class="bp-title">{content.hero.title}</h1>
+        <p class="bp-subtitle">{content.hero.description}</p>
+      </div>
+
+      <!-- Main Column Grid -->
+      <div class="bp-main-content">
+        <!-- Column 01: Books -->
+        <div class="bp-section tech-border">
+          <div class="bp-sec-header">
+            <h2>{locale === 'zh' ? '开源书籍' : 'BOOKS'}</h2>
+          </div>
+          <div class="bp-books-showcase">
+            {content.books.map((item, index) => (
+              <div class="bp-book-card">
+                <div class="bp-book-info">
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                  <a href={item.href} class="bp-book-link">{locale === 'zh' ? '系统阅读' : 'Read online'} [READ] →</a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Column 02: Projects -->
+        <div class="bp-section tech-border">
+          <div class="bp-sec-header">
+            <h2>{locale === 'zh' ? '开源项目' : 'PROJECTS'}</h2>
+          </div>
+          <div class="bp-projects-showcase">
+            {content.projects.map((item, index) => (
+              <div class="bp-project-box">
+                <div class="bp-project-header">
+                  <span class="bp-project-index">SRC.0{index + 1}</span>
+                  <span class="bp-project-status">[ACTIVE]</span>
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+                <div class="bp-project-specs">
+                  <span class="spec-tag">{item.meta.split(' · ')[1] || 'C++'}</span>
+                  <span class="spec-tag">{item.meta.split(' · ')[0]}</span>
+                </div>
+                <a href={item.href} class="bp-project-link">{locale === 'zh' ? '访问仓库' : 'Browse source'} [GITHUB] ↗</a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Column 03: Recent Articles -->
+        <div class="bp-section tech-border">
+          <div class="bp-sec-header">
+            <h2>{locale === 'zh' ? '最近博客' : 'ARTICLES'}</h2>
+          </div>
+          <div class="bp-articles-list">
+            {articlesList.map((item) => (
+              <div class="bp-article-item">
+                <div class="bp-article-meta">
+                  <span class="bp-article-date">{item.meta.split(' · ')[1] || 'RECENT'}</span>
+                  <span class="bp-article-series">[{locale === 'zh' ? '博文' : 'POST'}]</span>
+                </div>
+                <h3><a href={item.href}>{item.title}</a></h3>
+                <p>{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ locale }}>
+    localStorage.setItem("preferred-locale", locale);
+  </script>
+</MainLayout>

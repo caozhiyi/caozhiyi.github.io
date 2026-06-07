@@ -1,0 +1,335 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";
+import { siteContent, type Locale } from "../../../data/site";
+
+export async function getStaticPaths() {
+  const postsMap = import.meta.glob("../../../articles/**/*.md", { eager: true });
+  return Object.entries(postsMap).map(([path, post]: [string, any]) => {
+    const parts = path.split("/");
+    const filename = parts.pop() || "";
+    const slug = filename.replace(/\.md$/, "");
+    const category = parts.pop() || ""; // e.g., systems, ai, career
+    const locale = parts.pop() || ""; // e.g., zh, en
+    return {
+      params: { locale, slug },
+      props: { post }
+    };
+  });
+}
+
+const { post } = Astro.props;
+const { Content } = post;
+
+// Extract title from the raw markdown content or filename
+const rawContent = post.rawContent();
+const titleLine = rawContent.split("\n").find((line) => line.trim().startsWith("# "));
+const title = titleLine ? titleLine.replace(/#\s*/, "").replace(/\s*->\s*done\s*$/, "").trim() : "文章";
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent[locale];
+---
+
+<MainLayout content={content} pageTitle={title}>
+  <div class="article-detail-layout">
+    <article class="page-panel article-card">
+      <div class="markdown-body">
+        <Content />
+      </div>
+    </article>
+  </div>
+</MainLayout>
+
+<script>
+  // Only execute if there's at least one Mermaid block on the page
+  const mermaidBlocks = document.querySelectorAll('pre[data-language="mermaid"]');
+  if (mermaidBlocks.length > 0) {
+    // Dynamically import Mermaid from CDN to keep initial load lightweight
+    const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+
+    // Store original blocks and replace them with container divs
+    mermaidBlocks.forEach((pre, index) => {
+      // Create a wrapper container for rendering the chart
+      const container = document.createElement('div');
+      container.className = 'mermaid-container';
+      container.id = `mermaid-chart-${index}`;
+      
+      // Extract the raw diagram code from the pre textContent
+      const codeText = pre.textContent || '';
+      container.setAttribute('data-mermaid-code', codeText.trim());
+
+      // Insert loading placeholder
+      container.innerHTML = '<div class="mermaid-loading">渲染图表中...</div>';
+
+      // Replace pre with the new container
+      pre.parentNode?.replaceChild(container, pre);
+    });
+
+    let renderId = 0;
+
+    // Render function
+    const renderCharts = async () => {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      
+      // Configure Mermaid to match the素色极简 (grayscale/minimalist) aesthetic
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? 'dark' : 'neutral',
+        securityLevel: 'loose',
+        // Fine-tune grayscale theme colors for a premium, clean layout
+        themeVariables: isDark ? {
+          background: '#09090b',
+          primaryColor: '#18181b',
+          primaryTextColor: '#f4f4f5',
+          primaryBorderColor: 'rgba(244, 244, 245, 0.16)',
+          lineColor: '#a1a1aa',
+          secondaryColor: '#27272a',
+          tertiaryColor: '#18181b',
+        } : {
+          background: '#ffffff',
+          primaryColor: '#f4f4f5',
+          primaryTextColor: '#09090b',
+          primaryBorderColor: 'rgba(9, 9, 11, 0.16)',
+          lineColor: '#71717a',
+          secondaryColor: '#e4e4e7',
+          tertiaryColor: '#f4f4f5',
+        }
+      });
+
+      const containers = document.querySelectorAll('.mermaid-container');
+      for (const container of containers) {
+        const code = container.getAttribute('data-mermaid-code');
+        if (!code) continue;
+
+        try {
+          renderId++;
+          const svgId = `mermaid-svg-${container.id}-${renderId}`;
+          // Pass the container element so Mermaid measures text sizes inside the target DOM context
+          const { svg } = await mermaid.render(svgId, code, container);
+          container.innerHTML = svg;
+
+          // Adjust SVG properties for clean responsive scaling
+          const svgElement = container.querySelector('svg');
+          if (svgElement) {
+            svgElement.removeAttribute('height');
+          }
+        } catch (error: any) {
+          console.error('Mermaid rendering failed:', error);
+          container.innerHTML = `<pre style="color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); padding: 12px; border-radius: 6px; font-size: 0.85rem; width: 100%; overflow-x: auto; margin: 0;">图表渲染失败: ${error.message}</pre>`;
+        }
+      }
+    };
+
+    // Wait for web fonts (e.g. Inter) to be fully loaded to ensure browser text measurements are accurate
+    const init = async () => {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+      await renderCharts();
+    };
+    init();
+
+    // Re-render when theme changes using MutationObserver
+    const observer = new MutationObserver(async (mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          await renderCharts();
+        }
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+  }
+</script>
+
+<style is:global>
+  /* Mermaid charts styling */
+  .mermaid-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 32px 0;
+    padding: 24px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    overflow-x: auto;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  .mermaid-container svg {
+    max-width: 100% !important;
+    height: auto !important;
+    background: none !important;
+  }
+
+  /* Prevent inherited markdown-body line-height/fonts from corrupting SVG text dimensions */
+  .mermaid-container svg text,
+  .mermaid-container svg tspan {
+    line-height: normal !important;
+    font-family: var(--font-sans) !important;
+  }
+  
+  .mermaid-loading {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    font-family: var(--font-mono);
+  }
+
+  .article-detail-layout {
+    margin-top: 40px;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .article-card {
+    padding: 48px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+  }
+
+  /* Premium Markdown Rendering Styles */
+  .markdown-body {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: var(--text-soft);
+  }
+
+  /* Override the first H1 in the markdown so it behaves as the main page title */
+  .markdown-body > h1:first-child {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-strong);
+    margin-top: 0;
+    margin-bottom: 32px;
+    line-height: 1.35;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .markdown-body h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin-top: 40px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .markdown-body h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-strong);
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+
+  .markdown-body p {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .markdown-body strong {
+    color: var(--text-strong);
+    font-weight: 600;
+  }
+
+  .markdown-body ul, 
+  .markdown-body ol {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-left: 24px;
+  }
+
+  .markdown-body li {
+    margin-bottom: 8px;
+  }
+
+  .markdown-body a {
+    color: var(--text-strong);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+
+  .markdown-body a:hover {
+    color: var(--accent-strong);
+  }
+
+  .markdown-body blockquote {
+    margin: 24px 0;
+    padding: 12px 24px;
+    border-left: 4px solid var(--line-strong);
+    background: var(--accent-soft);
+    color: var(--text-strong);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .markdown-body blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Inline Code styling */
+  .markdown-body code {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: var(--accent-soft);
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    color: var(--text-strong);
+  }
+
+  /* Code blocks pre styling */
+  .markdown-body pre {
+    margin: 24px 0;
+    padding: 20px;
+    border-radius: 6px;
+    background: var(--accent-soft) !important;
+    border: 1px solid var(--line);
+    overflow-x: auto;
+  }
+
+  .markdown-body pre code {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: inherit;
+  }
+
+  .markdown-body hr {
+    margin: 40px 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 768px) {
+    .article-card {
+      padding: 28px 20px;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+
+    .markdown-body > h1:first-child {
+      font-size: 1.75rem;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.3rem;
+      margin-top: 32px;
+    }
+  }
+</style>

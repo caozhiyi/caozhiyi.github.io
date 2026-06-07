@@ -1,0 +1,442 @@
+---
+import "../../styles/global.css";
+import "../../styles/tech-review.css";
+import { siteContent } from "../../data/site";
+
+const zhContent = siteContent.zh;
+const enContent = siteContent.en;
+
+const featuredBookZh = zhContent.books[0];
+const featuredProjectZh = zhContent.projects[0];
+const featuredWritingZh = zhContent.writings[0];
+const allEntriesZh = [...zhContent.books, ...zhContent.projects, ...zhContent.writings];
+
+const themeColors = {
+  light: "#ffffff",
+  dark: "#09090b"
+};
+
+const recentArticlesZh = [
+  {
+    title: "深入理解 C++ 异步与 Epoll 事件驱动架构",
+    description: "从系统调用、事件循环到 C++ 协程支持，深入剖析高性能网络编程底层的驱动机制与性能调优最佳实践。",
+    date: "2026.06.05",
+    series: "系统与网络协议"
+  },
+  {
+    title: "大模型时代下的 AI 编程体感与 First Principles",
+    description: "大模型如何改变软件开发范式？探讨 AI 编程系统的底层原理、局限性以及在辅助开发中工程师工程判断的重要价值。",
+    date: "2026.05.28",
+    series: "AI 编程系统"
+  },
+  {
+    title: "QUIC 协议多路复用在混合云 VPC 网络中的实践与优化",
+    description: "深入分析 QUIC 协议连接建立、丢包重传以及在复杂混合云网络下的多路复用吞吐瓶颈与性能调优方案。",
+    date: "2026.05.15",
+    series: "云网络架构"
+  }
+];
+
+const recentArticlesEn = [
+  {
+    title: "Understanding C++ Async and Epoll Event-Driven Architecture",
+    description: "From system calls and event loops to C++ coroutines, a deep dive into the driving mechanisms and performance tuning practices of high-performance networking.",
+    date: "2026.06.05",
+    series: "Systems & Protocols"
+  },
+  {
+    title: "AI Coding Experience and First Principles in the LLM Era",
+    description: "How are large language models shaping software paradigms? Exploring the mechanics, limits, and the crucial value of human engineering judgment.",
+    date: "2026.05.28",
+    series: "AI Systems"
+  },
+  {
+    title: "QUIC Multiplexing in Hybrid Cloud VPC Networks: Lessons Learned",
+    description: "Analyzing connection handshakes, loss recovery, and tuning strategies to overcome throughput bottlenecks in complex hybrid cloud environments.",
+    date: "2026.05.15",
+    series: "Cloud Networking"
+  }
+];
+
+const fullScreenLayouts = [
+  { label: "01", name: "报纸头版", href: "#fullscreen-1" },
+  { label: "02", name: "目录墙", href: "#fullscreen-2" },
+  { label: "03", name: "阅读路线", href: "#fullscreen-3" },
+  { label: "04", name: "书房书架", href: "#fullscreen-4" },
+  { label: "05", name: "素色数智网格", href: "#fullscreen-5" }
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>全新素色首页布局评审</title>
+    <meta name="description" content="用于评审个人站首页布局方向的静态原型页面。" />
+    <meta name="theme-color" content={themeColors.dark} />
+    <script is:inline define:vars={{ themeColors }}>
+      (() => {
+        const mode = localStorage.getItem("preferred-theme") || "dark";
+        const darkMedia = window.matchMedia("(prefers-color-scheme: dark)");
+        const theme = mode === "dark" || (mode === "auto" && darkMedia.matches) ? "dark" : "light";
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? themeColors.dark : themeColors.light);
+      })();
+    </script>
+  </head>
+  <body class="fullscreen-review-body">
+    <div class="site-background" aria-hidden="true">
+      <div class="site-glow site-glow-a"></div>
+      <div class="site-glow site-glow-b"></div>
+      <div class="site-glow site-glow-c"></div>
+    </div>
+
+    <nav class="fullscreen-review-nav" aria-label="全屏布局评审导航">
+      <a class="fullscreen-review-brand" href="/zh/">返回当前首页</a>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        {fullScreenLayouts.map((item) => (
+          <a href={item.href}><span>{item.label}</span>{item.name}</a>
+        ))}
+        
+        <!-- Interactive Controls -->
+        <button class="review-control-btn locale-toggle-btn" type="button">
+          <span>[LANG]</span> 中文 / EN
+        </button>
+        <button class="review-control-btn theme-toggle-btn" type="button">
+          <span>[THEME]</span> 昼夜模式
+        </button>
+      </div>
+    </nav>
+
+    <main class="fullscreen-review-shell">
+      <section class="fullscreen-layout fullscreen-news" id="fullscreen-1">
+        <header class="fullscreen-layout-meta">
+          <span>Candidate 01</span>
+          <strong>全屏报纸头版</strong>
+          <em>靠字号、分栏、横线和版面密度组织，不使用卡片。</em>
+        </header>
+
+        <div class="news-masthead">
+          <p>{zhContent.hero.eyebrow}</p>
+          <h1>{zhContent.hero.title}</h1>
+          <span>Books · Projects · Writing</span>
+        </div>
+
+        <div class="news-frontpage">
+          <article class="news-lead-story">
+            <p>Lead Story</p>
+            <h2>{featuredBookZh.title}</h2>
+            <span>{featuredBookZh.description}</span>
+          </article>
+
+          <div class="news-story-lines">
+            {allEntriesZh.slice(1, 6).map((item, index) => (
+              <a href={item.href}>
+                <span>{String(index + 2).padStart(2, "0")}</span>
+                <strong>{item.title}</strong>
+                <em>{item.meta}</em>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="fullscreen-layout fullscreen-index-wall" id="fullscreen-2">
+        <header class="fullscreen-layout-meta">
+          <span>Candidate 02</span>
+          <strong>全屏目录墙</strong>
+          <em>像技术资产索引页，所有入口都是列表、编号 and 分区线。</em>
+        </header>
+
+        <div class="index-wall-grid">
+          <div class="index-wall-title">
+            <p>Personal technical archive</p>
+            <h1>书、项目与长期写作的索引墙</h1>
+          </div>
+
+          <div class="index-wall-list">
+            <section>
+              <h2>Books</h2>
+              {zhContent.books.map((item, index) => (
+                <a href={item.href}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{item.title}</strong>
+                  <em>{item.meta}</em>
+                </a>
+              ))}
+            </section>
+            <section>
+              <h2>Projects</h2>
+              {zhContent.projects.map((item, index) => (
+                <a href={item.href}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{item.title}</strong>
+                  <em>{item.meta}</em>
+                </a>
+              ))}
+            </section>
+            <section>
+              <h2>Writing</h2>
+              {zhContent.writings.map((item, index) => (
+                <a href={item.href}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{item.title}</strong>
+                  <em>{item.meta}</em>
+                </a>
+              ))}
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="fullscreen-layout fullscreen-path" id="fullscreen-3">
+        <header class="fullscreen-layout-meta">
+          <span>Candidate 03</span>
+          <strong>全屏阅读路线</strong>
+          <em>首页不是陈列柜，而是一条从主题到作品的路径。</em>
+        </header>
+
+        <div class="path-hero-line">
+          <p>Start here</p>
+          <h1>从原理、系统到工程实践</h1>
+        </div>
+
+        <ol class="path-full-list">
+          {allEntriesZh.slice(0, 6).map((item, index) => (
+            <li>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <a href={item.href}>
+                <strong>{item.title}</strong>
+                <em>{item.meta}</em>
+                <p>{item.description}</p>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="fullscreen-layout fullscreen-study" id="fullscreen-4">
+        <header class="fullscreen-layout-meta">
+          <span>Candidate 04</span>
+          <strong>全屏技术书房</strong>
+          <em>用书脊、目录线和主题索引表达长期积累，而不是卡片陈列。</em>
+        </header>
+
+        <div class="study-room-grid">
+          <div class="study-shelf" aria-label="书架布局">
+            {zhContent.books.map((item, index) => (
+              <a href={item.href} style={`--book-index: ${index}`}>
+                <span>{item.meta}</span>
+                <strong>{item.title}</strong>
+              </a>
+            ))}
+          </div>
+
+          <div class="study-index">
+            <p>Companion index</p>
+            {[featuredProjectZh, featuredWritingZh, ...zhContent.connect].map((item, index) => (
+              <a href={item.href}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{item.title}</strong>
+                <em>{item.meta}</em>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="fullscreen-layout tech-blueprint" id="fullscreen-5">
+        <header class="fullscreen-layout-meta">
+          <span>Candidate 05</span>
+          <strong>科技极简 · 素色数智网格 (Cyber-Grid)</strong>
+          <em>高维素色网格系统，数智化边界，适合展现长主线和技术地图，去除了色彩和花哨动效。</em>
+        </header>
+
+        <!-- Chinese Wrapper -->
+        <div class="bp-grid-container bp-lang-section" id="bp-zh">
+          <div class="bp-header tech-border">
+            <h1 class="bp-title">{zhContent.hero.title}</h1>
+            <p class="bp-subtitle">{zhContent.hero.description}</p>
+          </div>
+
+          <div class="bp-main-content">
+            <div class="bp-section tech-border">
+              <div class="bp-sec-header">
+                <h2>开源书籍</h2>
+              </div>
+              <div class="bp-books-showcase">
+                {zhContent.books.map((item, index) => (
+                  <div class="bp-book-card">
+                    <div class="bp-book-info">
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                      <a href={item.href} class="bp-book-link">系统阅读 [READ] →</a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div class="bp-section tech-border">
+              <div class="bp-sec-header">
+                <h2>开源项目</h2>
+              </div>
+              <div class="bp-projects-showcase">
+                {zhContent.projects.map((item, index) => (
+                  <div class="bp-project-box">
+                    <div class="bp-project-header">
+                      <span class="bp-project-index">SRC.0{index + 1}</span>
+                      <span class="bp-project-status">[ACTIVE]</span>
+                    </div>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                    <div class="bp-project-specs">
+                      <span class="spec-tag">{item.meta.split(' · ')[1] || 'C++'}</span>
+                      <span class="spec-tag">{item.meta.split(' · ')[0]}</span>
+                    </div>
+                    <a href={item.href} class="bp-project-link">访问仓库 [GITHUB] ↗</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div class="bp-section tech-border">
+              <div class="bp-sec-header">
+                <h2>最近博客</h2>
+              </div>
+              <div class="bp-articles-list">
+                {recentArticlesZh.map((item) => (
+                  <div class="bp-article-item">
+                    <div class="bp-article-meta">
+                      <span class="bp-article-date">{item.date}</span>
+                      <span class="bp-article-series">[{item.series}]</span>
+                    </div>
+                    <h3><a href="/zh/articles/">{item.title}</a></h3>
+                    <p>{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- English Wrapper -->
+        <div class="bp-grid-container bp-lang-section" id="bp-en" style="display: none;">
+          <div class="bp-header tech-border">
+            <h1 class="bp-title">{enContent.hero.title}</h1>
+            <p class="bp-subtitle">{enContent.hero.description}</p>
+          </div>
+
+          <div class="bp-main-content">
+            <div class="bp-section tech-border">
+              <div class="bp-sec-header">
+                <h2>BOOKS</h2>
+              </div>
+              <div class="bp-books-showcase">
+                {enContent.books.map((item, index) => (
+                  <div class="bp-book-card">
+                    <div class="bp-book-info">
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                      <a href={item.href} class="bp-book-link">Read online [READ] →</a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div class="bp-section tech-border">
+              <div class="bp-sec-header">
+                <h2>PROJECTS</h2>
+              </div>
+              <div class="bp-projects-showcase">
+                {enContent.projects.map((item, index) => (
+                  <div class="bp-project-box">
+                    <div class="bp-project-header">
+                      <span class="bp-project-index">SRC.0{index + 1}</span>
+                      <span class="bp-project-status">[ACTIVE]</span>
+                    </div>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                    <div class="bp-project-specs">
+                      <span class="spec-tag">{item.meta.split(' · ')[1] || 'C++'}</span>
+                      <span class="spec-tag">{item.meta.split(' · ')[0]}</span>
+                    </div>
+                    <a href={item.href} class="bp-project-link">Browse source [GITHUB] ↗</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div class="bp-section tech-border">
+              <div class="bp-sec-header">
+                <h2>ARTICLES</h2>
+              </div>
+              <div class="bp-articles-list">
+                {recentArticlesEn.map((item) => (
+                  <div class="bp-article-item">
+                    <div class="bp-article-meta">
+                      <span class="bp-article-date">{item.date}</span>
+                      <span class="bp-article-series">[{item.series}]</span>
+                    </div>
+                    <h3><a href="/en/articles/">{item.title}</a></h3>
+                    <p>{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Client-side Interactive Scripts for language and theme toggles -->
+    <script is:inline>
+      (() => {
+        // 1. Language Toggle handler
+        const langBtn = document.querySelector('.locale-toggle-btn');
+        const zhSection = document.getElementById('bp-zh');
+        const enSection = document.getElementById('bp-en');
+        
+        if (langBtn && zhSection && enSection) {
+          let currentLang = 'zh';
+          langBtn.addEventListener('click', () => {
+            if (currentLang === 'zh') {
+              zhSection.style.display = 'none';
+              enSection.style.display = 'grid';
+              langBtn.innerHTML = '<span>[LANG]</span> EN / 中文';
+              currentLang = 'en';
+            } else {
+              zhSection.style.display = 'grid';
+              enSection.style.display = 'none';
+              langBtn.innerHTML = '<span>[LANG]</span> 中文 / EN';
+              currentLang = 'zh';
+            }
+          });
+        }
+
+        // 2. Day/Night Mode handler
+        const themeBtn = document.querySelector('.theme-toggle-btn');
+        if (themeBtn) {
+          themeBtn.addEventListener('click', () => {
+            const root = document.documentElement;
+            const currentTheme = root.dataset.theme || 'dark';
+            const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            root.dataset.theme = nextTheme;
+            root.dataset.themeMode = nextTheme;
+            localStorage.setItem('preferred-theme', nextTheme);
+            
+            // Sync theme-color meta tag
+            const themeMeta = document.querySelector('meta[name="theme-color"]');
+            if (themeMeta) {
+              themeMeta.setAttribute('content', nextTheme === 'dark' ? '#09090b' : '#ffffff');
+            }
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

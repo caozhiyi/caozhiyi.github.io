@@ -1,0 +1,230 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";
+import { siteContent, type Locale } from "../../../data/site";
+
+export function getStaticPaths() {
+  return (Object.keys(siteContent) as Locale[]).map((locale) => ({
+    params: { locale }
+  }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent[locale];
+
+if (!content) {
+  throw new Error(`Unsupported locale: ${locale}`);
+}
+
+const pageContent = {
+  zh: {
+    title: "关于",
+    paragraphs: [
+      "一名拥有十年研发经验的系统架构师与技术管理人员。长期专注于高性能网络协议栈、分布式微服务以及底层系统开发。",
+      "我热衷于从第一性原理出发解构复杂的现实逻辑，并将这些思考落实在自研协议栈（如 quicX 与 CppNet）、系统化书籍编写以及长期技术写作中。"
+    ],
+    companiesTitle: "曾服务公司",
+    companies: ["腾讯 (当前)", "百度", "滴滴", "博睿宏远"],
+    asideTitle: "个人快照",
+    asideItems: [
+      "📍 上海 | Shanghai, CN",
+      "💼 十年研发与架构经验",
+      "👥 技术管理经验"
+    ],
+    contactTitle: "联系我",
+    contact: {
+      email: "caozhiyi5@gmail.com",
+      github: "https://github.com/caozhiyi"
+    }
+  },
+  en: {
+    title: "About",
+    paragraphs: [
+      "A systems architect and technical leader with a decade of experience in building high-performance networking stacks, distributed microservices, and low-level system infrastructures.",
+      "I focus on translating complex real-world logic into runnable code, long-form books, and structured technical writing."
+    ],
+    companiesTitle: "Companies",
+    companies: ["Tencent (Current)", "Baidu", "DiDi", "Bonree"],
+    asideTitle: "Overview",
+    asideItems: [
+      "📍 Shanghai, CN",
+      "💼 10 Years of R&D",
+      "👥 Technical Leadership"
+    ],
+    contactTitle: "Connect",
+    contact: {
+      email: "caozhiyi5@gmail.com",
+      github: "https://github.com/caozhiyi"
+    }
+  }
+}[locale];
+---
+
+<MainLayout content={content} pageTitle={pageContent.title}>
+  <div class="about-layout">
+    <!-- Left Column: Bio & Companies inside a card panel -->
+    <article class="page-panel about-copy">
+      <div class="bio-paragraphs">
+        {pageContent.paragraphs.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+      
+      <div class="companies-section">
+        <h3 class="section-subtitle">{pageContent.companiesTitle}</h3>
+        <div class="companies-list">
+          {pageContent.companies.map((company, index) => (
+            <span>
+              {company}
+              {index < pageContent.companies.length - 1 && <span class="divider">·</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+    </article>
+
+    <!-- Right Column: Sidebar info with card panels -->
+    <aside class="about-aside">
+      <!-- Snapshot Card -->
+      <div class="page-panel aside-panel-box">
+        <p class="kicker">Snapshot</p>
+        <h3>{pageContent.asideTitle}</h3>
+        <ul>
+          {pageContent.asideItems.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Contact Card -->
+      <div class="page-panel aside-panel-box">
+        <p class="kicker">Get in touch</p>
+        <h3>{pageContent.contactTitle}</h3>
+        <ul class="contact-list">
+          <li>
+            <span class="label">Email</span>
+            <a href={`mailto:${pageContent.contact.email}`}>{pageContent.contact.email}</a>
+          </li>
+          <li>
+            <span class="label">GitHub</span>
+            <a href={pageContent.contact.github} target="_blank" rel="noopener noreferrer">github.com/caozhiyi</a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <script define:vars={{ locale }}>
+    localStorage.setItem("preferred-locale", locale);
+  </script>
+</MainLayout>
+
+<style>
+  /* Page spacing wrapper */
+  .about-layout {
+    margin-top: 40px;
+  }
+
+  .about-copy {
+    display: grid;
+    gap: 28px;
+  }
+
+  .bio-paragraphs {
+    display: grid;
+    gap: 16px;
+  }
+
+  .about-copy p {
+    font-size: 0.96rem;
+    line-height: 1.75;
+    color: var(--text-soft);
+    margin: 0;
+  }
+
+  .about-copy p:first-of-type {
+    color: var(--text-strong);
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+
+  .companies-section {
+    padding-top: 24px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .section-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-soft);
+    margin: 0 0 12px 0;
+  }
+
+  .companies-list {
+    font-size: 0.95rem;
+    color: var(--text-strong);
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .divider {
+    margin-left: 12px;
+    color: var(--text-soft);
+    opacity: 0.5;
+  }
+
+  /* Aside panel styles */
+  .about-aside {
+    display: grid;
+    gap: 20px;
+  }
+
+  .aside-panel-box {
+    display: grid;
+    gap: 16px;
+  }
+
+  .aside-panel-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  .aside-panel-box li {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .contact-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    width: 50px;
+    display: inline-block;
+  }
+
+  .aside-panel-box a {
+    color: var(--text-strong);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .aside-panel-box a:hover {
+    color: var(--accent-strong);
+  }
+</style>

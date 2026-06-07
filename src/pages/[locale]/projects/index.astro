@@ -1,0 +1,48 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";
+import { siteContent, type Locale } from "../../../data/site";
+
+export function getStaticPaths() {
+  return (Object.keys(siteContent) as Locale[]).map((locale) => ({
+    params: { locale }
+  }));
+}
+
+const locale = Astro.params.locale as Locale;
+const content = siteContent[locale];
+
+if (!content) {
+  throw new Error(`Unsupported locale: ${locale}`);
+}
+
+const openLabel = locale === "zh" ? "查看仓库" : "View repository";
+---
+
+<MainLayout content={content} pageTitle={locale === "zh" ? "项目" : "Projects"}>
+  <section class="page-section project-list">
+    {content.projects.map((item) => (
+      <article class="card project-card">
+        {item.logo && (
+          <div class="project-logo-wrap">
+            <img class="project-logo" src={item.logo.src} alt={item.logo.alt} loading="lazy" />
+          </div>
+        )}
+        <div class="project-copy">
+          <p class="card-meta">{item.meta}</p>
+          <h2>{item.title}</h2>
+          <p>{item.description}</p>
+          {item.highlights && (
+            <ul class="project-highlights">
+              {item.highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+          )}
+          <a class="card-link" href={item.href}>{openLabel}</a>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <script define:vars={{ locale }}>
+    localStorage.setItem("preferred-locale", locale);
+  </script>
+</MainLayout>

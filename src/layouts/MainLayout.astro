@@ -1,0 +1,165 @@
+---
+import "../styles/global.css";
+import "../styles/tech-review.css";
+import type { SiteContent } from "../data/site";
+
+interface Props {
+  content: SiteContent;
+  pageTitle: string;
+}
+
+const { content, pageTitle } = Astro.props;
+const title = `${pageTitle} · ${content.siteTitle}`;
+const isZh = content.homePath.startsWith("/zh");
+const themeLabels = isZh
+  ? {
+      title: "主题",
+      auto: "跟随系统",
+      light: "浅色",
+      dark: "深色"
+    }
+  : {
+      title: "Theme",
+      auto: "Auto",
+      light: "Light",
+      dark: "Dark"
+    };
+const themeColors = {
+  light: "#f4efe6",
+  dark: "#171513"
+};
+---
+
+<!doctype html>
+<html lang={isZh ? "zh-CN" : "en"}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={content.siteDescription} />
+    <meta name="theme-color" content={themeColors.light} />
+    <script is:inline define:vars={{ themeColors }}>
+      (() => {
+        const storageKey = "preferred-theme";
+        const darkMedia = window.matchMedia("(prefers-color-scheme: dark)");
+
+        const readStoredMode = () => {
+          const mode = localStorage.getItem(storageKey);
+          return mode === "light" || mode === "dark" || mode === "auto" ? mode : "auto";
+        };
+
+        const resolveTheme = (mode) => {
+          if (mode === "auto") {
+            return darkMedia.matches ? "dark" : "light";
+          }
+          return mode;
+        };
+
+        const applyTheme = (mode) => {
+          const resolved = resolveTheme(mode);
+          const root = document.documentElement;
+          root.dataset.themeMode = mode;
+          root.dataset.theme = resolved;
+
+          const themeMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeMeta) {
+            themeMeta.setAttribute("content", resolved === "dark" ? themeColors.dark : themeColors.light);
+          }
+        };
+
+        const setMode = (mode) => {
+          localStorage.setItem(storageKey, mode);
+          applyTheme(mode);
+        };
+
+        applyTheme(readStoredMode());
+
+        const handleSystemThemeChange = () => {
+          if (readStoredMode() === "auto") {
+            applyTheme("auto");
+          }
+        };
+
+        if (typeof darkMedia.addEventListener === "function") {
+          darkMedia.addEventListener("change", handleSystemThemeChange);
+        } else if (typeof darkMedia.addListener === "function") {
+          darkMedia.addListener(handleSystemThemeChange);
+        }
+
+        window.__siteTheme = {
+          getMode: readStoredMode,
+          setMode,
+          applyTheme
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="site-background" aria-hidden="true">
+      <div class="site-glow site-glow-a"></div>
+      <div class="site-glow site-glow-b"></div>
+      <div class="site-glow site-glow-c"></div>
+    </div>
+
+    <div class="site-shell">
+      <header class="site-header">
+        <div class="site-header-inner">
+          <a class="site-brand" href={content.homePath} aria-label={content.siteTitle}>
+            <span class="site-brand-copy">
+              <strong>{content.siteTitle}</strong>
+              <small>{content.siteDescription}</small>
+            </span>
+          </a>
+
+          <nav class="site-nav" aria-label="Primary">
+            {content.nav.map((item) => (
+              <a href={item.href}>{item.label}</a>
+            ))}
+          </nav>
+
+          <div class="site-header-actions">
+            <button class="theme-switch" type="button" data-theme-toggle>
+              <span class="theme-switch-title">{themeLabels.title}</span>
+              <span class="theme-switch-value" data-theme-value>{themeLabels.auto}</span>
+            </button>
+            <a class="locale-switch" href={content.oppositeLocale.href}>{content.oppositeLocale.label}</a>
+          </div>
+        </div>
+      </header>
+
+      <main class="site-main">
+        <slot />
+      </main>
+
+
+    </div>
+
+    <script is:inline define:vars={{ themeLabels }}>
+      (() => {
+        const button = document.querySelector("[data-theme-toggle]");
+        const valueNode = document.querySelector("[data-theme-value]");
+        const modes = ["auto", "light", "dark"];
+
+        if (!button || !valueNode || !window.__siteTheme) {
+          return;
+        }
+
+        const render = () => {
+          const mode = window.__siteTheme.getMode();
+          valueNode.textContent = themeLabels[mode];
+          button.setAttribute("aria-label", `${themeLabels.title}: ${themeLabels[mode]}`);
+          button.dataset.mode = mode;
+        };
+
+        button.addEventListener("click", () => {
+          const currentMode = window.__siteTheme.getMode();
+          const nextMode = modes[(modes.indexOf(currentMode) + 1) % modes.length];
+          window.__siteTheme.setMode(nextMode);
+          render();
+        });
+
+        render();
+      })();
+    </script>
+  </body>
+</html>
