@@ -1,16 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0;url=/zh/" />
+    <link rel="canonical" href="https://caozhiyi.cc/zh/" />
+    <title>曹智轶 | Zhiyi Cao</title>
   </head>
   <body>
     <script>
       const saved = localStorage.getItem("preferred-locale");
       const browser = navigator.language.toLowerCase();
       const target = saved ?? (browser.startsWith("zh") ? "zh" : "en");
-      window.location.replace(`${import.meta.env.BASE_URL}${target}/`);
+      window.location.replace(`/${target}/`);
     </script>
+    <noscript>
+      <p>Please choose your language / 请选择语言：</p>
+      <ul>
+        <li><a href="/zh/">中文版 (Chinese)</a></li>
+        <li><a href="/en/">English Edition</a></li>
+      </ul>
+    </noscript>
   </body>
 </html>

@@ -27,9 +27,14 @@ const title = titleLine ? titleLine.replace(/#\s*/, "").replace(/\s*->\s*done\s*
 
 const locale = Astro.params.locale as Locale;
 const content = siteContent[locale];
+
+// Find the description of this article in site.ts writings
+const slug = Astro.params.slug;
+const articleMeta = content.writings.find((item) => item.href.endsWith(`/${slug}`));
+const description = articleMeta?.description || content.siteDescription;
 ---
 
-<MainLayout content={content} pageTitle={title}>
+<MainLayout content={content} pageTitle={title} description={description}>
   <div class="article-detail-layout">
     <article class="page-panel article-card">
       <div class="markdown-body">
@@ -40,18 +45,6 @@ const content = siteContent[locale];
 </MainLayout>
 
 <script>
-  // Fix absolute image paths in Markdown when deployed under a subpath
-  const baseUrl = import.meta.env.BASE_URL;
-  if (baseUrl && baseUrl !== '/') {
-    const images = document.querySelectorAll('.markdown-body img');
-    images.forEach((img) => {
-      const src = img.getAttribute('src');
-      if (src && src.indexOf('/images/') === 0) {
-        img.setAttribute('src', baseUrl + src.slice(1));
-      }
-    });
-  }
-
   // Only execute if there's at least one Mermaid block on the page
   const mermaidBlocks = document.querySelectorAll('pre[data-language="mermaid"]');
   if (mermaidBlocks.length > 0) {

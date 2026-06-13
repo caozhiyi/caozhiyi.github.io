@@ -19,7 +19,7 @@ const pageTitle = locale === "zh" ? "书" : "Books";
 const openLabel = locale === "zh" ? "打开书籍" : "Open book";
 ---
 
-<MainLayout content={content} pageTitle={pageTitle}>
+<MainLayout content={content} pageTitle={pageTitle} description={content.sections.booksIntro}>
   <section class="page-section book-grid">
     {content.books.map((item) => (
       <article class="card book-card">

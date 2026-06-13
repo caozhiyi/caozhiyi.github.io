@@ -18,7 +18,7 @@ if (!content) {
 const articlesList = content.writings.slice(0, 3);
 ---
 
-<MainLayout content={content} pageTitle={content.nav[0].label}>
+<MainLayout content={content} pageTitle={content.nav[0].label} description={content.hero.description}>
   <div class="tech-blueprint">
     <div class="bp-grid-container">
       <div class="bp-header tech-border">

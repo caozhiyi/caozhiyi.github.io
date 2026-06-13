@@ -6,9 +6,10 @@ import type { SiteContent } from "../data/site";
 interface Props {
   content: SiteContent;
   pageTitle: string;
+  description?: string;
 }
 
-const { content, pageTitle } = Astro.props;
+const { content, pageTitle, description } = Astro.props;
 const title = `${pageTitle} · ${content.siteTitle}`;
 const isZh = content.homePath.startsWith("/zh");
 const themeLabels = isZh
@@ -28,6 +29,24 @@ const themeColors = {
   light: "#f4efe6",
   dark: "#171513"
 };
+
+const siteUrl = Astro.site ? Astro.site.href.replace(/\/$/, "") : "https://caozhiyi.cc";
+const pathname = Astro.url.pathname;
+const canonicalURL = new URL(pathname, siteUrl).href;
+
+const oppositePath = pathname.startsWith("/zh/")
+  ? pathname.replace(/^\/zh\//, "/en/")
+  : pathname.startsWith("/en/")
+    ? pathname.replace(/^\/en\//, "/zh/")
+    : pathname;
+const oppositeURL = new URL(oppositePath, siteUrl).href;
+
+const zhURL = isZh ? canonicalURL : oppositeURL;
+const enURL = isZh ? oppositeURL : canonicalURL;
+const xDefaultURL = new URL("/zh/", siteUrl).href;
+
+const pageDescription = description || content.siteDescription;
+const defaultOgImage = new URL("/images/books/ai-programming-book-zh.svg", siteUrl).href;
 ---
 
 <!doctype html>
@@ -35,9 +54,37 @@ const themeColors = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-4J919K537P"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4J919K537P');
+    </script>
+
     <title>{title}</title>
-    <meta name="description" content={content.siteDescription} />
+    <meta name="description" content={pageDescription} />
     <meta name="theme-color" content={themeColors.light} />
+
+    <link rel="canonical" href={canonicalURL} />
+
+    <link rel="alternate" hreflang="zh-CN" href={zhURL} />
+    <link rel="alternate" hreflang="en" href={enURL} />
+    <link rel="alternate" hreflang="x-default" href={xDefaultURL} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={defaultOgImage} />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={pageDescription} />
+    <meta property="twitter:image" content={defaultOgImage} />
     <script is:inline define:vars={{ themeColors }}>
       (() => {
         const storageKey = "preferred-theme";
@@ -131,7 +178,12 @@ const themeColors = {
         <slot />
       </main>
 
-
+      <footer class="site-footer">
+        <div class="site-footer-inner">
+          <p>{content.footer}</p>
+          <a class="footer-link" href="https://github.com/caozhiyi" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </footer>
     </div>
 
     <script is:inline define:vars={{ themeLabels }}>

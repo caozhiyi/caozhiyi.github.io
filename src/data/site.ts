@@ -1,16 +1,5 @@
 export type Locale = "zh" | "en";
 
-export function getRelativePath(path: string) {
-  if (!path) return path;
-  if (path.indexOf("http://") === 0 || path.indexOf("https://") === 0 || path.indexOf("mailto:") === 0) {
-    return path;
-  }
-  const meta: any = import.meta;
-  const base = (meta && meta.env && meta.env.BASE_URL) || '/';
-  const cleanPath = path.indexOf('/') === 0 ? path.slice(1) : path;
-  return `${base}${cleanPath}`;
-}
-
 export type NavItem = {
   label: string;
   href: string;
@@ -93,7 +82,7 @@ const sharedBooks = {
     {
       title: "AI 编程的第一性原理",
       description: "从模型行为、Agent 执行、记忆与上下文，到可验证的工程闭环，系统推导 AI 编程如何从生成走向交付。",
-      href: "https://caozhiyi.github.io/ai-programming-book/",
+      href: "https://caozhiyi.cc/ai-programming-book/",
       meta: "Book · AI Systems",
       cover: {
         src: "/images/books/ai-programming-book-zh.svg",
@@ -103,7 +92,7 @@ const sharedBooks = {
     {
       title: "云网络：从隔离到连接",
       description: "从孤立边界到全局联通，沿着物理网络、多租户隔离、VPC、公网连接与混合云，把网络演进讲成一条连续主线。",
-      href: "https://caozhiyi.github.io/network-book/",
+      href: "https://caozhiyi.cc/network-book/",
       meta: "Book · Cloud Networking",
       cover: {
         src: "/images/books/network-book-zh.svg",
@@ -113,7 +102,7 @@ const sharedBooks = {
     {
       title: "深入解析 QUIC 与 HTTP/3",
       description: "不是 RFC 摘要，而是把 QUIC 与 HTTP/3 的协议约束落实到工程结构里，理解连接、恢复、拥塞控制与实现取舍。",
-      href: "https://caozhiyi.github.io/quicx-book/",
+      href: "https://caozhiyi.cc/quicx-book/",
       meta: "Book · Protocol & Implementation",
       cover: {
         src: "/images/books/quicx-book-zh.svg",
@@ -125,7 +114,7 @@ const sharedBooks = {
     {
       title: "First Principles of AI Coding",
       description: "A systems-first path from model behavior and agent execution to memory, context, and verifiable engineering loops.",
-      href: "https://caozhiyi.github.io/ai-programming-book/",
+      href: "https://caozhiyi.cc/ai-programming-book/",
       meta: "Book · AI Systems",
       cover: {
         src: "/images/books/ai-programming-book-en.svg",
@@ -135,7 +124,7 @@ const sharedBooks = {
     {
       title: "Cloud Networking: From Isolation to Connectivity",
       description: "A long-form account of how networking evolves from isolated boundaries to global connectivity through VPC, Internet access, and hybrid cloud.",
-      href: "https://caozhiyi.github.io/network-book/",
+      href: "https://caozhiyi.cc/network-book/",
       meta: "Book · Cloud Networking",
       cover: {
         src: "/images/books/network-book-en.svg",
@@ -145,15 +134,15 @@ const sharedBooks = {
     {
       title: "Inside QUIC and HTTP/3",
       description: "Not an RFC summary, but a protocol-engineering view of how QUIC and HTTP/3 constraints become implementation structure.",
-      href: "https://caozhiyi.github.io/quicx-book/",
+      href: "https://caozhiyi.cc/quicx-book/",
       meta: "Book · Protocol & Implementation",
       cover: {
         src: "/images/books/quicx-book-en.svg",
         alt: "Cover of Inside QUIC and HTTP/3"
       }
     }
-  ]
-} satisfies Record<Locale, HighlightItem[]>;
+  ] satisfies Record<Locale, HighlightItem[]>
+};
 
 const sharedProjects = {
   zh: [
@@ -219,8 +208,8 @@ const sharedProjects = {
         "Includes echo, HTTP, sendfile, pingpong, RPC, and multi-port examples for practical networking scenarios."
       ]
     }
-  ]
-} satisfies Record<Locale, HighlightItem[]>;
+  ] satisfies Record<Locale, HighlightItem[]>
+};
 
 const sharedWritings = {
   zh: [
@@ -406,8 +395,8 @@ const sharedWritings = {
       href: "/en/articles/ai-understanding-code-illusion",
       meta: "AI Coding · LLM"
     }
-  ]
-} satisfies Record<Locale, HighlightItem[]>;
+  ] satisfies Record<Locale, HighlightItem[]>
+};
 
 const sharedWritingGroups = {
   zh: [
@@ -673,8 +662,8 @@ const sharedWritingGroups = {
           
       ]
     }
-  ]
-} satisfies Record<Locale, WritingGroup[]>;
+  ] satisfies Record<Locale, WritingGroup[]>
+};
 
 const sharedConnect = {
   zh: [
@@ -704,70 +693,10 @@ const sharedConnect = {
       href: "/en/about/",
       meta: "Author Profile"
     }
-  ]
-} satisfies Record<Locale, HighlightItem[]>;
+  ] satisfies Record<Locale, HighlightItem[]>
+};
 
-function processSiteContent(content: Record<Locale, SiteContent>): Record<Locale, SiteContent> {
-  const keys: Locale[] = ["zh", "en"];
-  for (const lang of keys) {
-    const item = content[lang];
-    if (item.homePath) item.homePath = getRelativePath(item.homePath);
-    if (item.oppositeLocale && item.oppositeLocale.href) {
-      item.oppositeLocale.href = getRelativePath(item.oppositeLocale.href);
-    }
-    if (item.nav) {
-      for (const navItem of item.nav) {
-        navItem.href = getRelativePath(navItem.href);
-      }
-    }
-    if (item.hero) {
-      if (item.hero.primaryCta) {
-        item.hero.primaryCta.href = getRelativePath(item.hero.primaryCta.href);
-      }
-      if (item.hero.secondaryCta) {
-        item.hero.secondaryCta.href = getRelativePath(item.hero.secondaryCta.href);
-      }
-    }
-    if (item.books) {
-      for (const book of item.books) {
-        book.href = getRelativePath(book.href);
-        if (book.cover && book.cover.src) {
-          book.cover.src = getRelativePath(book.cover.src);
-        }
-      }
-    }
-    if (item.projects) {
-      for (const proj of item.projects) {
-        proj.href = getRelativePath(proj.href);
-        if (proj.logo && proj.logo.src) {
-          proj.logo.src = getRelativePath(proj.logo.src);
-        }
-      }
-    }
-    if (item.writings) {
-      for (const writing of item.writings) {
-        writing.href = getRelativePath(writing.href);
-      }
-    }
-    if (item.writingGroups) {
-      for (const group of item.writingGroups) {
-        if (group.items) {
-          for (const writing of group.items) {
-            writing.href = getRelativePath(writing.href);
-          }
-        }
-      }
-    }
-    if (item.connect) {
-      for (const conn of item.connect) {
-        conn.href = getRelativePath(conn.href);
-      }
-    }
-  }
-  return content;
-}
-
-const rawSiteContent: Record<Locale, SiteContent> = {
+export const siteContent: Record<Locale, SiteContent> = {
   zh: {
     siteTitle: "曹智轶",
     siteDescription: "代码、书籍与长期写作",
@@ -899,5 +828,3 @@ const rawSiteContent: Record<Locale, SiteContent> = {
     footer: "Built with Astro as the front door for books, projects, and technical writing."
   }
 };
-
-export const siteContent = processSiteContent(rawSiteContent);

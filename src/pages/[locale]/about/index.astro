@@ -59,7 +59,7 @@ const pageContent = {
 }[locale];
 ---
 
-<MainLayout content={content} pageTitle={pageContent.title}>
+<MainLayout content={content} pageTitle={pageContent.title} description={pageContent.paragraphs[0]}>
   <div class="about-layout">
     <!-- Left Column: Bio & Companies inside a card panel -->
     <article class="page-panel about-copy">

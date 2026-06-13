@@ -18,7 +18,7 @@ if (!content) {
 const openLabel = locale === "zh" ? "查看仓库" : "View repository";
 ---
 
-<MainLayout content={content} pageTitle={locale === "zh" ? "项目" : "Projects"}>
+<MainLayout content={content} pageTitle={locale === "zh" ? "项目" : "Projects"} description={content.sections.projectsIntro}>
   <section class="page-section project-list">
     {content.projects.map((item) => (
       <article class="card project-card">
