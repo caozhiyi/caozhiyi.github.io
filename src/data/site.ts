@@ -319,85 +319,85 @@ const sharedWritings = {
   en: [
     {
       title: "The Developer's Diary (Fragments)",
-      description: "A Chinese essay styled as a sci-fi developer diary from 2023 to 2029, tracking a programmer's journey through AI collaboration and agent-driven workflows.",
+      description: "A developer diary styled as a sci-fi piece from 2023 to 2029, tracking a programmer's journey through AI collaboration and agent-driven workflows.",
       href: "/en/articles/coding-diary",
       meta: "Reflection · Career"
     },
     {
       title: "You Think You're Chatting with AI, but You're Managing a Finite Textbox",
-      description: "A Chinese essay analyzing LLM context windows, system prompts, and multi-turn conversations to understand how to manage information within a finite attention budget.",
+      description: "An analysis of LLM context windows, system prompts, and multi-turn conversations to understand how to manage information within a finite attention budget.",
       href: "/en/articles/ai-chat-is-context-management",
       meta: "AI Coding · Context"
     },
     {
       title: "Technical Beginners in the AI Era",
-      description: "A Chinese essay reflecting on how AI affects the growth path of junior developers, and how to cultivate core judgment and systems thinking.",
+      description: "A reflection on how AI affects the growth path of junior developers, and how to cultivate core judgment and systems thinking.",
       href: "/en/articles/ai-area-studying",
       meta: "AI Coding · Career"
     },
     {
       title: "Should We Still Learn CS Foundations in the Age of AI Coding?",
-      description: "A Chinese essay examining why foundational CS topics like data structures remain critical for developer judgment in the AI era.",
+      description: "An examination of why foundational CS topics like data structures remain critical for developer judgment in the AI era.",
       href: "/en/articles/ai-basic-learning",
       meta: "AI Coding · Foundations"
     },
     {
       title: "When Boredom Disappears",
-      description: "A Chinese essay exploring recommendation algorithms, the attention economy, and how constant stimulation shapes our judgment and focus.",
+      description: "An exploration of recommendation algorithms, the attention economy, and how constant stimulation shapes our judgment and focus.",
       href: "/en/articles/ai-attention",
       meta: "Reflection · Attention"
     },
     {
       title: "Understanding Memory Management",
-      description: "A Chinese essay tracing memory management from physical and virtual memory to user-space allocators and runtime GC designs across C/C++, Rust, Java, and Go.",
+      description: "A deep dive into memory management from physical and virtual memory to user-space allocators and runtime GC designs across C/C++, Rust, Java, and Go.",
       href: "/en/articles/understanding-memory",
       meta: "Systems · Memory"
     },
     {
       title: "Why We Need QUIC",
-      description: "A Chinese essay explaining the evolution from HTTP/1.x and HTTP/2 to QUIC, analyzing why we need user-space protocols to solve head-of-line blocking, achieve zero-RTT handshake, and support connection migration.",
+      description: "An explanation of the evolution from HTTP/1.x and HTTP/2 to QUIC, analyzing why we need user-space protocols to solve head-of-line blocking, achieve zero-RTT handshake, and support connection migration.",
       href: "/en/articles/why-we-need-quic",
       meta: "Systems · Networking"
     },
     {
       title: "Inside the Wave: From Verb Coding to AI Collaboration",
-      description: "A Chinese essay reflecting on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
+      description: "A reflection on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
       href: "/en/articles/ai-collaboration",
       meta: "AI Coding · AI"
     },
     {
       title: "When Query Meets Distributed",
-      description: "A Chinese essay examining list querying challenges in microservices, detailing the trade-offs between API composition, CQRS, and shared database patterns.",
+      description: "An examination of list querying challenges in microservices, detailing the trade-offs between API composition, CQRS, and shared database patterns.",
       href: "/en/articles/distributed-query",
       meta: "Systems · Design"
     },
     {
       title: "Avoiding Software Decay",
-      description: "A Chinese essay reflecting on why code inevitably slides into decay, and engineering strategies to mitigate technical debt.",
+      description: "A reflection on why code inevitably slides into decay, and engineering strategies to mitigate technical debt.",
       href: "/en/articles/avoid-software-decay",
       meta: "Systems · Architecture"
     },
     {
       title: "Architecture Practice: Data Conversion Service",
-      description: "A Chinese essay on designing and building a high-throughput, zero-hardcoding extensible data service based on hexagonal architecture, chain of responsibility, and composite patterns.",
+      description: "Designing and building a high-throughput, zero-hardcoding extensible data service based on hexagonal architecture, chain of responsibility, and composite patterns.",
       href: "/en/articles/architecture-practice-data-conversion-service",
       meta: "Systems · Design"
     },
     {
       title: "Software Performance: CPU",
-      description: "A Chinese essay on CPU hardware traits like multi-core execution, cache lines, and branch prediction, and how to optimize computational execution.",
+      description: "An exploration of CPU hardware traits like multi-core execution, cache lines, and branch prediction, and how to optimize computational execution.",
       href: "/en/articles/software-performance-cpu",
       meta: "Systems · CPU"
     },
     {
       title: "Software Performance: IO",
-      description: "A Chinese essay on IO bottlenecks across disk, network, memory, and locks, and how system design trades long resources for short ones.",
+      description: "An exploration of IO bottlenecks across disk, network, memory, and locks, and how system design trades long resources for short ones.",
       href: "/en/articles/software-performance-io",
       meta: "Systems · IO"
     },
     {
       title: "How Large Models “Think”",
-      description: "A Chinese essay on tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
+      description: "An explanation of tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
       href: "/en/articles/ai-understanding-code-illusion",
       meta: "AI Coding · LLM"
     },
@@ -561,59 +561,59 @@ const sharedWritingGroups = {
   en: [
     {
       name: "Systems Design",
-      description: "Chinese essays on abstraction, performance, memory, IO, and the constraints that shape software systems.",
+      description: "Essays on abstraction, performance, memory, IO, and the constraints that shape software systems.",
       items: [
           {
                 title: "Understanding Memory Management",
-                description: "A Chinese essay tracing memory management from physical and virtual memory to user-space allocators and runtime GC designs across C/C++, Rust, Java, and Go.",
+                description: "A deep dive into memory management from physical and virtual memory to user-space allocators and runtime GC designs across C/C++, Rust, Java, and Go.",
                 href: "/en/articles/understanding-memory",
                 meta: "Systems · Memory"
               },
           {
                 title: "Why We Need QUIC",
-                description: "A Chinese essay explaining the evolution from HTTP/1.x and HTTP/2 to QUIC, analyzing why we need user-space protocols to solve head-of-line blocking, achieve zero-RTT handshake, and support connection migration.",
+                description: "An explanation of the evolution from HTTP/1.x and HTTP/2 to QUIC, analyzing why we need user-space protocols to solve head-of-line blocking, achieve zero-RTT handshake, and support connection migration.",
                 href: "/en/articles/why-we-need-quic",
                 meta: "Systems · Networking"
               },
           {
                 title: "Object-Oriented Programming",
-                description: "A Chinese essay revisiting OOP through the software crisis, abstraction, SOLID principles, and design patterns.",
+                description: "A reflection on OOP through the software crisis, abstraction, SOLID principles, and design patterns.",
                 href: "/en/articles/object-oriented-programming",
                 meta: "Systems · OOP"
               },
           {
                 title: "Network IO Multiplexing",
-                description: "A Chinese essay on sockets, non-blocking IO, select/poll, epoll, threading models, and buffer organization.",
+                description: "An exploration of sockets, non-blocking IO, select/poll, epoll, threading models, and buffer organization.",
                 href: "/en/articles/network-io-multiplexing",
                 meta: "Systems · Networking"
               },
           {
                 title: "Software Performance: CPU",
-                description: "A Chinese essay on CPU hardware traits like multi-core execution, cache lines, and branch prediction, and how to optimize computational execution.",
+                description: "An exploration of CPU hardware traits like multi-core execution, cache lines, and branch prediction, and how to optimize computational execution.",
                 href: "/en/articles/software-performance-cpu",
                 meta: "Systems · CPU"
               },
           {
                 title: "Software Performance: IO",
-                description: "A Chinese essay on IO bottlenecks across disk, network, memory, and locks, and how system design trades long resources for short ones.",
+                description: "An exploration of IO bottlenecks across disk, network, memory, and locks, and how system design trades long resources for short ones.",
                 href: "/en/articles/software-performance-io",
                 meta: "Systems · Performance"
               },
           {
                 title: "Architecture Practice: Data Conversion Service",
-                description: "A Chinese essay on designing and building a high-throughput, zero-hardcoding extensible data service based on hexagonal architecture, chain of responsibility, and composite patterns.",
+                description: "Designing and building a high-throughput, zero-hardcoding extensible data service based on hexagonal architecture, chain of responsibility, and composite patterns.",
                 href: "/en/articles/architecture-practice-data-conversion-service",
                 meta: "Systems · Design"
               },
           {
                 title: "Avoiding Software Decay",
-                description: "A Chinese essay reflecting on why code inevitably slides into decay, and engineering strategies to mitigate technical debt.",
+                description: "A reflection on why code inevitably slides into decay, and engineering strategies to mitigate technical debt.",
                 href: "/en/articles/avoid-software-decay",
                 meta: "Systems · Architecture"
               },
           {
                 title: "When Query Meets Distributed",
-                description: "A Chinese essay examining list querying challenges in microservices, detailing the trade-offs between API composition, CQRS, and shared database patterns.",
+                description: "An examination of list querying challenges in microservices, detailing the trade-offs between API composition, CQRS, and shared database patterns.",
                 href: "/en/articles/distributed-query",
                 meta: "Systems · Design"
               }
@@ -621,35 +621,35 @@ const sharedWritingGroups = {
     },
     {
       name: "AI Coding",
-      description: "Chinese essays on large models, context, tool use, and the engineering loops behind AI coding systems.",
+      description: "Essays on large models, context, tool use, and the engineering loops behind AI coding systems.",
       items: [
           {
                 title: "You Think You're Chatting with AI, but You're Managing a Finite Textbox",
-                description: "A Chinese essay analyzing LLM context windows, system prompts, and multi-turn conversations to understand how to manage information within a finite attention budget.",
+                description: "An analysis of LLM context windows, system prompts, and multi-turn conversations to understand how to manage information within a finite attention budget.",
                 href: "/en/articles/ai-chat-is-context-management",
                 meta: "AI Coding · Context"
               },
           {
                 title: "Technical Beginners in the AI Era",
-                description: "A Chinese essay reflecting on how AI affects the growth path of junior developers, and how to cultivate core judgment and systems thinking.",
+                description: "A reflection on how AI affects the growth path of junior developers, and how to cultivate core judgment and systems thinking.",
                 href: "/en/articles/ai-area-studying",
                 meta: "AI Coding · Career"
               },
           {
                 title: "Should We Still Learn CS Foundations in the Age of AI Coding?",
-                description: "A Chinese essay examining why foundational CS topics like data structures remain critical for developer judgment in the AI era.",
+                description: "An examination of why foundational CS topics like data structures remain critical for developer judgment in the AI era.",
                 href: "/en/articles/ai-basic-learning",
                 meta: "AI Coding · Foundations"
               },
           {
                 title: "How Large Models “Think”",
-                description: "A Chinese essay on tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
+                description: "An explanation of tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
                 href: "/en/articles/ai-understanding-code-illusion",
                 meta: "AI Coding · LLM"
               },
           {
                 title: "Inside the Wave: From Verb Coding to AI Collaboration",
-                description: "A Chinese essay reflecting on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
+                description: "A reflection on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
                 href: "/en/articles/ai-collaboration",
                 meta: "AI Coding · AI"
               },
@@ -663,17 +663,17 @@ const sharedWritingGroups = {
     },
     {
       name: "Industry Reflections",
-      description: "Chinese essays on engineering leadership, team work, and long-term technical judgment.",
+      description: "Essays on engineering leadership, team work, and long-term technical judgment.",
       items: [
           {
                 title: "The Developer's Diary (Fragments)",
-                description: "A Chinese essay styled as a sci-fi developer diary from 2023 to 2029, tracking a programmer's journey through AI collaboration and agent-driven workflows.",
+                description: "A developer diary styled as a sci-fi piece from 2023 to 2029, tracking a programmer's journey through AI collaboration and agent-driven workflows.",
                 href: "/en/articles/coding-diary",
                 meta: "Reflection · Career"
               },
           {
                 title: "When Boredom Disappears",
-                description: "A Chinese essay exploring recommendation algorithms, the attention economy, and how constant stimulation shapes our judgment and focus.",
+                description: "An exploration of recommendation algorithms, the attention economy, and how constant stimulation shapes our judgment and focus.",
                 href: "/en/articles/ai-attention",
                 meta: "Reflection · Attention"
               }
