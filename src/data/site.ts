@@ -308,6 +308,12 @@ const sharedWritings = {
       description: "从 Token、注意力、自回归生成和采样机制出发，解释大模型在代码场景中为什么会惊艳，也为什么会犯错。",
       href: "/zh/articles/ai-understanding-code-illusion",
       meta: "AI 编程 · LLM"
+    },
+    {
+      title: "它不是低配的人：关于 LLM 智能本身的几个判断",
+      description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
+      href: "/zh/articles/llm-intelligence-blackbox",
+      meta: "AI 编程 · 智能本质"
     }
   ],
   en: [
@@ -394,6 +400,12 @@ const sharedWritings = {
       description: "A Chinese essay on tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
       href: "/en/articles/ai-understanding-code-illusion",
       meta: "AI Coding · LLM"
+    },
+    {
+      title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
+      description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
+      href: "/en/articles/llm-intelligence-blackbox",
+      meta: "AI Coding · Intelligence"
     }
   ] satisfies Record<Locale, HighlightItem[]>
 };
@@ -493,6 +505,12 @@ const sharedWritingGroups = {
                 description: "回望 AI 编程这两年，从粘贴代码、Copilot 到 Agent 协作，聊聊这场技术浪潮带来的反思与思考。",
                 href: "/zh/articles/ai-collaboration",
                 meta: "AI 编程 · AI 协作"
+              },
+          {
+                title: "它不是低配的人：关于 LLM 智能本身的几个判断",
+                description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
+                href: "/zh/articles/llm-intelligence-blackbox",
+                meta: "AI 编程 · 智能本质"
               }
       ]
     },
@@ -634,6 +652,12 @@ const sharedWritingGroups = {
                 description: "A Chinese essay reflecting on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
                 href: "/en/articles/ai-collaboration",
                 meta: "AI Coding · AI"
+              },
+          {
+                title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
+                description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
+                href: "/en/articles/llm-intelligence-blackbox",
+                meta: "AI Coding · Intelligence"
               }
       ]
     },

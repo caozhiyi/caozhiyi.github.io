@@ -280,13 +280,13 @@ You might still feel it's a bit abstract. Principles are great, but how do you t
 
 The literature on design patterns is enormous. I won't go through them one by one. A high-level sketch instead.
 
-There's an old Chinese mnemonic for the 23 GoF design patterns that I've kept in my head for years. It rhymes — 单(Singleton) 抽(Abstract Factory) 工(Factory Method) 元(Prototype) 建(Builder) / 责(Chain of Responsibility) 令(Command) 策(Strategy) 访(Visitor) 迭(Iterator) / 中(Mediator) 观(Observer) 解(Interpreter)，备(Memento) 模(Template Method) 态(State) / 适(Adapter) 装(Decorator) 乔(Bridge) 组(Composite) 享(Flyweight) 代(Proxy) 外(Facade). Each pattern fits a different design situation:
+To keep all 23 GoF design patterns straight, they are typically divided into three main buckets based on their purpose: **Creational** (how objects are made), **Structural** (how objects are composed), and **Behavioral** (how objects interact). Each pattern fits a different design situation:
 
-- **Object creation** — Singleton, Abstract Factory, Factory Method, Prototype, Builder.
-- **Behavior** — Chain of Responsibility, Command, Strategy, Visitor, Iterator, Mediator, Observer, Interpreter, Memento, Template Method, State.
-- **Structure** — Adapter, Decorator, Bridge, Composite, Flyweight, Proxy, Facade.
+- **Creational (Object Creation)** — Singleton, Abstract Factory, Factory Method, Prototype, Builder.
+- **Behavioral (Behavior)** — Chain of Responsibility, Command, Strategy, Visitor, Iterator, Mediator, Observer, Interpreter, Memento, Template Method, State.
+- **Structural (Structure)** — Adapter, Decorator, Bridge, Composite, Flyweight, Proxy, Facade.
 
-The mnemonic is the rough map — recite it five times every morning and your sleeves will start producing pattern names on demand.
+This classification is your high-level map — keep these three buckets in mind, and you'll find it much easier to categorize them in your head.
 
 Jokes aside: design patterns are best understood as **proven OOP practices for recurring situations**. Each pattern is an abstraction of a problem shape. A few examples:
 
@@ -298,7 +298,7 @@ Jokes aside: design patterns are best understood as **proven OOP practices for r
 - **Iterator** — abstracts iteration so the caller can walk a collection without knowing the underlying structure.
 - **Observer** — abstracts call relationships so callers don't have to know callees; method invocation becomes event notification.
 
-When you spot a similar shape in your own code, **try a pattern first**. Especially if you're not yet at the level where you can reasonably invent a *new* pattern, you should be careful about saying "my approach is better." The shape is so similar — what does your version actually buy you over the established one? That argument, of course, only works if you already know the patterns and their use cases. New developers often find pattern catalogs dry and abstract; reading them feels like chewing wax. That's normal. Without enough code under your belt, design patterns are hard to internalize. The advice that's worked for me: treat them like memorizing a poem — recite even if you don't understand yet (the mnemonic helps), and keep an eye out for the shape in real code. Eventually it clicks.
+When you spot a similar shape in your own code, **try a pattern first**. Especially if you're not yet at the level where you can reasonably invent a *new* pattern, you should be careful about saying "my approach is better." The shape is so similar — what does your version actually buy you over the established one? That argument, of course, only works if you already know the patterns and their use cases. New developers often find pattern catalogs dry and abstract; reading them feels like chewing wax. That's normal. Without enough code under your belt, design patterns are hard to internalize. The advice that's worked for me: treat them like learning a new vocabulary — keep the categories in mind (the classification helps), and keep an eye out for their shapes in real code. Eventually it clicks.
 
 We've covered a lot — why we needed OOP, how to use OOP well, what the best practices look like. Reading and writing aren't the same thing, though. Many of these rules can't be fully understood by reading about them; you have to learn what *bad* feels like before what *good* feels like makes sense.
 
