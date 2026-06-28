@@ -214,6 +214,12 @@ const sharedProjects = {
 const sharedWritings = {
   zh: [
     {
+      title: "它不是低配的人：关于 LLM 智能本身的几个判断",
+      description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
+      href: "/zh/articles/llm-intelligence-blackbox",
+      meta: "AI 编程 · 智能本质"
+    },
+    {
       title: "《编程者日记（残）》",
       description: "一部科幻视角的工程师日记，从 2023 到 2029，记录了一名技术人在 AI 协作、自驱动与 Agent 化浪潮下的心态变迁。",
       href: "/zh/articles/coding-diary",
@@ -308,15 +314,15 @@ const sharedWritings = {
       description: "从 Token、注意力、自回归生成和采样机制出发，解释大模型在代码场景中为什么会惊艳，也为什么会犯错。",
       href: "/zh/articles/ai-understanding-code-illusion",
       meta: "AI 编程 · LLM"
-    },
-    {
-      title: "它不是低配的人：关于 LLM 智能本身的几个判断",
-      description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
-      href: "/zh/articles/llm-intelligence-blackbox",
-      meta: "AI 编程 · 智能本质"
     }
   ],
   en: [
+    {
+      title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
+      description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
+      href: "/en/articles/llm-intelligence-blackbox",
+      meta: "AI Coding · Intelligence"
+    },
     {
       title: "The Developer's Diary (Fragments)",
       description: "A developer diary styled as a sci-fi piece from 2023 to 2029, tracking a programmer's journey through AI collaboration and agent-driven workflows.",
@@ -400,12 +406,6 @@ const sharedWritings = {
       description: "An explanation of tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
       href: "/en/articles/ai-understanding-code-illusion",
       meta: "AI Coding · LLM"
-    },
-    {
-      title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
-      description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
-      href: "/en/articles/llm-intelligence-blackbox",
-      meta: "AI Coding · Intelligence"
     }
   ] satisfies Record<Locale, HighlightItem[]>
 };
@@ -477,6 +477,12 @@ const sharedWritingGroups = {
       description: "围绕大模型、上下文、工具调用与工程闭环，记录 AI 编程系统背后的真实机制。",
       items: [
           {
+                title: "它不是低配的人：关于 LLM 智能本身的几个判断",
+                description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
+                href: "/zh/articles/llm-intelligence-blackbox",
+                meta: "AI 编程 · 智能本质"
+              },
+          {
                 title: "你以为在和 AI 聊天，其实是在管理一个有限的文本框",
                 description: "深入剖析大模型的上下文窗口、System Prompt 与多轮对话机制，理解如何高效在有限的注意力预算内做信息管理。",
                 href: "/zh/articles/ai-chat-is-context-management",
@@ -505,12 +511,6 @@ const sharedWritingGroups = {
                 description: "回望 AI 编程这两年，从粘贴代码、Copilot 到 Agent 协作，聊聊这场技术浪潮带来的反思与思考。",
                 href: "/zh/articles/ai-collaboration",
                 meta: "AI 编程 · AI 协作"
-              },
-          {
-                title: "它不是低配的人：关于 LLM 智能本身的几个判断",
-                description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
-                href: "/zh/articles/llm-intelligence-blackbox",
-                meta: "AI 编程 · 智能本质"
               }
       ]
     },
@@ -624,6 +624,12 @@ const sharedWritingGroups = {
       description: "Essays on large models, context, tool use, and the engineering loops behind AI coding systems.",
       items: [
           {
+                title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
+                description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
+                href: "/en/articles/llm-intelligence-blackbox",
+                meta: "AI Coding · Intelligence"
+              },
+          {
                 title: "You Think You're Chatting with AI, but You're Managing a Finite Textbox",
                 description: "An analysis of LLM context windows, system prompts, and multi-turn conversations to understand how to manage information within a finite attention budget.",
                 href: "/en/articles/ai-chat-is-context-management",
@@ -652,12 +658,6 @@ const sharedWritingGroups = {
                 description: "A reflection on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
                 href: "/en/articles/ai-collaboration",
                 meta: "AI Coding · AI"
-              },
-          {
-                title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
-                description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
-                href: "/en/articles/llm-intelligence-blackbox",
-                meta: "AI Coding · Intelligence"
               }
       ]
     },
