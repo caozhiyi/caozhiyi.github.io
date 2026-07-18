@@ -6,3 +6,7 @@ Sitemap: https://caozhiyi.cc/ai-programming-book/sitemap.xml
 Sitemap: https://caozhiyi.cc/ai-programming-book/en/sitemap.xml
 Sitemap: https://caozhiyi.cc/network-book/sitemap.xml
 Sitemap: https://caozhiyi.cc/quicx-book/sitemap.xml
+
+# RSS Feeds
+# https://caozhiyi.cc/zh/rss.xml
+# https://caozhiyi.cc/en/rss.xml

@@ -28,15 +28,99 @@ const title = titleLine ? titleLine.replace(/#\s*/, "").replace(/\s*->\s*done\s*
 const locale = Astro.params.locale as Locale;
 const content = siteContent[locale];
 
-// Find the description of this article in site.ts writings
+// Find this article's metadata: first in flat writings, then in grouped writings
 const slug = Astro.params.slug;
-const articleMeta = content.writings.find((item) => item.href.endsWith(`/${slug}`));
+const matchSlug = (href: string) => href.endsWith(`/${slug}`) || href.endsWith(`/${slug}/`);
+const articleMeta =
+  content.writings.find((item) => matchSlug(item.href)) ||
+  content.writingGroups
+    .flatMap((group) => group.items)
+    .find((item) => matchSlug(item.href));
+
 const description = articleMeta?.description || content.siteDescription;
+const publishedAt = articleMeta?.publishedAt;
+
+// Site & URL constants for structured data
+const siteUrl = Astro.site ? Astro.site.href.replace(/\/$/, "") : "https://caozhiyi.cc";
+const canonicalURL = new URL(Astro.url.pathname, siteUrl).href;
+const homeURL = new URL(`/${locale}/`, siteUrl).href;
+const articlesIndexURL = new URL(`/${locale}/articles/`, siteUrl).href;
+
+const authorPerson = {
+  "@type": "Person",
+  name: locale === "zh" ? "曹智轶" : "Zhiyi Cao",
+  url: siteUrl,
+  sameAs: ["https://github.com/caozhiyi"]
+};
+
+const publishedAtISO = publishedAt ? `${publishedAt}T00:00:00+08:00` : undefined;
+
+const blogPostingLd: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: title,
+  description,
+  url: canonicalURL,
+  inLanguage: locale === "zh" ? "zh-CN" : "en",
+  author: authorPerson,
+  publisher: authorPerson,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": canonicalURL
+  }
+};
+if (publishedAtISO) {
+  blogPostingLd.datePublished = publishedAtISO;
+  blogPostingLd.dateModified = publishedAtISO;
+}
+
+const breadcrumbLabels = locale === "zh"
+  ? { home: "首页", articles: "文章" }
+  : { home: "Home", articles: "Writing" };
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: breadcrumbLabels.home, item: homeURL },
+    { "@type": "ListItem", position: 2, name: breadcrumbLabels.articles, item: articlesIndexURL },
+    { "@type": "ListItem", position: 3, name: title, item: canonicalURL }
+  ]
+};
+
+// Human-readable date for the visible <time> element
+const publishedDate = publishedAt ? new Date(`${publishedAt}T00:00:00+08:00`) : null;
+const publishedDateLabel = publishedDate
+  ? new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
+      year: "numeric",
+      month: locale === "zh" ? "long" : "long",
+      day: "numeric"
+    }).format(publishedDate)
+  : null;
 ---
 
-<MainLayout content={content} pageTitle={title} description={description}>
+<MainLayout
+  content={content}
+  pageTitle={title}
+  description={description}
+  pageType="article"
+  publishedAt={publishedAt}
+  jsonLd={[blogPostingLd, breadcrumbLd]}
+>
   <div class="article-detail-layout">
     <article class="page-panel article-card">
+      <nav class="article-breadcrumb" aria-label="Breadcrumb">
+        <a href={`/${locale}/`}>{breadcrumbLabels.home}</a>
+        <span class="article-breadcrumb-sep" aria-hidden="true">›</span>
+        <a href={`/${locale}/articles/`}>{breadcrumbLabels.articles}</a>
+        <span class="article-breadcrumb-sep" aria-hidden="true">›</span>
+        <span class="article-breadcrumb-current">{title}</span>
+      </nav>
+      {publishedDate && publishedDateLabel && (
+        <p class="article-meta-published">
+          <time datetime={publishedAt}>{publishedDateLabel}</time>
+        </p>
+      )}
       <div class="markdown-body">
         <Content />
       </div>
@@ -150,6 +234,55 @@ const description = articleMeta?.description || content.siteDescription;
 </script>
 
 <style is:global>
+  /* Article breadcrumb & published meta */
+  .article-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+  }
+
+  .article-breadcrumb a {
+    color: var(--text-soft);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .article-breadcrumb a:hover {
+    color: var(--text-strong);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .article-breadcrumb-sep {
+    color: var(--text-soft);
+    opacity: 0.6;
+  }
+
+  .article-breadcrumb-current {
+    color: var(--text-soft);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .article-meta-published {
+    margin: 0 0 24px 0;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    font-family: var(--font-mono, inherit);
+    letter-spacing: 0.02em;
+  }
+
+  .article-meta-published time {
+    color: inherit;
+  }
+
   /* Mermaid charts styling */
   .mermaid-container {
     display: flex;

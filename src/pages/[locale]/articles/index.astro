@@ -28,7 +28,34 @@ const pageIntro = {
   }
 }[locale];
 
-const writingGroups = content.writingGroups || [];
+const rawWritingGroups = content.writingGroups || [];
+
+// Sort articles in each group by publishedAt DESC; items without publishedAt fall to the end but keep relative order.
+const byPublishedDesc = <T extends { publishedAt?: string }>(a: T, b: T) => {
+  const av = a.publishedAt || "";
+  const bv = b.publishedAt || "";
+  if (av && bv) return bv.localeCompare(av);
+  if (av) return -1;
+  if (bv) return 1;
+  return 0;
+};
+
+const writingGroups = rawWritingGroups.map((group) => ({
+  ...group,
+  items: [...(group.items || [])].sort(byPublishedDesc)
+}));
+
+const dateFormatter = new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
+  year: "numeric",
+  month: locale === "zh" ? "long" : "short",
+  day: "numeric"
+});
+const formatPublishedAt = (value?: string) => {
+  if (!value) return null;
+  const d = new Date(`${value}T00:00:00+08:00`);
+  if (Number.isNaN(d.getTime())) return null;
+  return dateFormatter.format(d);
+};
 ---
 
 <MainLayout content={content} pageTitle={pageIntro.title} description={pageIntro.description}>
@@ -45,9 +72,19 @@ const writingGroups = content.writingGroups || [];
               <p class="group-section-desc">{group.description}</p>
             </div>
             <div class="articles-list">
-              {group.items.map((item, itemIndex) => (
+              {group.items.map((item, itemIndex) => {
+                const publishedLabel = formatPublishedAt(item.publishedAt);
+                return (
                 <article class="article-row-card" id={`art-${groupIndex}-${itemIndex}`}>
-                  <div class="art-meta">{item.meta}</div>
+                  <div class="art-meta">
+                    <span>{item.meta}</span>
+                    {publishedLabel && (
+                      <>
+                        <span class="art-meta-sep" aria-hidden="true">·</span>
+                        <time datetime={item.publishedAt}>{publishedLabel}</time>
+                      </>
+                    )}
+                  </div>
                   <h3 class="art-title">
                     <a href={item.href}>{item.title}</a>
                   </h3>
@@ -56,7 +93,8 @@ const writingGroups = content.writingGroups || [];
                     {locale === 'zh' ? '阅读全文' : 'Read article'} [READ] →
                   </a>
                 </article>
-              ))}
+                );
+              })}
             </div>
           </section>
         );
@@ -233,6 +271,18 @@ const writingGroups = content.writingGroups || [];
     color: var(--text-soft);
     margin-bottom: 8px;
     letter-spacing: 0.02em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .art-meta-sep {
+    opacity: 0.6;
+  }
+
+  .art-meta time {
+    color: inherit;
   }
 
   .art-title {

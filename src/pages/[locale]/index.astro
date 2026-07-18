@@ -15,10 +15,54 @@ if (!content) {
   throw new Error(`Unsupported locale: ${locale}`);
 }
 
-const articlesList = content.writings.slice(0, 3);
+const byPublishedDesc = <T extends { publishedAt?: string }>(a: T, b: T) => {
+  const av = a.publishedAt || "";
+  const bv = b.publishedAt || "";
+  if (av && bv) return bv.localeCompare(av);
+  if (av) return -1;
+  if (bv) return 1;
+  return 0;
+};
+
+const articlesList = [...content.writings].sort(byPublishedDesc).slice(0, 3);
+
+const formatShortDate = (value?: string) => {
+  if (!value) return null;
+  // Use YYYY-MM-DD (already ISO), keep it monospace-friendly for the homepage strip
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+};
+
+// Structured data: WebSite + Person for the Knowledge Graph
+const siteUrl = Astro.site ? Astro.site.href.replace(/\/$/, "") : "https://caozhiyi.cc";
+const localeHomeURL = new URL(`/${locale}/`, siteUrl).href;
+const personName = locale === "zh" ? "曹智轶" : "Zhiyi Cao";
+
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: content.siteTitle,
+      url: localeHomeURL,
+      inLanguage: locale === "zh" ? "zh-CN" : "en",
+      description: content.siteDescription
+    },
+    {
+      "@type": "Person",
+      name: personName,
+      url: siteUrl,
+      sameAs: ["https://github.com/caozhiyi"]
+    }
+  ]
+};
 ---
 
-<MainLayout content={content} pageTitle={content.nav[0].label} description={content.hero.description}>
+<MainLayout
+  content={content}
+  pageTitle={content.nav[0].label}
+  description={content.hero.description}
+  jsonLd={homeJsonLd}
+>
   <div class="tech-blueprint">
     <div class="bp-grid-container">
       <div class="bp-header tech-border">
@@ -76,16 +120,25 @@ const articlesList = content.writings.slice(0, 3);
             <h2>{locale === 'zh' ? '最近博客' : 'ARTICLES'}</h2>
           </div>
           <div class="bp-articles-list">
-            {articlesList.map((item) => (
+            {articlesList.map((item) => {
+              const shortDate = formatShortDate(item.publishedAt);
+              return (
               <div class="bp-article-item">
                 <div class="bp-article-meta">
-                  <span class="bp-article-date">{item.meta.split(' · ')[1] || 'RECENT'}</span>
+                  <span class="bp-article-date">
+                    {shortDate ? (
+                      <time datetime={item.publishedAt}>{shortDate}</time>
+                    ) : (
+                      item.meta.split(' · ')[1] || 'RECENT'
+                    )}
+                  </span>
                   <span class="bp-article-series">[{locale === 'zh' ? '博文' : 'POST'}]</span>
                 </div>
                 <h3><a href={item.href}>{item.title}</a></h3>
                 <p>{item.description}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

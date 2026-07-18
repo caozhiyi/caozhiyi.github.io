@@ -29,6 +29,7 @@ export type HighlightItem = {
   description: string;
   href: string;
   meta: string;
+  publishedAt?: string;
   cover?: {
     src: string;
     alt: string;
@@ -214,198 +215,272 @@ const sharedProjects = {
 const sharedWritings = {
   zh: [
     {
+      title: "软件吃掉了世界的一半：从规则化到 Token 化的产业轨迹",
+      description: "重读“软件吞噬世界”，剖析软件为何只吃掉了世界能被规则化的那一半，以及 Token 化如何为剩下的另一半打开新的产业轨迹。",
+      href: "/zh/articles/software-second-half",
+      meta: "AI 编程 · 产业趋势",
+      publishedAt: "2026-07-04"
+    },
+    {
+      title: "被重新定价的工程师",
+      description: "从规则化时代到 Token 化时代，工程师的能力清单正在被市场重新结算：编码实现在贬值，判断力资产在升值。",
+      href: "/zh/articles/engineer-repricing",
+      meta: "AI 编程 · Career",
+      publishedAt: "2026-07-17"
+    },
+    {
+      title: "从 API 网关到 AI 网关：当基础设施被 Token 撑开",
+      description: "LLM 调用打破了传统 API 网关“内容黑盒”与“行为确定”的两个前提，催生出新一层承载不确定性的基础设施：AI 网关。",
+      href: "/zh/articles/ai-gateway-as-infra",
+      meta: "AI 编程 · Infra",
+      publishedAt: "2026-07-13"
+    },
+    {
       title: "它不是低配的人：关于 LLM 智能本身的几个判断",
       description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
       href: "/zh/articles/llm-intelligence-blackbox",
-      meta: "AI 编程 · 智能本质"
+      meta: "AI 编程 · 智能本质",
+      publishedAt: "2026-06-27"
     },
     {
       title: "《编程者日记（残）》",
       description: "一部科幻视角的工程师日记，从 2023 到 2029，记录了一名技术人在 AI 协作、自驱动与 Agent 化浪潮下的心态变迁。",
       href: "/zh/articles/coding-diary",
-      meta: "行业感悟 · Career"
+      meta: "行业感悟 · Career",
+      publishedAt: "2026-05-27"
     },
     {
       title: "你以为在和 AI 聊天，其实是在管理一个有限的文本框",
       description: "深入剖析大模型的上下文窗口、System Prompt 与多轮对话机制，理解如何高效在有限的注意力预算内做信息管理。",
       href: "/zh/articles/ai-chat-is-context-management",
-      meta: "AI 编程 · Context"
+      meta: "AI 编程 · Context",
+      publishedAt: "2026-05-22"
     },
     {
       title: "AI 时代的技术新人",
       description: "探讨在 AI 自动生成代码的时代下，技术新人成长路径的改变，以及如何培养真正核心的系统设计与判断力。",
       href: "/zh/articles/ai-area-studying",
-      meta: "AI 编程 · Career"
+      meta: "AI 编程 · Career",
+      publishedAt: "2026-05-15"
     },
     {
       title: "在 AI 编程的今天，学好数据结构等基础还有必要吗？",
       description: "探讨有了 AI 辅助编码后，数据结构、算法等底层基础知识对培养程序员核心判断力的意义。",
       href: "/zh/articles/ai-basic-learning",
-      meta: "AI 编程 · Foundations"
+      meta: "AI 编程 · Foundations",
+      publishedAt: "2026-05-29"
     },
     {
       title: "当无聊消失之后",
       description: "从短视频、算法推荐与注意力经济出发，反思信息过载时代对个人注意力与独立判断力的深度塑造。",
       href: "/zh/articles/ai-attention",
-      meta: "行业感悟 · Attention"
+      meta: "行业感悟 · Attention",
+      publishedAt: "2026-05-23"
     },
     {
       title: "深入理解内存管理",
       description: "从物理内存、虚拟内存、用户态分配器到 C/C++、Rust、Java 与 Go 的运行时回收机制，串联起整条内存管理链路的设计与权衡。",
       href: "/zh/articles/understanding-memory",
-      meta: "系统设计 · Memory"
+      meta: "系统设计 · Memory",
+      publishedAt: "2026-04-26"
     },
     {
       title: "为什么我们需要 QUIC",
       description: "知其然也要知其所以然，从 HTTP/1.x、HTTP/2 到 QUIC，剖析用户态协议栈解决队头阻塞、快速握手与连接迁移的必然性。",
       href: "/zh/articles/why-we-need-quic",
-      meta: "系统设计 · Networking"
+      meta: "系统设计 · Networking",
+      publishedAt: "2026-03-01"
     },
     {
       title: "浪潮之中：从 Verb Coding 到 AI 协作——一名技术人的反思与重构",
       description: "回望 AI 编程这两年，从粘贴代码、Copilot 到 Agent 协作，聊聊这场技术浪潮带来的反思与思考。",
       href: "/zh/articles/ai-collaboration",
-      meta: "AI 编程 · AI 协作"
+      meta: "AI 编程 · AI 协作",
+      publishedAt: "2025-12-14"
     },
     {
       title: "当查询遇到分布式",
       description: "剖析微服务拆分后的列表查询困境，对比并总结 API 聚合、CQRS 与共用存储三种经典设计方案的权衡。",
       href: "/zh/articles/distributed-query",
-      meta: "系统设计 · 架构"
+      meta: "系统设计 · 架构",
+      publishedAt: "2025-10-14"
     },
     {
       title: "互联网围城（下）：从技术奴隶到命运抗争",
       description: "在日常积累中掌握可进可退的主动权，理智地面对工作与同事关系，并在莫测的职业发展道路上保持抗争。",
       href: "/zh/articles/slave-to-fate",
-      meta: "行业感悟 · Career"
+      meta: "行业感悟 · Career",
+      publishedAt: "2025-06-28"
     },
     {
       title: "互联网围城：学习诅咒与 35 岁断崖的战争",
       description: "站在技术从业者的角度，聊聊互联网的行业特点、学习诅咒、加班成风、以及 35 岁职业危机与跳槽选择。",
       href: "/zh/articles/internet-siege",
-      meta: "行业感悟 · Career"
+      meta: "行业感悟 · Career",
+      publishedAt: "2025-06-27"
     },
     {
       title: "如何避免软件腐朽",
       description: "反思为什么代码会不可避免地滑向腐朽的深渊，并讨论在工程设计与测试上如何减缓腐化速度。",
       href: "/zh/articles/avoid-software-decay",
-      meta: "系统设计 · 架构"
+      meta: "系统设计 · 架构",
+      publishedAt: "2025-05-10"
     },
     {
       title: "架构实战：数据转换服务",
       description: "以六边形架构为核心，融合责任链与组合模式，设计并落地一个高吞吐量、零硬编码扩展的数据服务。",
       href: "/zh/articles/architecture-practice-data-conversion-service",
-      meta: "系统设计 · 架构"
+      meta: "系统设计 · 架构",
+      publishedAt: "2024-12-11"
     },
     {
       title: "软件性能之 CPU",
       description: "从多核、缓存、分支预测等硬件特性出发，探讨如何压榨 CPU 的计算时钟周期。",
       href: "/zh/articles/software-performance-cpu",
-      meta: "系统设计 · CPU"
+      meta: "系统设计 · CPU",
+      publishedAt: "2025-05-31"
     },
     {
       title: "软件性能之 IO",
       description: "从磁盘、网络、内存和锁四个维度理解 IO 的性能瓶颈，以及系统设计如何用长板资源补短板。",
       href: "/zh/articles/software-performance-io",
-      meta: "系统设计 · IO"
+      meta: "系统设计 · IO",
+      publishedAt: "2026-04-06"
     },
     {
       title: "大模型是怎么“思考”的",
       description: "从 Token、注意力、自回归生成和采样机制出发，解释大模型在代码场景中为什么会惊艳，也为什么会犯错。",
       href: "/zh/articles/ai-understanding-code-illusion",
-      meta: "AI 编程 · LLM"
+      meta: "AI 编程 · LLM",
+      publishedAt: "2026-05-20"
     }
   ],
   en: [
     {
+      title: "Software Ate Only Half the World: From Rule-Based to Token-Based",
+      description: "A long-form reflection on why software has only ever eaten the rule-codifiable half of the world, and how tokens are opening a second industrial track for the other half.",
+      href: "/en/articles/software-second-half",
+      meta: "AI Coding · Industry",
+      publishedAt: "2026-07-04"
+    },
+    {
+      title: "The Repriced Engineer",
+      description: "As the industry shifts from rule-based to token-based delivery, the capability bundle of software engineers is being repriced: raw coding depreciates while judgment becomes the new scarce asset.",
+      href: "/en/articles/engineer-repricing",
+      meta: "AI Coding · Career",
+      publishedAt: "2026-07-17"
+    },
+    {
+      title: "From API Gateway to AI Gateway: When Infrastructure Is Stretched by Tokens",
+      description: "LLM traffic breaks the two hidden assumptions of the traditional API gateway — opaque payloads and deterministic behavior — and forces a new infrastructure layer that governs non-deterministic calls.",
+      href: "/en/articles/ai-gateway-as-infra",
+      meta: "AI Coding · Infra",
+      publishedAt: "2026-07-13"
+    },
+    {
       title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
       description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
       href: "/en/articles/llm-intelligence-blackbox",
-      meta: "AI Coding · Intelligence"
+      meta: "AI Coding · Intelligence",
+      publishedAt: "2026-06-27"
     },
     {
       title: "The Developer's Diary (Fragments)",
       description: "A developer diary styled as a sci-fi piece from 2023 to 2029, tracking a programmer's journey through AI collaboration and agent-driven workflows.",
       href: "/en/articles/coding-diary",
-      meta: "Reflection · Career"
+      meta: "Reflection · Career",
+      publishedAt: "2026-05-27"
     },
     {
       title: "You Think You're Chatting with AI, but You're Managing a Finite Textbox",
       description: "An analysis of LLM context windows, system prompts, and multi-turn conversations to understand how to manage information within a finite attention budget.",
       href: "/en/articles/ai-chat-is-context-management",
-      meta: "AI Coding · Context"
+      meta: "AI Coding · Context",
+      publishedAt: "2026-05-22"
     },
     {
       title: "Technical Beginners in the AI Era",
       description: "A reflection on how AI affects the growth path of junior developers, and how to cultivate core judgment and systems thinking.",
       href: "/en/articles/ai-area-studying",
-      meta: "AI Coding · Career"
+      meta: "AI Coding · Career",
+      publishedAt: "2026-05-15"
     },
     {
       title: "Should We Still Learn CS Foundations in the Age of AI Coding?",
       description: "An examination of why foundational CS topics like data structures remain critical for developer judgment in the AI era.",
       href: "/en/articles/ai-basic-learning",
-      meta: "AI Coding · Foundations"
+      meta: "AI Coding · Foundations",
+      publishedAt: "2026-05-29"
     },
     {
       title: "When Boredom Disappears",
       description: "An exploration of recommendation algorithms, the attention economy, and how constant stimulation shapes our judgment and focus.",
       href: "/en/articles/ai-attention",
-      meta: "Reflection · Attention"
+      meta: "Reflection · Attention",
+      publishedAt: "2026-05-23"
     },
     {
       title: "Understanding Memory Management",
       description: "A deep dive into memory management from physical and virtual memory to user-space allocators and runtime GC designs across C/C++, Rust, Java, and Go.",
       href: "/en/articles/understanding-memory",
-      meta: "Systems · Memory"
+      meta: "Systems · Memory",
+      publishedAt: "2026-04-26"
     },
     {
       title: "Why We Need QUIC",
       description: "An explanation of the evolution from HTTP/1.x and HTTP/2 to QUIC, analyzing why we need user-space protocols to solve head-of-line blocking, achieve zero-RTT handshake, and support connection migration.",
       href: "/en/articles/why-we-need-quic",
-      meta: "Systems · Networking"
+      meta: "Systems · Networking",
+      publishedAt: "2026-03-01"
     },
     {
       title: "Inside the Wave: From Verb Coding to AI Collaboration",
       description: "A reflection on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
       href: "/en/articles/ai-collaboration",
-      meta: "AI Coding · AI"
+      meta: "AI Coding · AI",
+      publishedAt: "2025-12-14"
     },
     {
       title: "When Query Meets Distributed",
       description: "An examination of list querying challenges in microservices, detailing the trade-offs between API composition, CQRS, and shared database patterns.",
       href: "/en/articles/distributed-query",
-      meta: "Systems · Design"
+      meta: "Systems · Design",
+      publishedAt: "2025-10-14"
     },
     {
       title: "Avoiding Software Decay",
       description: "A reflection on why code inevitably slides into decay, and engineering strategies to mitigate technical debt.",
       href: "/en/articles/avoid-software-decay",
-      meta: "Systems · Architecture"
+      meta: "Systems · Architecture",
+      publishedAt: "2025-05-10"
     },
     {
       title: "Architecture Practice: Data Conversion Service",
       description: "Designing and building a high-throughput, zero-hardcoding extensible data service based on hexagonal architecture, chain of responsibility, and composite patterns.",
       href: "/en/articles/architecture-practice-data-conversion-service",
-      meta: "Systems · Design"
+      meta: "Systems · Design",
+      publishedAt: "2024-12-11"
     },
     {
       title: "Software Performance: CPU",
       description: "An exploration of CPU hardware traits like multi-core execution, cache lines, and branch prediction, and how to optimize computational execution.",
       href: "/en/articles/software-performance-cpu",
-      meta: "Systems · CPU"
+      meta: "Systems · CPU",
+      publishedAt: "2025-05-31"
     },
     {
       title: "Software Performance: IO",
       description: "An exploration of IO bottlenecks across disk, network, memory, and locks, and how system design trades long resources for short ones.",
       href: "/en/articles/software-performance-io",
-      meta: "Systems · IO"
+      meta: "Systems · IO",
+      publishedAt: "2026-04-06"
     },
     {
       title: "How Large Models “Think”",
       description: "An explanation of tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
       href: "/en/articles/ai-understanding-code-illusion",
-      meta: "AI Coding · LLM"
+      meta: "AI Coding · LLM",
+      publishedAt: "2026-05-20"
     }
   ] satisfies Record<Locale, HighlightItem[]>
 };
@@ -420,55 +495,64 @@ const sharedWritingGroups = {
                 title: "深入理解内存管理",
                 description: "从物理内存、虚拟内存、用户态分配器到 C/C++、Rust、Java 与 Go 的运行时回收机制，串联起整条内存管理链路的设计与权衡。",
                 href: "/zh/articles/understanding-memory",
-                meta: "系统设计 · Memory"
+                meta: "系统设计 · Memory",
+                publishedAt: "2026-04-26"
               },
           {
                 title: "为什么我们需要 QUIC",
                 description: "知其然也要知其所以然，从 HTTP/1.x、HTTP/2 到 QUIC，剖析用户态协议栈解决队头阻塞、快速握手与连接迁移的必然性。",
                 href: "/zh/articles/why-we-need-quic",
-                meta: "系统设计 · Networking"
+                meta: "系统设计 · Networking",
+                publishedAt: "2026-03-01"
               },
           {
                 title: "面向对象编程",
                 description: "从软件危机、抽象、SOLID 原则到设计模式，重新理解面向对象为什么出现，以及它真正解决了什么问题。",
                 href: "/zh/articles/object-oriented-programming",
-                meta: "系统设计 · OOP"
+                meta: "系统设计 · OOP",
+                publishedAt: "2025-08-17"
               },
           {
                 title: "深入剖析网络 IO 复用",
                 description: "从 socket、非阻塞调用、select/poll 到 epoll、线程模型和缓存组织，拆解高性能网络编程的底层机制。",
                 href: "/zh/articles/network-io-multiplexing",
-                meta: "系统设计 · Networking"
+                meta: "系统设计 · Networking",
+                publishedAt: "2025-06-08"
               },
           {
                 title: "软件性能之 CPU",
                 description: "从多核、缓存、分支预测等硬件特性出发，探讨如何压榨 CPU 的计算时钟周期。",
                 href: "/zh/articles/software-performance-cpu",
-                meta: "系统设计 · CPU"
+                meta: "系统设计 · CPU",
+                publishedAt: "2025-05-31"
               },
           {
                 title: "软件性能之 IO",
                 description: "从磁盘、网络、内存和锁四个维度理解 IO 的性能瓶颈，以及系统设计如何用长板资源补短板。",
                 href: "/zh/articles/software-performance-io",
-                meta: "系统设计 · Performance"
+                meta: "系统设计 · Performance",
+                publishedAt: "2026-04-06"
               },
           {
                 title: "架构实战：数据转换服务",
                 description: "以六边形架构为核心，融合责任链与组合模式，设计并落地一个高吞吐量、零硬编码扩展的数据服务。",
                 href: "/zh/articles/architecture-practice-data-conversion-service",
-                meta: "系统设计 · 架构"
+                meta: "系统设计 · 架构",
+                publishedAt: "2024-12-11"
               },
           {
                 title: "如何避免软件腐朽",
                 description: "反思为什么代码会不可避免地滑向腐朽的深渊，并讨论在工程设计与测试上如何减缓腐化速度。",
                 href: "/zh/articles/avoid-software-decay",
-                meta: "系统设计 · 架构"
+                meta: "系统设计 · 架构",
+                publishedAt: "2025-05-10"
               },
           {
                 title: "当查询遇到分布式",
                 description: "剖析微服务拆分后的列表查询困境，对比并总结 API 聚合、CQRS 与共用存储三种经典设计方案的权衡。",
                 href: "/zh/articles/distributed-query",
-                meta: "系统设计 · 架构"
+                meta: "系统设计 · 架构",
+                publishedAt: "2025-10-14"
               }
       ]
     },
@@ -477,40 +561,67 @@ const sharedWritingGroups = {
       description: "围绕大模型、上下文、工具调用与工程闭环，记录 AI 编程系统背后的真实机制。",
       items: [
           {
+                title: "软件吃掉了世界的一半：从规则化到 Token 化的产业轨迹",
+                description: "重读“软件吞噬世界”，剖析软件为何只吃掉了世界能被规则化的那一半，以及 Token 化如何为剩下的另一半打开新的产业轨迹。",
+                href: "/zh/articles/software-second-half",
+                meta: "AI 编程 · 产业趋势",
+                publishedAt: "2026-07-04"
+              },
+          {
+                title: "被重新定价的工程师",
+                description: "从规则化时代到 Token 化时代，工程师的能力清单正在被市场重新结算：编码实现在贬值，判断力资产在升值。",
+                href: "/zh/articles/engineer-repricing",
+                meta: "AI 编程 · Career",
+                publishedAt: "2026-07-17"
+              },
+          {
+                title: "从 API 网关到 AI 网关：当基础设施被 Token 撑开",
+                description: "LLM 调用打破了传统 API 网关“内容黑盒”与“行为确定”的两个前提，催生出新一层承载不确定性的基础设施：AI 网关。",
+                href: "/zh/articles/ai-gateway-as-infra",
+                meta: "AI 编程 · Infra",
+                publishedAt: "2026-07-13"
+              },
+          {
                 title: "它不是低配的人：关于 LLM 智能本身的几个判断",
                 description: "实践跑在理论前面，每天被使用的 LLM 依然是没人说得清原理的黑盒。本文从图灵与塞尔的隔代对话、压缩与智能的等价性、涌现与收敛演化等视角，探讨大模型智能的本质及对人类自我定义的重构。",
                 href: "/zh/articles/llm-intelligence-blackbox",
-                meta: "AI 编程 · 智能本质"
+                meta: "AI 编程 · 智能本质",
+                publishedAt: "2026-06-27"
               },
           {
                 title: "你以为在和 AI 聊天，其实是在管理一个有限的文本框",
                 description: "深入剖析大模型的上下文窗口、System Prompt 与多轮对话机制，理解如何高效在有限的注意力预算内做信息管理。",
                 href: "/zh/articles/ai-chat-is-context-management",
-                meta: "AI 编程 · Context"
+                meta: "AI 编程 · Context",
+                publishedAt: "2026-05-22"
               },
           {
                 title: "AI 时代的技术新人",
-                description: "探讨在 AI 自动生成代码的时代下，技术新人成长路径 of 改变，以及如何培养真正核心的系统设计与判断力。",
+                description: "探讨在 AI 自动生成代码的时代下，技术新人成长路径的改变，以及如何培养真正核心的系统设计与判断力。",
                 href: "/zh/articles/ai-area-studying",
-                meta: "AI 编程 · Career"
+                meta: "AI 编程 · Career",
+                publishedAt: "2026-05-15"
               },
           {
                 title: "在 AI 编程的今天，学好数据结构等基础还有必要吗？",
                 description: "探讨有了 AI 辅助编码后，数据结构、算法等底层基础知识对培养程序员核心判断力的意义。",
                 href: "/zh/articles/ai-basic-learning",
-                meta: "AI 编程 · Foundations"
+                meta: "AI 编程 · Foundations",
+                publishedAt: "2026-05-29"
               },
           {
                 title: "大模型是怎么“思考”的",
                 description: "从 Token、注意力、自回归生成和采样机制出发，解释大模型在代码场景中为什么会惊艳，也为什么会犯错。",
                 href: "/zh/articles/ai-understanding-code-illusion",
-                meta: "AI 编程 · LLM"
+                meta: "AI 编程 · LLM",
+                publishedAt: "2026-05-20"
               },
           {
                 title: "浪潮之中：从 Verb Coding 到 AI 协作——一名技术人的反思与重构",
                 description: "回望 AI 编程这两年，从粘贴代码、Copilot 到 Agent 协作，聊聊这场技术浪潮带来的反思与思考。",
                 href: "/zh/articles/ai-collaboration",
-                meta: "AI 编程 · AI 协作"
+                meta: "AI 编程 · AI 协作",
+                publishedAt: "2025-12-14"
               }
       ]
     },
@@ -522,31 +633,36 @@ const sharedWritingGroups = {
                 title: "《编程者日记（残）》",
                 description: "一部科幻视角的工程师日记，从 2023 到 2029，记录了一名技术人在 AI 协作、自驱动与 Agent 化浪潮下的心态变迁。",
                 href: "/zh/articles/coding-diary",
-                meta: "行业感悟 · Career"
+                meta: "行业感悟 · Career",
+                publishedAt: "2026-05-27"
               },
           {
                 title: "当无聊消失之后",
                 description: "从短视频、算法推荐与注意力经济出发，反思信息过载时代对个人注意力与独立判断力的深度塑造。",
                 href: "/zh/articles/ai-attention",
-                meta: "行业感悟 · Attention"
+                meta: "行业感悟 · Attention",
+                publishedAt: "2026-05-23"
               },
           {
                 title: "如何做好一个技术 Leader",
                 description: "围绕第三驱动力、以身作则、建立私交和团队氛围，整理一线技术管理中的经验与取舍。",
                 href: "/zh/articles/leader",
-                meta: "行业感悟 · Leadership"
+                meta: "行业感悟 · Leadership",
+                publishedAt: "2025-01-15"
               },
           {
                 title: "互联网围城：学习诅咒与 35 岁断崖的战争",
                 description: "站在技术从业者的角度，聊聊互联网的行业特点、学习诅咒、加班成风、以及 35 岁职业危机与跳槽选择。",
                 href: "/zh/articles/internet-siege",
-                meta: "行业感悟 · Career"
+                meta: "行业感悟 · Career",
+                publishedAt: "2025-06-27"
               },
           {
                 title: "互联网围城（下）：从技术奴隶到命运抗争",
                 description: "在日常积累中掌握可进可退的主动权，理智地面对工作与同事关系，并在莫测的职业发展道路上保持抗争。",
                 href: "/zh/articles/slave-to-fate",
-                meta: "行业感悟 · Career"
+                meta: "行业感悟 · Career",
+                publishedAt: "2025-06-28"
               }
       ]
     },
@@ -567,55 +683,64 @@ const sharedWritingGroups = {
                 title: "Understanding Memory Management",
                 description: "A deep dive into memory management from physical and virtual memory to user-space allocators and runtime GC designs across C/C++, Rust, Java, and Go.",
                 href: "/en/articles/understanding-memory",
-                meta: "Systems · Memory"
+                meta: "Systems · Memory",
+                publishedAt: "2026-04-26"
               },
           {
                 title: "Why We Need QUIC",
                 description: "An explanation of the evolution from HTTP/1.x and HTTP/2 to QUIC, analyzing why we need user-space protocols to solve head-of-line blocking, achieve zero-RTT handshake, and support connection migration.",
                 href: "/en/articles/why-we-need-quic",
-                meta: "Systems · Networking"
+                meta: "Systems · Networking",
+                publishedAt: "2026-03-01"
               },
           {
                 title: "Object-Oriented Programming",
                 description: "A reflection on OOP through the software crisis, abstraction, SOLID principles, and design patterns.",
                 href: "/en/articles/object-oriented-programming",
-                meta: "Systems · OOP"
+                meta: "Systems · OOP",
+                publishedAt: "2025-08-17"
               },
           {
                 title: "Network IO Multiplexing",
                 description: "An exploration of sockets, non-blocking IO, select/poll, epoll, threading models, and buffer organization.",
                 href: "/en/articles/network-io-multiplexing",
-                meta: "Systems · Networking"
+                meta: "Systems · Networking",
+                publishedAt: "2025-06-08"
               },
           {
                 title: "Software Performance: CPU",
                 description: "An exploration of CPU hardware traits like multi-core execution, cache lines, and branch prediction, and how to optimize computational execution.",
                 href: "/en/articles/software-performance-cpu",
-                meta: "Systems · CPU"
+                meta: "Systems · CPU",
+                publishedAt: "2025-05-31"
               },
           {
                 title: "Software Performance: IO",
                 description: "An exploration of IO bottlenecks across disk, network, memory, and locks, and how system design trades long resources for short ones.",
                 href: "/en/articles/software-performance-io",
-                meta: "Systems · Performance"
+                meta: "Systems · Performance",
+                publishedAt: "2026-04-06"
               },
           {
                 title: "Architecture Practice: Data Conversion Service",
                 description: "Designing and building a high-throughput, zero-hardcoding extensible data service based on hexagonal architecture, chain of responsibility, and composite patterns.",
                 href: "/en/articles/architecture-practice-data-conversion-service",
-                meta: "Systems · Design"
+                meta: "Systems · Design",
+                publishedAt: "2024-12-11"
               },
           {
                 title: "Avoiding Software Decay",
                 description: "A reflection on why code inevitably slides into decay, and engineering strategies to mitigate technical debt.",
                 href: "/en/articles/avoid-software-decay",
-                meta: "Systems · Architecture"
+                meta: "Systems · Architecture",
+                publishedAt: "2025-05-10"
               },
           {
                 title: "When Query Meets Distributed",
                 description: "An examination of list querying challenges in microservices, detailing the trade-offs between API composition, CQRS, and shared database patterns.",
                 href: "/en/articles/distributed-query",
-                meta: "Systems · Design"
+                meta: "Systems · Design",
+                publishedAt: "2025-10-14"
               }
       ]
     },
@@ -624,40 +749,67 @@ const sharedWritingGroups = {
       description: "Essays on large models, context, tool use, and the engineering loops behind AI coding systems.",
       items: [
           {
+                title: "Software Ate Only Half the World: From Rule-Based to Token-Based",
+                description: "A long-form reflection on why software has only ever eaten the rule-codifiable half of the world, and how tokens are opening a second industrial track for the other half.",
+                href: "/en/articles/software-second-half",
+                meta: "AI Coding · Industry",
+                publishedAt: "2026-07-04"
+              },
+          {
+                title: "The Repriced Engineer",
+                description: "As the industry shifts from rule-based to token-based delivery, the capability bundle of software engineers is being repriced: raw coding depreciates while judgment becomes the new scarce asset.",
+                href: "/en/articles/engineer-repricing",
+                meta: "AI Coding · Career",
+                publishedAt: "2026-07-17"
+              },
+          {
+                title: "From API Gateway to AI Gateway: When Infrastructure Is Stretched by Tokens",
+                description: "LLM traffic breaks the two hidden assumptions of the traditional API gateway — opaque payloads and deterministic behavior — and forces a new infrastructure layer that governs non-deterministic calls.",
+                href: "/en/articles/ai-gateway-as-infra",
+                meta: "AI Coding · Infra",
+                publishedAt: "2026-07-13"
+              },
+          {
                 title: "It Is Not a Lesser Human: Notes on What LLMs Actually Are",
                 description: "An essay exploring the nature of LLM intelligence through the lens of Turing, Searle, compression theory, and convergent evolution.",
                 href: "/en/articles/llm-intelligence-blackbox",
-                meta: "AI Coding · Intelligence"
+                meta: "AI Coding · Intelligence",
+                publishedAt: "2026-06-27"
               },
           {
                 title: "You Think You're Chatting with AI, but You're Managing a Finite Textbox",
                 description: "An analysis of LLM context windows, system prompts, and multi-turn conversations to understand how to manage information within a finite attention budget.",
                 href: "/en/articles/ai-chat-is-context-management",
-                meta: "AI Coding · Context"
+                meta: "AI Coding · Context",
+                publishedAt: "2026-05-22"
               },
           {
                 title: "Technical Beginners in the AI Era",
                 description: "A reflection on how AI affects the growth path of junior developers, and how to cultivate core judgment and systems thinking.",
                 href: "/en/articles/ai-area-studying",
-                meta: "AI Coding · Career"
+                meta: "AI Coding · Career",
+                publishedAt: "2026-05-15"
               },
           {
                 title: "Should We Still Learn CS Foundations in the Age of AI Coding?",
                 description: "An examination of why foundational CS topics like data structures remain critical for developer judgment in the AI era.",
                 href: "/en/articles/ai-basic-learning",
-                meta: "AI Coding · Foundations"
+                meta: "AI Coding · Foundations",
+                publishedAt: "2026-05-29"
               },
           {
                 title: "How Large Models “Think”",
                 description: "An explanation of tokens, attention, autoregressive generation, sampling, and why LLMs can be both impressive and unreliable in coding work.",
                 href: "/en/articles/ai-understanding-code-illusion",
-                meta: "AI Coding · LLM"
+                meta: "AI Coding · LLM",
+                publishedAt: "2026-05-20"
               },
           {
                 title: "Inside the Wave: From Verb Coding to AI Collaboration",
                 description: "A reflection on the evolution of AI coding from chatbots and Copilots to autonomous agents, and what it means for developers.",
                 href: "/en/articles/ai-collaboration",
-                meta: "AI Coding · AI"
+                meta: "AI Coding · AI",
+                publishedAt: "2025-12-14"
               }
       ]
     },
@@ -669,13 +821,15 @@ const sharedWritingGroups = {
                 title: "The Developer's Diary (Fragments)",
                 description: "A developer diary styled as a sci-fi piece from 2023 to 2029, tracking a programmer's journey through AI collaboration and agent-driven workflows.",
                 href: "/en/articles/coding-diary",
-                meta: "Reflection · Career"
+                meta: "Reflection · Career",
+                publishedAt: "2026-05-27"
               },
           {
                 title: "When Boredom Disappears",
                 description: "An exploration of recommendation algorithms, the attention economy, and how constant stimulation shapes our judgment and focus.",
                 href: "/en/articles/ai-attention",
-                meta: "Reflection · Attention"
+                meta: "Reflection · Attention",
+                publishedAt: "2026-05-23"
               }
       ]
     },

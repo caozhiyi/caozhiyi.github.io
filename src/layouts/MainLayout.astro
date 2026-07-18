@@ -7,11 +7,38 @@ interface Props {
   content: SiteContent;
   pageTitle: string;
   description?: string;
+  pageType?: "website" | "article";
+  publishedAt?: string;
+  jsonLd?: unknown;
 }
 
-const { content, pageTitle, description } = Astro.props;
+const {
+  content,
+  pageTitle,
+  description,
+  pageType = "website",
+  publishedAt,
+  jsonLd
+} = Astro.props;
 const title = `${pageTitle} · ${content.siteTitle}`;
 const isZh = content.homePath.startsWith("/zh");
+const localeSlug = isZh ? "zh" : "en";
+const keywords = isZh
+  ? "曹智轶,AI 编程,系统,网络,QUIC,云网络,长文写作"
+  : "Zhiyi Cao, AI programming, systems, networking, QUIC, cloud networking, long-form writing";
+
+const normalizeIsoDate = (value?: string) => {
+  if (!value) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) return value;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return `${value}T00:00:00+08:00`;
+  return value;
+};
+const publishedAtISO = normalizeIsoDate(publishedAt);
+const jsonLdEntries = jsonLd === undefined || jsonLd === null
+  ? []
+  : Array.isArray(jsonLd)
+    ? jsonLd.filter((entry) => entry !== undefined && entry !== null)
+    : [jsonLd];
 const themeLabels = isZh
   ? {
       title: "主题",
@@ -33,6 +60,7 @@ const themeColors = {
 const siteUrl = Astro.site ? Astro.site.href.replace(/\/$/, "") : "https://caozhiyi.cc";
 const pathname = Astro.url.pathname;
 const canonicalURL = new URL(pathname, siteUrl).href;
+const rssURL = new URL(`/${localeSlug}/rss.xml`, siteUrl).href;
 
 const oppositePath = pathname.startsWith("/zh/")
   ? pathname.replace(/^\/zh\//, "/en/")
@@ -46,7 +74,7 @@ const enURL = isZh ? oppositeURL : canonicalURL;
 const xDefaultURL = new URL("/zh/", siteUrl).href;
 
 const pageDescription = description || content.siteDescription;
-const defaultOgImage = new URL("/images/books/ai-programming-book-zh.svg", siteUrl).href;
+const defaultOgImage = new URL("/images/og/og-default.png", siteUrl).href;
 ---
 
 <!doctype html>
@@ -66,6 +94,8 @@ const defaultOgImage = new URL("/images/books/ai-programming-book-zh.svg", siteU
 
     <title>{title}</title>
     <meta name="description" content={pageDescription} />
+    <meta name="author" content="曹智轶 / Zhiyi Cao" />
+    <meta name="keywords" content={keywords} />
     <meta name="theme-color" content={themeColors.light} />
 
     <link rel="canonical" href={canonicalURL} />
@@ -73,18 +103,26 @@ const defaultOgImage = new URL("/images/books/ai-programming-book-zh.svg", siteU
     <link rel="alternate" hreflang="zh-CN" href={zhURL} />
     <link rel="alternate" hreflang="en" href={enURL} />
     <link rel="alternate" hreflang="x-default" href={xDefaultURL} />
+    <link rel="alternate" type="application/rss+xml" title={`${content.siteTitle} RSS`} href={rssURL} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={pageType} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content={defaultOgImage} />
+    {publishedAtISO && (
+      <meta property="article:published_time" content={publishedAtISO} />
+    )}
 
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={pageDescription} />
     <meta property="twitter:image" content={defaultOgImage} />
+
+    {jsonLdEntries.map((entry) => (
+      <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+    ))}
     <script is:inline define:vars={{ themeColors }}>
       (() => {
         const storageKey = "preferred-theme";

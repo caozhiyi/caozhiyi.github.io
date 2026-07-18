@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4efe6" />
+      <stop offset="100%" stop-color="#e9dfcf" />
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c9a25a" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#c9a25a" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="960" cy="120" r="360" fill="url(#glow)" />
+  <g font-family="'PingFang SC','Noto Sans SC','Inter','Helvetica Neue',sans-serif">
+    <text x="80" y="180" font-size="28" fill="#7a6c56" letter-spacing="8">CAOZHIYI · WRITING · SYSTEMS · AI</text>
+    <text x="80" y="330" font-size="120" font-weight="800" fill="#1c1a17" letter-spacing="-3">曹智轶</text>
+    <text x="80" y="410" font-size="52" font-weight="600" fill="#2b2925" letter-spacing="1">Zhiyi Cao</text>
+    <text x="80" y="500" font-size="30" fill="#5a4f3d" letter-spacing="1">代码 · 书籍 · 长期写作</text>
+    <text x="80" y="546" font-size="26" fill="#7a6c56" letter-spacing="0.5">Code · Books · Long-form Writing</text>
+  </g>
+  <g stroke="#c9a25a" stroke-opacity="0.55" stroke-width="2" fill="none">
+    <line x1="80" y1="220" x2="200" y2="220" />
+  </g>
+  <text x="1120" y="590" text-anchor="end" font-family="'JetBrains Mono','Menlo',monospace" font-size="20" fill="#7a6c56" letter-spacing="1">caozhiyi.cc</text>
+</svg>
