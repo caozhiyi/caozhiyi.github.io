@@ -96,6 +96,8 @@ jobs:
       - name: Build QuicX docs site
         run: |
           npm ci
+          # mermaid 构建期渲染需要 Playwright chromium（--with-deps 顺带装系统库）
+          npx playwright install chromium --with-deps
           node scripts/inject-content.mjs "${{ github.workspace }}/quicx-repo/docs" src/content/docs
           npm run build
           mkdir -p "${{ github.workspace }}/dist/docs/quicx"
