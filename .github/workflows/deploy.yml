@@ -29,6 +29,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # quicX 文档站（/docs/quicx/）内容源头：构建期拉取，不进本仓库
+      # 注意：quicX 文档更新后需手动 workflow_dispatch 触发本 workflow 重新部署
+      - name: Checkout quicX docs source
+        uses: actions/checkout@v4
+        with:
+          repository: caozhiyi/quicX
+          ref: main
+          path: quicx-repo
+          sparse-checkout: docs
+          fetch-depth: 1
+
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -73,6 +84,23 @@ jobs:
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ${{ env.BUILD_PATH }}
+
+      # docs-site 使用 Astro 7 + Starlight，要求 Node >= 22.12（主站保持 Node 20）
+      - name: Setup Node for docs-site
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+
+      - name: Build QuicX docs site
+        run: |
+          npm ci
+          node scripts/inject-content.mjs "${{ github.workspace }}/quicx-repo/docs" src/content/docs
+          npm run build
+          mkdir -p "${{ github.workspace }}/dist/docs/quicx"
+          cp -r dist/. "${{ github.workspace }}/dist/docs/quicx/"
+        working-directory: docs-site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

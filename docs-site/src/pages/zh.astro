@@ -1,0 +1,19 @@
+---
+// /zh/ → /zh/overview/：README 已从 index 迁移为 overview，此页保住旧链接
+const target = '/docs/quicx/zh/overview/';
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>QuicX 文档</title>
+  </head>
+  <body>
+    <script is:inline>location.replace('/docs/quicx/zh/overview/');</script>
+    <p style="font-family: system-ui; padding: 40px; text-align: center">
+      <a href="/docs/quicx/zh/overview/">QuicX 文档 →</a>
+    </p>
+  </body>
+</html>

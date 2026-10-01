@@ -24,11 +24,71 @@ const byPublishedDesc = <T extends { publishedAt?: string }>(a: T, b: T) => {
   return 0;
 };
 
-const articlesList = [...content.writings].sort(byPublishedDesc).slice(0, 3);
+// "Start here" reading path: the AI engineering I do now + the protocol decade behind it.
+const featuredSlugs = ["ai-gateway-as-infra", "engineer-repricing", "why-we-need-quic"];
+type Writing = (typeof content.writings)[number];
+const startHere = featuredSlugs
+  .map((slug) => content.writings.find((w) => w.href.includes(slug)))
+  .filter((w): w is Writing => Boolean(w));
+
+// Recent timeline proves the site is alive; the articles page keeps the full archive.
+const recentArticles = [...content.writings].sort(byPublishedDesc).slice(0, 5);
+
+// Works are listed newest-first, so the order itself tells the turn from protocols to AI.
+const books = content.books;
+const projects = content.projects;
+const latestBook = books[0];
+
+const booksPath = `/${locale}/books/`;
+const projectsPath = `/${locale}/projects/`;
+const articlesPath = `/${locale}/articles/`;
+const aboutPath = `/${locale}/about/`;
+const githubUrl = "https://github.com/caozhiyi";
+
+const copy = {
+  zh: {
+    intro: [
+      "我是曹智轶，在腾讯做基础设施研发，此前先后在百度、滴滴与博睿宏远工作。",
+      "过去十年我的大部分时间花在网络协议和底层系统上。这些方向最初都来自工作——在解决具体问题的过程中慢慢生出兴趣，又从兴趣里长出一点「想创造点什么」的心思。于是有了 quicX 和 CppNet 两个开源协议栈，以及关于云网络和 AI 编程的两本书。",
+      "现在我的主要精力在 AI 工程化：AI 网关、AI 编程系统，以及大模型真正落地时冒出来的那些工程问题。如果你对协议实现、系统设计或 AI 工程化感兴趣，这个站的长文写作可以从任何一处开始读。"
+    ],
+    ctaLatest: "最新",
+    ctaAbout: "关于我",
+    ctaGithub: "GitHub",
+    worksTitle: "作品",
+    worksBooks: "书",
+    worksProjects: "代码",
+    allBooks: "全部书籍",
+    allProjects: "全部项目",
+    startHereTitle: "从这里开始读",
+    startHereIntro: "如果只读三篇：两篇是现在正在做的 AI 工程，一篇是过去十年的协议功底。",
+    recentTitle: "最近更新",
+    allEssays: "全部文章"
+  },
+  en: {
+    intro: [
+      "I'm Zhiyi Cao. I build infrastructure at Tencent, previously at Baidu, DiDi, and Bonree.",
+      "For the past decade, most of my time went into network protocols and low-level systems. Those interests grew out of the work itself — solving concrete problems first, then growing curious, then wanting to build something of my own. That impulse became two open-source stacks (quicX and CppNet) and two books on cloud networking and AI coding.",
+      "These days my main focus is AI engineering: AI gateways, AI coding systems, and the engineering problems that surface when large models actually ship. If protocols, systems design, or AI engineering interest you, the long-form writing here is a good place to start."
+    ],
+    ctaLatest: "Latest",
+    ctaAbout: "About me",
+    ctaGithub: "GitHub",
+    worksTitle: "Works",
+    worksBooks: "Books",
+    worksProjects: "Code",
+    allBooks: "All books",
+    allProjects: "All projects",
+    startHereTitle: "Start here",
+    startHereIntro: "If you only read three: two on the AI engineering I do now, one on the protocol decade behind it.",
+    recentTitle: "Recent updates",
+    allEssays: "All writing"
+  }
+}[locale];
 
 const formatShortDate = (value?: string) => {
   if (!value) return null;
-  // Use YYYY-MM-DD (already ISO), keep it monospace-friendly for the homepage strip
+  // Use YYYY-MM-DD (already ISO), keep it monospace-friendly for the timeline
   return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
 };
 
@@ -55,90 +115,114 @@ const homeJsonLd = {
     }
   ]
 };
+
+const seoDescription = copy.intro.slice(0, 2).join(" ");
 ---
 
 <MainLayout
   content={content}
   pageTitle={content.nav[0].label}
-  description={content.hero.description}
+  description={seoDescription}
   jsonLd={homeJsonLd}
 >
   <div class="tech-blueprint">
     <div class="bp-grid-container">
+      <!-- ① Hero: who I am, where I came from, what I do now -->
       <div class="bp-header tech-border">
         <h1 class="bp-title">{content.hero.title}</h1>
-        <p class="bp-subtitle">{content.hero.description}</p>
+        <div class="bp-intro">
+          {copy.intro.map((paragraph, i) => (
+            <p class:list={["bp-intro-p", { lead: i === 0 }]}>{paragraph}</p>
+          ))}
+        </div>
+        <div class="bp-hero-actions">
+          {latestBook && (
+            <a class="bp-action-link bp-action-primary" href={latestBook.href}>
+              {copy.ctaLatest}：{latestBook.title} →
+            </a>
+          )}
+          <a class="bp-action-link" href={aboutPath}>{copy.ctaAbout} →</a>
+          <a class="bp-action-link" href={githubUrl} target="_blank" rel="noopener noreferrer">
+            {copy.ctaGithub} ↗
+          </a>
+        </div>
       </div>
 
-      <!-- Main Column Grid -->
-      <div class="bp-main-content">
-        <!-- Column 01: Books -->
-        <div class="bp-section tech-border">
-          <div class="bp-sec-header">
-            <h2>{locale === 'zh' ? '开源书籍' : 'BOOKS'}</h2>
-          </div>
-          <div class="bp-books-showcase">
-            {content.books.map((item, index) => (
-              <div class="bp-book-card">
-                <div class="bp-book-info">
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                  <a href={item.href} class="bp-book-link">{locale === 'zh' ? '系统阅读' : 'Read online'} [READ] →</a>
-                </div>
-              </div>
+      <!-- ② Works: all five assets, one line each, newest first -->
+      <div class="bp-section tech-border">
+        <div class="bp-sec-header">
+          <h2>{copy.worksTitle}</h2>
+        </div>
+        <div class="bp-works-grid">
+          <div class="bp-works-col">
+            <h3 class="bp-works-col-title">{copy.worksBooks}</h3>
+            {books.map((item) => (
+              <a class="bp-work-row" href={item.href}>
+                <span class="bp-work-tag">{item.meta.split(' · ')[1]}</span>
+                <strong>{item.title}</strong>
+                <span class="bp-work-arrow" aria-hidden="true">→</span>
+              </a>
             ))}
+            <a class="bp-works-more" href={booksPath}>{copy.allBooks} →</a>
+          </div>
+          <div class="bp-works-col">
+            <h3 class="bp-works-col-title">{copy.worksProjects}</h3>
+            {projects.map((item) => (
+              <a class="bp-work-row" href={item.href} target="_blank" rel="noopener noreferrer">
+                <span class="bp-work-tag">{item.meta.split(' · ')[1] || 'C++'}</span>
+                <strong>{item.title}</strong>
+                <span class="bp-work-arrow" aria-hidden="true">↗</span>
+              </a>
+            ))}
+            <a class="bp-works-more" href={projectsPath}>{copy.allProjects} →</a>
           </div>
         </div>
+      </div>
 
-        <!-- Column 02: Projects -->
+      <!-- ③ Start here (editorial pick) + ④ Recent timeline -->
+      <div class="bp-home-lower">
         <div class="bp-section tech-border">
           <div class="bp-sec-header">
-            <h2>{locale === 'zh' ? '开源项目' : 'PROJECTS'}</h2>
+            <h2>{copy.startHereTitle}</h2>
           </div>
-          <div class="bp-projects-showcase">
-            {content.projects.map((item, index) => (
-              <div class="bp-project-box">
-                <div class="bp-project-header">
-                  <span class="bp-project-index">SRC.0{index + 1}</span>
-                  <span class="bp-project-status">[ACTIVE]</span>
-                </div>
-                <h3>{item.title}</h3>
+          <p class="bp-section-intro">{copy.startHereIntro}</p>
+          <div class="bp-starthere-list">
+            {startHere.map((item) => (
+              <a class="bp-starthere-item" href={item.href}>
+                <span class="bp-starthere-meta">{item.meta}</span>
+                <strong>{item.title}</strong>
                 <p>{item.description}</p>
-                <div class="bp-project-specs">
-                  <span class="spec-tag">{item.meta.split(' · ')[1] || 'C++'}</span>
-                  <span class="spec-tag">{item.meta.split(' · ')[0]}</span>
-                </div>
-                <a href={item.href} class="bp-project-link">{locale === 'zh' ? '访问仓库' : 'Browse source'} [GITHUB] ↗</a>
-              </div>
+              </a>
             ))}
           </div>
         </div>
 
-        <!-- Column 03: Recent Articles -->
         <div class="bp-section tech-border">
           <div class="bp-sec-header">
-            <h2>{locale === 'zh' ? '最近博客' : 'ARTICLES'}</h2>
+            <h2>{copy.recentTitle}</h2>
           </div>
           <div class="bp-articles-list">
-            {articlesList.map((item) => {
+            {recentArticles.map((item) => {
               const shortDate = formatShortDate(item.publishedAt);
               return (
-              <div class="bp-article-item">
-                <div class="bp-article-meta">
-                  <span class="bp-article-date">
-                    {shortDate ? (
-                      <time datetime={item.publishedAt}>{shortDate}</time>
-                    ) : (
-                      item.meta.split(' · ')[1] || 'RECENT'
-                    )}
-                  </span>
-                  <span class="bp-article-series">[{locale === 'zh' ? '博文' : 'POST'}]</span>
+                <div class="bp-article-item">
+                  <div class="bp-article-meta">
+                    <span class="bp-article-date">
+                      {shortDate ? (
+                        <time datetime={item.publishedAt}>{shortDate}</time>
+                      ) : (
+                        item.meta.split(' · ')[1] || 'RECENT'
+                      )}
+                    </span>
+                    <span class="bp-article-series">[{item.meta.split(' · ')[0]}]</span>
+                  </div>
+                  <h3><a href={item.href}>{item.title}</a></h3>
                 </div>
-                <h3><a href={item.href}>{item.title}</a></h3>
-                <p>{item.description}</p>
-              </div>
               );
             })}
+          </div>
+          <div class="bp-section-footer">
+            <a class="bp-more-link" href={articlesPath}>{copy.allEssays} →</a>
           </div>
         </div>
       </div>
@@ -149,3 +233,239 @@ const homeJsonLd = {
     localStorage.setItem("preferred-locale", locale);
   </script>
 </MainLayout>
+
+<style>
+  /* ① Hero intro */
+  .bp-intro {
+    display: grid;
+    gap: 12px;
+    max-width: 760px;
+  }
+
+  .bp-intro-p {
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--tech-text-muted);
+    margin: 0;
+  }
+
+  .bp-intro-p.lead {
+    color: var(--tech-text);
+    font-size: 1.02rem;
+    font-weight: 500;
+  }
+
+  .bp-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 24px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--tech-border);
+  }
+
+  .bp-action-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--tech-text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .bp-action-link:hover {
+    color: var(--tech-text);
+    border-bottom-color: var(--tech-text);
+  }
+
+  .bp-action-primary {
+    color: var(--tech-text);
+    font-weight: 600;
+  }
+
+  /* ② Works: one line per asset */
+  .bp-works-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .bp-works-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .bp-works-col-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tech-text-muted);
+    margin: 0 0 8px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--tech-border);
+  }
+
+  .bp-work-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 4px;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .bp-work-row:hover {
+    border-bottom-color: var(--tech-border-strong);
+  }
+
+  .bp-work-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--tech-border);
+    color: var(--tech-text-muted);
+    background: var(--tech-tag-bg);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .bp-work-row strong {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--tech-text);
+    line-height: 1.4;
+  }
+
+  .bp-work-row:hover strong {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+
+  .bp-work-arrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--tech-text-muted);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .bp-works-more {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--tech-text-muted);
+    text-decoration: none;
+    margin-top: 10px;
+    align-self: flex-start;
+    border-bottom: 1px solid transparent;
+  }
+
+  .bp-works-more:hover {
+    color: var(--tech-text);
+    border-bottom-color: var(--tech-text);
+  }
+
+  /* Section intro line */
+  .bp-section-intro {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--tech-text-muted);
+    margin: 0 0 18px 0;
+  }
+
+  /* ③ Start here: editorial picks with description */
+  .bp-starthere-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .bp-starthere-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--tech-border);
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .bp-starthere-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .bp-starthere-item:hover {
+    border-bottom-color: var(--tech-border-strong);
+  }
+
+  .bp-starthere-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    color: var(--tech-text-muted);
+  }
+
+  .bp-starthere-item strong {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.02rem;
+    font-weight: 500;
+    color: var(--tech-text);
+    line-height: 1.4;
+  }
+
+  .bp-starthere-item:hover strong {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+
+  .bp-starthere-item p {
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--tech-text-muted);
+    margin: 0;
+  }
+
+  /* ④ Section footer */
+  .bp-section-footer {
+    margin-top: auto;
+    padding-top: 18px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+  }
+
+  .bp-more-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--tech-text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .bp-more-link:hover {
+    color: var(--tech-text);
+    border-bottom-color: var(--tech-text);
+  }
+
+  /* Lower row: start here + recent */
+  .bp-home-lower {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  @media (max-width: 900px) {
+    .bp-works-grid,
+    .bp-home-lower {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

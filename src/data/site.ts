@@ -38,6 +38,10 @@ export type HighlightItem = {
     src: string;
     alt: string;
   };
+  links?: {
+    label: string;
+    href: string;
+  }[];
   highlights?: string[];
 };
 
@@ -99,16 +103,6 @@ const sharedBooks = {
         src: "/images/books/network-book-zh.svg",
         alt: "《云网络：从隔离到连接》封面"
       }
-    },
-    {
-      title: "深入解析 QUIC 与 HTTP/3",
-      description: "不是 RFC 摘要，而是把 QUIC 与 HTTP/3 的协议约束落实到工程结构里，理解连接、恢复、拥塞控制与实现取舍。",
-      href: "https://caozhiyi.cc/quicx-book/",
-      meta: "Book · Protocol & Implementation",
-      cover: {
-        src: "/images/books/quicx-book-zh.svg",
-        alt: "《深入解析 QUIC 与 HTTP/3》封面"
-      }
     }
   ],
   en: [
@@ -132,16 +126,6 @@ const sharedBooks = {
         alt: "Cover of Cloud Networking: From Isolation to Connectivity"
       }
     },
-    {
-      title: "Inside QUIC and HTTP/3",
-      description: "Not an RFC summary, but a protocol-engineering view of how QUIC and HTTP/3 constraints become implementation structure.",
-      href: "https://caozhiyi.cc/quicx-book/",
-      meta: "Book · Protocol & Implementation",
-      cover: {
-        src: "/images/books/quicx-book-en.svg",
-        alt: "Cover of Inside QUIC and HTTP/3"
-      }
-    }
   ] satisfies Record<Locale, HighlightItem[]>
 };
 
@@ -156,6 +140,9 @@ const sharedProjects = {
         src: "/images/projects/quicx-logo.png",
         alt: "quicX logo"
       },
+      links: [
+        { label: "官网", href: "https://caozhiyi.cc/docs/quicx/" }
+      ],
       highlights: [
         "覆盖 QUIC v1 / v2、HTTP/3、QPACK、连接迁移、拥塞控制和丢包恢复等核心路径。",
         "内置示例、测试、互通验证、QLog 和运行时指标，用工程手段反复校验协议实现。",
@@ -188,6 +175,9 @@ const sharedProjects = {
         src: "/images/projects/quicx-logo.png",
         alt: "quicX logo"
       },
+      links: [
+        { label: "Website", href: "https://caozhiyi.cc/docs/quicx/" }
+      ],
       highlights: [
         "Covers QUIC v1 / v2, HTTP/3, QPACK, connection migration, congestion control, and loss recovery paths.",
         "Ships examples, tests, interop reports, QLog tracing, and runtime metrics to make protocol behavior observable.",

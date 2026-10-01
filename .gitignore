@@ -11,6 +11,10 @@ dist/
 # Astro generated files
 .astro/
 
+# QuicX docs: build-time injected content (see docs-site/scripts/inject-content.mjs)
+docs-site/src/content/docs/
+docs-site/logo.png
+
 # Logs
 logs/
 *.log

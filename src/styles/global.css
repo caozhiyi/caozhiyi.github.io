@@ -650,7 +650,9 @@ img {
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* 列数自适应 + 整体居中：两本并排居中展示，恢复三本时自动回到三列 */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 350px));
+  justify-content: center;
   gap: 22px;
 }
 
@@ -727,6 +729,18 @@ img {
 .project-copy {
   display: grid;
   gap: 14px;
+}
+
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.project-links .card-link {
+  margin-top: 0;
 }
 
 .project-copy h2 {

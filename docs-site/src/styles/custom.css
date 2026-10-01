@@ -1,0 +1,61 @@
+/* ============================================================
+   QuicX 文档站 · 正文排版定制
+   背景：源文档层级普遍深至 H3/H4，Starlight 默认梯度下
+   H2 过大、H4 与正文几乎同字号，层次感坍塌。
+   方案：收紧字号梯度 + 靠字重/间距建立层次 + 近邻原则分组。
+   ============================================================ */
+
+/* header 品牌区：已有 logo 图片，隐藏冗余的文字标题 */
+a.site-title span[translate='no'] {
+  display: none;
+}
+
+/* ---------- 正文标题梯度 ---------- */
+.sl-markdown-content h2 {
+  font-size: 1.4rem;        /* 22.4px：章节级 */
+  line-height: 1.35;
+  font-weight: 700;
+  margin-top: 3rem;         /* 远离上一节 */
+  margin-bottom: 0.875rem;  /* 贴近所属内容 */
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--sl-color-hairline);
+  text-wrap: balance;
+}
+
+.sl-markdown-content h3 {
+  font-size: 1.2rem;        /* 19.2px：小节级 */
+  line-height: 1.4;
+  font-weight: 700;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  text-wrap: balance;
+}
+
+.sl-markdown-content h4 {
+  font-size: 1.0625rem;     /* 17px：条目级，靠字重而非字号区分 */
+  line-height: 1.45;
+  font-weight: 700;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  text-wrap: balance;
+}
+
+.sl-markdown-content h5 {
+  font-size: 1rem;          /* 与正文同号，字重+上边距区分 */
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 页面首标题（紧随页头 H1 的第一个章节）不需要大留白 */
+.sl-markdown-content h2:first-child,
+.sl-markdown-content > :first-child h2 {
+  margin-top: 1.5rem;
+}
+
+/* ---------- Mermaid 暗色适配 ---------- */
+/* Mermaid 图为构建期静态 SVG（浅色主题配色），
+   暗色模式下整体反色并回转色相，保持节点配色协调、文字可读 */
+[data-theme='dark'] .sl-markdown-content svg[id^='mermaid-'] {
+  filter: invert(0.88) hue-rotate(180deg);
+}
