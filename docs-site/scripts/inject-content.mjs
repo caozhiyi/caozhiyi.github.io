@@ -29,7 +29,8 @@ if (!srcDocs || !targetDocs) {
 }
 const srcRoot = resolveDir(srcDocs);
 const repoRoot = dirname(srcRoot); // quicX 仓库根
-const outRoot = resolveDir(targetDocs);
+// 目标目录无需存在：下方 rm+mkdir 会重建（CI 全新 checkout 中该目录不存在）
+const outRoot = resolve(process.cwd(), targetDocs);
 
 function resolveDir(p) {
   const abs = resolve(process.cwd(), p);
