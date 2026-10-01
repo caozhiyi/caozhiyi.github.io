@@ -115,10 +115,18 @@ function rewriteLinks(relFile, raw) {
       // 站内 md 互链 -> 目录形式路由
       let route = targetRel.slice(0, -3); // 去 .md
       if (route.endsWith('README')) {
-        route = route.slice(0, -'README'.length).replace(/\/$/, ''); // README -> 目录本身
-        if (route === '') route = '.';
+        // README 注入为 overview.md（/ 与 /en/ 路由留给 Landing 页），互链目标同样映射
+        route = route.slice(0, -'README'.length) + 'overview';
       }
-      let rel = relative(fromDir, route).replaceAll('\\', '/');
+      // 相对基准是「页面自身路由」而非源文件目录：
+      // 页面 en/design/foo.md 的 URL 为 /docs/quicx/en/design/foo/（目录形式），
+      // 浏览器从该 URL 目录解析相对链接，故基准需用 foo 路由整体，比源目录深一层。
+      const pageRoute = relFile.slice(0, -3);
+      let rel = relative(pageRoute, route).replaceAll('\\', '/');
+      if (rel === '') {
+        linksRewritten++;
+        return `](./#${anchor ? `#${anchor}` : ''})`;
+      }
       if (!rel.startsWith('.')) rel = `./${rel}`;
       if (rel !== '.' && rel !== '..') rel = `${rel}/`;
       linksRewritten++;
