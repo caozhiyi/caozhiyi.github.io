@@ -15,7 +15,8 @@
 //      - README.md 链接          -> locale 根路由（../README.md -> ../）
 //      - 指向仓库其他文件的链接   -> GitHub 绝对链接（../../src/x.h -> github blob URL）
 //      - 无法解析的链接保留原样并告警
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, normalize, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -64,6 +65,33 @@ let renamed = 0;
 let linksRewritten = 0;
 
 /**
+ * 查询路径在 git 对象库中的类型。
+ * 稀疏克隆（CI 与本地都只 checkout docs/）下工作树没有 src/ 等文件，
+ * existsSync 不可用；git ls-tree 直接查 HEAD 树，与 checkout 范围无关。
+ * @returns 'blob' | 'tree' | null（不存在）
+ */
+const gitTypeCache = new Map();
+function gitType(repoRoot, relPath) {
+  const p = relPath.replace(/\/+$/, '');
+  if (gitTypeCache.has(p)) return gitTypeCache.get(p);
+  let type = null;
+  try {
+    const out = execSync(`git ls-tree HEAD -- ${JSON.stringify(p)}`, {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    const m = out.match(/^\d+ (\w+) [0-9a-f]+\t/);
+    if (m) type = m[1];
+  } catch {
+    // git 不可用时退回文件系统判断
+    if (existsSync(join(repoRoot, p))) type = 'blob';
+  }
+  gitTypeCache.set(p, type);
+  return type;
+}
+
+/**
  * 改写 markdown 中的相对链接。
  * @param relFile 当前 md 相对 docs 根的路径（如 'zh/design/process_model.md'）
  */
@@ -97,11 +125,11 @@ function rewriteLinks(relFile, raw) {
       return `](${rel}${anchor ? `#${anchor}` : ''})`;
     }
 
-    // 指向 docs 之外的仓库文件 -> GitHub 链接
+    // 指向 docs 之外的仓库文件 -> GitHub 链接（查 git 对象库，兼容稀疏克隆）
     const repoTarget = normalize(join('docs', targetRel)).replaceAll('\\', '/');
-    const repoAbs = join(repoRoot, repoTarget);
-    if (existsSync(repoAbs)) {
-      const verb = statSync(repoAbs).isDirectory() ? 'tree' : 'blob';
+    const type = gitType(repoRoot, repoTarget);
+    if (type) {
+      const verb = type === 'tree' ? 'tree' : 'blob';
       linksRewritten++;
       return `](${GITHUB_BASE}/${verb}/${GITHUB_BRANCH}/${repoTarget}${anchor ? `#${anchor}` : ''})`;
     }
