@@ -40,10 +40,17 @@ const byPublishedDesc = <T extends { publishedAt?: string }>(a: T, b: T) => {
   return 0;
 };
 
-const writingGroups = rawWritingGroups.map((group) => ({
-  ...group,
-  items: [...(group.items || [])].sort(byPublishedDesc)
-}));
+const writingGroups = rawWritingGroups
+  .map((group) => ({
+    ...group,
+    items: [...(group.items || [])].sort(byPublishedDesc)
+  }))
+  .sort((a, b) => {
+    // 组间也按各组最新一篇的发布时间倒序，保证整页大致按时间线阅读
+    const av = a.items[0]?.publishedAt || "";
+    const bv = b.items[0]?.publishedAt || "";
+    return bv.localeCompare(av);
+  });
 
 const dateFormatter = new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
   year: "numeric",
@@ -241,7 +248,9 @@ const formatPublishedAt = (value?: string) => {
 
   .articles-list {
     display: grid;
-    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
   }
 
   /* List row cards */
@@ -318,6 +327,8 @@ const formatPublishedAt = (value?: string) => {
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    margin-top: auto;
+    padding-top: 4px;
     transition: color 0.15s ease;
   }
 
@@ -449,6 +460,12 @@ const formatPublishedAt = (value?: string) => {
     .articles-sidebar {
       position: static;
       max-height: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .articles-list {
+      grid-template-columns: 1fr;
     }
   }
 </style>
