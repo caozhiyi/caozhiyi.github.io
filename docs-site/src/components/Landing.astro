@@ -34,7 +34,7 @@ const T = {
     eyebrow: '开源 · BSD-3-Clause · C++17 · RFC 9000 / 9369 / 9114',
     h1a: '从 UDP 网卡到 HTTP/3 handler，', h1b: '全链路自包含的 QUIC 协议栈',
     sub: '生产级健壮，工程级可读。单仓库实现 TLS 1.3、QUIC 传输、HTTP/3 路由与 QPACK 全栈，不依赖任何外部 HTTP 框架；自 1.0 起公开 API 遵循语义化版本。',
-    ctaPrimary: '快速开始', ctaPath: '跟着源码走一遍 →',
+    ctaPrimary: '快速开始', ctaPathLabel: '源码导览 →',
     stats: [
       { n: '1523', label: '单元与集成测试' },
       { n: '90.60%', label: '互通通过率（24 场景 × 17 对端）' },
@@ -82,7 +82,7 @@ const T = {
     eyebrow: 'Open Source · BSD-3-Clause · C++17 · RFC 9000 / 9369 / 9114',
     h1a: 'From the UDP socket to the HTTP/3 handler,', h1b: 'a self-contained QUIC stack',
     sub: 'Production-grade robustness, engineered for readability. A single repository implementing TLS 1.3, the QUIC transport, HTTP/3 routing and QPACK — with no external HTTP framework. Public API follows semantic versioning since 1.0.',
-    ctaPrimary: 'Get Started', ctaPath: 'Walk the source →',
+    ctaPrimary: 'Get Started', ctaPathLabel: 'Walk the source →',
     stats: [
       { n: '1523', label: 'unit & integration tests' },
       { n: '90.60%', label: 'interop pass rate (24 × 17 peers)' },
@@ -176,7 +176,7 @@ const t = T[lang];
             <div class="cta">
               <a class="btn primary" href="#quickstart">{t.ctaPrimary}</a>
               <a class="btn" href={GITHUB} target="_blank" rel="noopener">GitHub</a>
-              <a class="text-link" href={t.pathHref}>{t.ctaPath}</a>
+              <a class="text-link" href={t.pathHref}>{t.ctaPathLabel}</a>
             </div>
           </div>
           <div class="hero-term reveal">
