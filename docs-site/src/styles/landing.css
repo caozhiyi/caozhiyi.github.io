@@ -167,7 +167,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 .donut-bg { fill: none; stroke: var(--hairline); stroke-width: 11; }
 .donut-fg {
   fill: none; stroke: var(--accent); stroke-width: 11; stroke-linecap: round;
-  stroke-dasharray: 296 327; /* 90.60% of 2π×52 */
+  stroke-dasharray: 303 327; /* 92.87% of 2π×52 */
 }
 .donut-label {
   position: absolute; inset: 0; display: grid; place-content: center; text-align: center;
