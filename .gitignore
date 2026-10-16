@@ -15,9 +15,10 @@ dist/
 docs-site/src/content/docs/
 docs-site/logo.png
 
-# Logs
-logs/
+# Logs (root-level dev logs only; interop results under public/ are site content)
+/logs/
 *.log
+!public/interop/quic/logs/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
