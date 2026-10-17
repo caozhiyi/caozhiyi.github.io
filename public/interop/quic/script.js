@@ -63,18 +63,13 @@
     var a = document.createElement("a");
     a.className = "btn btn-xs btn-" + color_type[res] + " " + res + " test-" + text.toLowerCase();
     var ttip_target = a;
-    if (res !== "unsupported") {
-      a.href = "logs/" + currentProtocol + "/" + log_dir + "/" + server + "_" + client + "/" + test;
-      a.target = "_blank";
-      ttip += "<br><br>(Click for logs.)";
-    } else {
-      var s = document.createElement("span");
-      s.className = "d-inline-block";
-      s.tabIndex = 0;
-      a.style = "pointer-events: none;";
-      s.appendChild(a);
-      ttip_target = s;
-    }
+    // Per-test logs are not published; keep every cell non-clickable.
+    var s = document.createElement("span");
+    s.className = "d-inline-block";
+    s.tabIndex = 0;
+    a.style = "pointer-events: none;";
+    s.appendChild(a);
+    ttip_target = s;
     ttip_target.title = ttip;
     $(ttip_target).attr("data-toggle", "tooltip").attr("data-placement", "bottom").attr("data-html", true).tooltip();
     $(ttip_target).click(function() { $(this).blur(); });
