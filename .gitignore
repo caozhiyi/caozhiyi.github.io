@@ -51,5 +51,6 @@ coverage/
 *.tmp
 *.temp
 
-# Search analytics exports (local only)
+# Local-only files (never commit)
 analyize/
+author.yaml
