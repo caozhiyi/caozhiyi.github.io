@@ -15,6 +15,30 @@ if (!content) {
   throw new Error(`Unsupported locale: ${locale}`);
 }
 
+// Person schema for knowledge-graph association (data follows author.yaml,
+// the canonical author metadata source in this repo root).
+const personJsonLd = locale === "zh"
+  ? {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "曹智轶",
+      "alternateName": "Zhiyi Cao",
+      "url": "https://caozhiyi.cc/",
+      "jobTitle": "系统架构师",
+      "sameAs": ["https://github.com/caozhiyi"],
+      "knowsAbout": ["分布式系统", "高性能网络", "QUIC", "AI 工程"]
+    }
+  : {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Zhiyi Cao",
+      "alternateName": "曹智轶",
+      "url": "https://caozhiyi.cc/",
+      "jobTitle": "Systems Architect",
+      "sameAs": ["https://github.com/caozhiyi"],
+      "knowsAbout": ["Distributed Systems", "High-Performance Networking", "QUIC", "AI Engineering"]
+    };
+
 const pageContent = {
   zh: {
     title: "关于",
@@ -59,7 +83,7 @@ const pageContent = {
 }[locale];
 ---
 
-<MainLayout content={content} pageTitle={pageContent.title} description={pageContent.paragraphs[0]}>
+<MainLayout content={content} pageTitle={pageContent.title} description={pageContent.paragraphs[0]} jsonLd={personJsonLd}>
   <div class="about-layout">
     <!-- Left Column: Bio & Companies inside a card panel -->
     <article class="page-panel about-copy">

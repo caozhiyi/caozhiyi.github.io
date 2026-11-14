@@ -1,0 +1,88 @@
+# =====================================================================
+# 作者元数据（canonical source）—— 曹智轶 (caozhiyi)
+#
+# 唯一维护源：caozhiyi.github.io/author.yaml
+# 其他仓库（network-book / ai-programming-book / quicx-book ...）
+# 一律以本文件口径为准，勿在各仓库内自行改写。
+# 原则：bio 只负责定位与方向，作品与项目细节由链接（个人站/GitHub）承载；
+#       bio 不带时间限定词（"近年/如今/current"），保证长期陈列不朽；
+#       正文署名一律纯文本"曹智轶（caozhiyi）"，不内嵌链接——
+#       入口统一由紧随其后的链接列表承载，避免同址重复。
+# 最后更新：2026-11-13
+# =====================================================================
+
+identity:
+  name: 曹智轶
+  name_en: Zhiyi Cao
+  handle: caozhiyi
+  display: 曹智轶（caozhiyi）
+  display_en: Zhiyi Cao (caozhiyi)
+  location: 上海
+  motto: "What I cannot create, I do not understand."  # 个人站标语，可选露出
+
+bio:
+  # 一句话版：署名行、社交卡片、meta description
+  one_liner: 系统架构师，十年研发经验，专注分布式系统架构、高性能网络与 AI 工程。
+  one_liner_en: >-
+    Zhiyi Cao (caozhiyi) — systems architect focused on distributed systems,
+    high-performance networking, and AI engineering.
+
+  # 标准版：扉页作者卡、README「关于作者」
+  standard: >-
+    曹智轶（caozhiyi），系统架构师，十年研发经验，专注分布式系统架构、
+    高性能网络、底层系统开发与 AI 工程——研究大模型真正落地时才浮出来的
+    系统工程问题。热衷于从第一性原理出发解构复杂问题，并将思考沉淀为长期技术写作。
+  standard_en: >-
+    Zhiyi Cao (caozhiyi) is a systems architect with a decade of experience in
+    distributed systems architecture, high-performance networking, and low-level
+    systems. His work in AI engineering examines the systems problems that
+    surface when large models actually ship. He writes from first principles,
+    at length.
+
+career:
+  full:                     # 个人站 About 口径（已公开）
+    - 腾讯（在职）
+    - 百度
+    - 滴滴
+    - 博睿宏远
+  conservative:             # 已选定：三本书扉页/作者卡统一用这档
+    summary: 现于一线云厂商从事基础设施研发
+  years: "10+"
+  roles:
+    - 系统架构师
+    - 技术管理者
+
+links:
+  website: https://caozhiyi.cc        # canonical 域（caozhiyi.github.io 为别名）
+  github: https://github.com/caozhiyi
+  email: caozhiyi5@gmail.com          # 个人站 About 已公开
+  wechat_mp: 煮码宝藏                  # 二维码源图：ai-programming-book/docs/images/wechat-qr.jpg
+                                       # 各书复制到自己的 docs/images/wechat-qr.jpg
+
+works:  # 供「作者其他作品」区块按需引用；bio 正文不提
+  books:
+    - title: 云网络：从隔离到连接
+      title_en: Cloud Networking: From Isolation to Connectivity
+      url: https://caozhiyi.cc/network-book/
+    - title: AI 编程的第一性原理
+      title_en: First Principles of AI Coding
+      url: https://caozhiyi.cc/ai-programming-book/
+    - title: 深入解析 QUIC 与 HTTP/3
+      title_en: Inside QUIC and HTTP/3
+      url: https://caozhiyi.cc/quicx-book/
+  projects:
+    - name: quicX
+      lang: C++17
+      desc: 自包含的 QUIC / HTTP/3 协议栈
+      url: https://github.com/caozhiyi/quicX
+    - name: CppNet
+      lang: C++11
+      desc: 跨平台 TCP 异步网络库
+      url: https://github.com/caozhiyi/CppNet
+
+# ---- 各仓库配置文件直接抄录的标准值 ----
+config_values:
+  mkdocs_site_author: 曹智轶 (caozhiyi)
+  epub_author: 曹智轶 (caozhiyi)
+  og_author: 曹智轶 (caozhiyi)
+  copyright_line: Copyright © 2026 曹智轶 · CC BY-NC-SA 4.0

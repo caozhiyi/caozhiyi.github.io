@@ -1,3 +1,7 @@
+---
+seoTitle: "CPU Performance Optimization: Caches, Branch Prediction, and Lock Contention"
+---
+
 # Software Performance: CPU
 
 Performance is a vast and tangled topic. From code, to network, to deployment — performance touches everything. There is no shortage of articles on the subject, covering principles, methodologies, and tooling in fine detail. This piece won't entirely escape that mold, but it tries to look at performance from a slightly different angle: **performance from the hardware's point of view.**

@@ -1,3 +1,7 @@
+---
+seoTitle: "Why Software Rots: Causes of Technical Debt and How to Manage It"
+---
+
 # How to Keep Software From Rotting
 
 Looking back, it's been almost eight years since I graduated. Across that span I've worked at a few places — some were the household-name BAT giants, some were just-IPO'd startups. I've touched a fair number of projects along the way, and the honest summary is this: **most of what I've seen was a debt-laden pile, structurally sound projects were the rare exception.** I've been quietly chewing on the same question for years — *why does code drift, almost inevitably, toward rot?* I'm sure every project starts out with serious thought and effort poured into it. And yet, given enough time, most of them collapse into something nobody enjoys touching.

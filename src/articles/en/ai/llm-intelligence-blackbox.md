@@ -1,3 +1,7 @@
+---
+seoTitle: "Do LLMs Really Think? The Mechanisms and Limits of LLM Intelligence"
+---
+
 # It Is Not a Lesser Human: Notes on What LLMs Actually Are
 
 The standard rhythm of modern science is theory first, engineering second. Maxwell's equations come first, and decades later the radio shows up—Hertz produces electromagnetic waves in the lab, Marconi turns it into the wireless telegraph, and behind both of them are the equations on a blackboard. The usual reason a new technology lands at all is that the principle has already been worked out. The engineering is just bringing it down to earth.

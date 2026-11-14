@@ -1,3 +1,7 @@
+---
+seoTitle: "Why Object-Oriented Programming? From the Software Crisis to SOLID"
+---
+
 # A Long Look at Object-Oriented Programming
 
 I've wanted to write something about object-oriented programming for a long time, and held off because the topic is both basic and enormous, and I wasn't sure I could do it justice. Today, I'll take a swing at it anyway.

@@ -1,3 +1,7 @@
+---
+seoTitle: "Should You Still Learn Data Structures and Algorithms in the Age of AI Coding?"
+---
+
 # Do You Still Need to Learn the Fundamentals in the Age of AI Coding?
 
 Over the last couple of years, a particular doubt keeps showing up.

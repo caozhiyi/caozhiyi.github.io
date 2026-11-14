@@ -1,3 +1,7 @@
+---
+seoTitle: "select, poll, epoll: Differences and How Servers Handle Massive Connections"
+---
+
 # I/O Multiplexing and High-Performance Network Programming
 
 I/O multiplexing feels almost retro at this point. Dan Kegel posed the C10K problem at the turn of the century. Linux 2.6 introduced epoll. Nginx eventually showed how to do fully async I/O at the application layer. Somewhere along that line, single-machine concurrency stopped being a research topic and became a solved problem with a standard answer. Then the post-microservices era arrived — cloud-native everything, infrastructure that makes large-scale deployment trivial — and people more or less stopped talking about per-machine throughput. High-level languages like Java and Go keep extending their reach, the network APIs they expose get more and more abstracted, and the underlying I/O multiplexing primitives drift further away from day-to-day application code. Some engineers writing services today have never actually touched a `socket()` call.

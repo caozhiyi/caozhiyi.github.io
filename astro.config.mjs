@@ -29,8 +29,20 @@ const buildArticleLastmodMap = () => {
 
 const articleLastmodMap = buildArticleLastmodMap();
 
+// Normalize URL pathname to always end with a trailing slash (except for files with extensions),
+// so sitemap URLs match GitHub Pages' 301-to-trailing-slash behavior.
+const withTrailingSlash = (pathname) => {
+  if (!pathname) return "/";
+  if (/\.[a-z0-9]+$/i.test(pathname)) return pathname; // keep file paths like /rss.xml
+  return pathname.endsWith("/") ? pathname : `${pathname}/`;
+};
+
 export default defineConfig({
   site: "https://caozhiyi.cc",
+  trailingSlash: "always",
+  build: {
+    format: "directory"
+  },
   markdown: {
     rehypePlugins: [rehypeImageLazy]
   },
@@ -40,11 +52,15 @@ export default defineConfig({
       serialize: (item) => {
         try {
           const url = new URL(item.url);
-          const path = url.pathname.replace(/\/$/, "");
-          const lastmod = articleLastmodMap.get(path);
+          const normalizedPath = withTrailingSlash(url.pathname);
+          const normalizedUrl = `${url.origin}${normalizedPath}${url.search}${url.hash}`;
+          const lookupPath = normalizedPath.replace(/\/$/, "");
+          const lastmod = articleLastmodMap.get(lookupPath);
+          const next = { ...item, url: normalizedUrl };
           if (lastmod) {
-            return { ...item, lastmod };
+            next.lastmod = lastmod;
           }
+          return next;
         } catch {
           // fall through to default
         }

@@ -1,3 +1,7 @@
+---
+seoTitle: "What Is an AI Gateway? When Token Traffic Outgrows API Gateways"
+---
+
 # From API Gateway to AI Gateway: When Infrastructure Is Stretched by Tokens
 
 The act of wiring an LLM call into your own product, the more I do it, the less it looks like *just calling another API*.

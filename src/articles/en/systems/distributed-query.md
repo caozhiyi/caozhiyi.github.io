@@ -1,3 +1,7 @@
+---
+seoTitle: "Distributed Queries Explained: Sharding, Routing, and Aggregation Trade-offs"
+---
+
 # When Queries Meet Distributed Systems
 
 In modern enterprise architectures, breaking a system apart into microservices is a conversation you don't really get to skip. Why microservices in the first place is a discussion for another day. Today I want to focus on one classic problem that emerges *after* the split: **list queries**.

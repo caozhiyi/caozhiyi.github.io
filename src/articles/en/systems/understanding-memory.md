@@ -1,3 +1,7 @@
+---
+seoTitle: "How Memory Management Works: Virtual Memory, Allocators, and GC Trade-offs"
+---
+
 # Memory Management, From the Bottom Up
 
 In *Software Performance: CPU* and *Software Performance: I/O*, we approached performance from two different angles — compute and data movement. There's a topic that ran through both pieces without ever getting a chapter of its own: **memory.** CPU cache hits depend on memory layout. The Page Cache in the I/O piece is essentially a memory-scheduling story. Zero-copy is about reducing memory shuffling. GC architectures are about automating object lifetimes.

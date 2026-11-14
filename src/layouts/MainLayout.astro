@@ -6,21 +6,31 @@ import type { SiteContent } from "../data/site";
 interface Props {
   content: SiteContent;
   pageTitle: string;
+  // Full-page <title> override. When set, it replaces the default
+  // `${pageTitle} · ${siteTitle}` composition (used by the homepage for
+  // query-oriented branding, without polluting every page's title suffix).
+  fullTitle?: string;
   description?: string;
   pageType?: "website" | "article";
   publishedAt?: string;
   jsonLd?: unknown;
+  // Whether an equivalent page exists in the opposite locale (zh <-> en).
+  // When false, hreflang alternate links are omitted to avoid pointing Google
+  // at 404 URLs (e.g. articles only published in one language).
+  hasOppositeLocale?: boolean;
 }
 
 const {
   content,
   pageTitle,
+  fullTitle,
   description,
   pageType = "website",
   publishedAt,
-  jsonLd
+  jsonLd,
+  hasOppositeLocale = true
 } = Astro.props;
-const title = `${pageTitle} · ${content.siteTitle}`;
+const title = fullTitle ?? `${pageTitle} · ${content.siteTitle}`;
 const isZh = content.homePath.startsWith("/zh");
 const localeSlug = isZh ? "zh" : "en";
 const keywords = isZh
@@ -100,9 +110,13 @@ const defaultOgImage = new URL("/images/og/og-default.png", siteUrl).href;
 
     <link rel="canonical" href={canonicalURL} />
 
-    <link rel="alternate" hreflang="zh-CN" href={zhURL} />
-    <link rel="alternate" hreflang="en" href={enURL} />
-    <link rel="alternate" hreflang="x-default" href={xDefaultURL} />
+    {hasOppositeLocale && (
+      <>
+        <link rel="alternate" hreflang="zh-CN" href={zhURL} />
+        <link rel="alternate" hreflang="en" href={enURL} />
+        <link rel="alternate" hreflang="x-default" href={xDefaultURL} />
+      </>
+    )}
     <link rel="alternate" type="application/rss+xml" title={`${content.siteTitle} RSS`} href={rssURL} />
 
     <meta property="og:type" content={pageType} />
@@ -220,6 +234,7 @@ const defaultOgImage = new URL("/images/og/og-default.png", siteUrl).href;
         <div class="site-footer-inner">
           <p>{content.footer}</p>
           <a class="footer-link" href="https://github.com/caozhiyi" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="footer-link" href={rssURL}>RSS</a>
         </div>
       </footer>
     </div>

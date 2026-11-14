@@ -1,3 +1,7 @@
+---
+seoTitle: "From Copilot to Agents: Two Years of AI Pair Programming, Reconsidered"
+---
+
 # Riding the Wave: From Verb Coding to AI Collaboration — One Engineer's Reflection and Reset
 
 Since GPT-4 landed in 2023 and rattled the world, AI has been moving at a pace it's hard to keep up with. As an engineer working on the internet stack, I've been on the receiving end of every aftershock. This isn't some gentle current. It's a tidal wave reshaping the skill tree we've all been climbing.

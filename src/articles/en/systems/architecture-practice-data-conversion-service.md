@@ -1,3 +1,7 @@
+---
+seoTitle: "Data Conversion Service in Practice: Hexagonal Architecture, Chain of Responsibility, High Throughput"
+---
+
 # Architecture in Practice: Building a Data Conversion Service
 
 A few years back I led a fairly large round of service refactoring. A handful of those services ended up with designs I still feel good about, so I want to walk through one of them here. I'll strip out the business specifics, but the internal architecture won't lose anything important in the process.

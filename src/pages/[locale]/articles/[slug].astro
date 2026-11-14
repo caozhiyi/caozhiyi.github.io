@@ -2,7 +2,25 @@
 import MainLayout from "../../../layouts/MainLayout.astro";
 import { siteContent, type Locale } from "../../../data/site";
 
+// Pre-compute which (locale, slug) combinations actually exist as article files.
+// This is used both by getStaticPaths and to decide whether a matching page
+// exists in the opposite locale (for hreflang alternate emission).
+const allPostsMap = import.meta.glob("../../../articles/**/*.md", { eager: true });
+const localeSlugSets: Record<string, Set<string>> = { zh: new Set(), en: new Set() };
+for (const path of Object.keys(allPostsMap)) {
+  const parts = path.split("/");
+  const filename = parts.pop() || "";
+  const fileSlug = filename.replace(/\.md$/, "");
+  parts.pop(); // drop category
+  const fileLocale = parts.pop() || "";
+  if (fileLocale === "zh" || fileLocale === "en") {
+    localeSlugSets[fileLocale].add(fileSlug);
+  }
+}
+
 export async function getStaticPaths() {
+  // Note: getStaticPaths runs in an isolated scope and cannot see frontmatter
+  // variables, so the glob must be repeated here instead of reusing allPostsMap.
   const postsMap = import.meta.glob("../../../articles/**/*.md", { eager: true });
   return Object.entries(postsMap).map(([path, post]: [string, any]) => {
     const parts = path.split("/");
@@ -37,14 +55,31 @@ const articleMeta =
     .flatMap((group) => group.items)
     .find((item) => matchSlug(item.href));
 
-const description = articleMeta?.description || content.siteDescription;
+// Per-article SEO overrides live in each markdown file's frontmatter
+// (seoTitle / description); site.ts entries act as fallback. The visible
+// h1 and breadcrumb always keep the literary title.
+const frontmatter = post.frontmatter ?? {};
+const description = frontmatter.description || articleMeta?.description || content.siteDescription;
 const publishedAt = articleMeta?.publishedAt;
+const seoTitle = frontmatter.seoTitle || articleMeta?.seoTitle;
+
+// Whether the article also exists in the opposite locale. If not, we should
+// NOT emit an hreflang alternate link, otherwise Google will crawl a 404 URL.
+const oppositeLocale = locale === "zh" ? "en" : "zh";
+const hasOppositeLocale = localeSlugSets[oppositeLocale]?.has(String(slug)) ?? false;
 
 // Site & URL constants for structured data
 const siteUrl = Astro.site ? Astro.site.href.replace(/\/$/, "") : "https://caozhiyi.cc";
 const canonicalURL = new URL(Astro.url.pathname, siteUrl).href;
 const homeURL = new URL(`/${locale}/`, siteUrl).href;
 const articlesIndexURL = new URL(`/${locale}/articles/`, siteUrl).href;
+const rssFeedURL = new URL(`/${locale}/rss.xml`, siteUrl).href;
+
+// Related reading (topical cross-links to book chapters) + subscription UI.
+const related = articleMeta?.related;
+const uiLabels = locale === "zh"
+  ? { relatedTitle: "相关阅读", subscribeText: "想第一时间读到下一篇？", subscribeLink: "RSS 订阅" }
+  : { relatedTitle: "Related Reading", subscribeText: "Want the next post as it ships?", subscribeLink: "Subscribe via RSS" };
 
 const authorPerson = {
   "@type": "Person",
@@ -58,7 +93,7 @@ const publishedAtISO = publishedAt ? `${publishedAt}T00:00:00+08:00` : undefined
 const blogPostingLd: Record<string, unknown> = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  headline: title,
+  headline: seoTitle ?? title,
   description,
   url: canonicalURL,
   inLanguage: locale === "zh" ? "zh-CN" : "en",
@@ -101,11 +136,12 @@ const publishedDateLabel = publishedDate
 
 <MainLayout
   content={content}
-  pageTitle={title}
+  pageTitle={seoTitle ?? title}
   description={description}
   pageType="article"
   publishedAt={publishedAt}
   jsonLd={[blogPostingLd, breadcrumbLd]}
+  hasOppositeLocale={hasOppositeLocale}
 >
   <div class="article-detail-layout">
     <article class="page-panel article-card">
@@ -125,6 +161,22 @@ const publishedDateLabel = publishedDate
         <Content />
       </div>
     </article>
+    {related && related.length > 0 && (
+      <aside class="page-panel article-related">
+        <h2 class="related-heading">{uiLabels.relatedTitle}</h2>
+        <ul class="related-list">
+          {related.map((item) => (
+            <li>
+              <a href={item.href} target="_blank" rel="noopener noreferrer">{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+    <aside class="page-panel article-subscribe">
+      <span>{uiLabels.subscribeText}</span>
+      <a href={rssFeedURL}>{uiLabels.subscribeLink}</a>
+    </aside>
   </div>
 </MainLayout>
 
@@ -494,5 +546,49 @@ const publishedDateLabel = publishedDate
       font-size: 1.3rem;
       margin-top: 32px;
     }
+  }
+
+  .article-related {
+    margin-top: 24px;
+    padding: 22px 28px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .related-heading {
+    font-size: 1rem;
+    margin: 0;
+    color: var(--text-strong);
+  }
+
+  .related-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .related-list a {
+    color: var(--accent-strong);
+    text-decoration: none;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .article-subscribe {
+    margin-top: 16px;
+    padding: 14px 28px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+  }
+
+  .article-subscribe a {
+    color: var(--accent-strong);
+    font-weight: 500;
+    text-decoration: none;
   }
 </style>

@@ -50,3 +50,6 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Search analytics exports (local only)
+analyize/

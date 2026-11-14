@@ -1,3 +1,7 @@
+---
+seoTitle: "When Boredom Disappears: How the Attention Economy Reshapes Independent Thinking"
+---
+
 # When Boredom Disappears
 
 Lately I keep noticing the same thing: people don't seem to get stuck in boredom anymore.

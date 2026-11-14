@@ -1,3 +1,7 @@
+---
+seoTitle: "I/O Performance Bottlenecks: Disk, Network, Memory, and Locks Explained"
+---
+
 # Software Performance: I/O
 
 In *Software Performance: CPU*, we walked through how to wring every clock cycle out of the CPU — multi-core, caches, branch prediction. In real systems, software spends just as much of its time *moving data*: reading from disk, sending packets across the network, shuffling structs through memory, fighting over a mutex.

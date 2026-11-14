@@ -1,3 +1,7 @@
+---
+seoTitle: "Why LLMs Write Brilliant Code and Still Make Mistakes: Tokens, Attention, and Generation"
+---
+
 # How Large Models Actually "Think"
 
 You hand the AI a piece of code. Seconds later, it comes back with a refactor. The functions are reasonably split, the naming is consistent, and even error handling has been quietly filled in. The whole thing took maybe a few seconds.

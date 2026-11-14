@@ -1,3 +1,7 @@
+---
+seoTitle: "Junior Developers in the AI Era: Growth Paths and Core Skills to Build"
+---
+
 # Becoming a Junior Engineer in the Age of AI
 
 Someone asked a question on Zhihu the other day: now that AI is this capable, is there still any point in learning all that technology?

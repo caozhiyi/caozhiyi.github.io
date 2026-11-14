@@ -1,3 +1,7 @@
+---
+seoTitle: "HTTP/3 and QUIC Explained: Why It's Faster — 0-RTT and Connection Migration"
+---
+
 # Why We Needed QUIC
 
 Finally, finally, finally.

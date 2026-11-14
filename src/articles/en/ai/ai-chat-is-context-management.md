@@ -1,3 +1,7 @@
+---
+seoTitle: "LLM Context Windows and Multi-Turn Dialogue: Managing a Limited Attention Budget"
+---
+
 # You Think You're Chatting with an AI. You're Actually Managing a Fixed-Size Text Box.
 
 You spent the afternoon working with an AI. It refactored three modules for you. It seems to know your code style by now — early returns, no nesting beyond three levels, Go-flavored explicit error handling. By turn thirty, it almost feels like it understands your project better than the colleague sitting next to you.
