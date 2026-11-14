@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 
+# AI guide for LLM crawlers: https://caozhiyi.cc/llms.txt
+
 Sitemap: https://caozhiyi.cc/sitemap-index.xml
 Sitemap: https://caozhiyi.cc/ai-programming-book/sitemap.xml
 Sitemap: https://caozhiyi.cc/ai-programming-book/en/sitemap.xml
