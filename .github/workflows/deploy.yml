@@ -79,10 +79,11 @@ jobs:
         working-directory: ${{ env.BUILD_PATH }}
 
       - name: Build with Astro
-        run: |
-          ${{ steps.detect-package-manager.outputs.runner }} astro build \
-            --site "${{ steps.pages.outputs.origin }}" \
-            --base "${{ steps.pages.outputs.base_path }}"
+        # Use the site/base pinned in astro.config.mjs (https://caozhiyi.cc).
+        # Do NOT pass --site from pages.outputs.origin: when the Pages custom
+        # domain lacks "Enforce HTTPS", the API returns http:// and every
+        # sitemap <loc> would be built as http, breaking Search Console.
+        run: ${{ steps.detect-package-manager.outputs.runner }} astro build
         working-directory: ${{ env.BUILD_PATH }}
 
       # docs-site 使用 Astro 7 + Starlight，要求 Node >= 22.12（主站保持 Node 20）
