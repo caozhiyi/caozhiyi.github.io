@@ -215,6 +215,32 @@ const sharedProjects = {
 const sharedWritings = {
   zh: [
     {
+      title: "AI 替我们写了代码，那谁来懂代码",
+      description: "当 AI 写了九成的代码、读代码也交给了机器，谁来真正懂代码？结合 Anthropic 的 code review 实践与解释深度错觉，聊聊代码理解的困境与个人的应对。",
+      href: "/zh/articles/who-understands-the-code/",
+      meta: "AI 编程 · Code Review",
+      publishedAt: "2026-11-15",
+      related: [
+        {
+          label: "在 AI 编程的今天，学好数据结构等基础还有必要吗？",
+          href: "/zh/articles/ai-basic-learning/"
+        }
+      ]
+    },
+    {
+      title: "quicX 简史",
+      description: "从 cppnet、hudp 到 QUIC 协议栈，记录一个个人开发者历时多年用 C++ 实现 QUIC/HTTP3 的曲折历程，以及 AI 时代开发效率的变迁与感悟。",
+      href: "/zh/articles/quicx-history/",
+      meta: "系统设计 · Networking",
+      publishedAt: "2026-11-15",
+      related: [
+        {
+          label: "为什么我们需要 QUIC",
+          href: "/zh/articles/why-we-need-quic/"
+        }
+      ]
+    },
+    {
       title: "软件吃掉了世界的一半：从规则化到 Token 化的产业轨迹",
       description: "重读“软件吞噬世界”，剖析软件为何只吃掉了世界能被规则化的那一半，以及 Token 化如何为剩下的另一半打开新的产业轨迹。",
       href: "/zh/articles/software-second-half/",
@@ -369,6 +395,32 @@ const sharedWritings = {
   ],
   en: [
     {
+      title: "AI Writes the Code for Us Now — So Who Understands It?",
+      description: "When AI writes ninety percent of the code and machines do most of the reading, who truly understands the code? Reflections on Anthropic's code review practices, the illusion of explanatory depth, and what AI explainers can never tell us.",
+      href: "/en/articles/who-understands-the-code/",
+      meta: "AI Coding · Code Review",
+      publishedAt: "2026-11-15",
+      related: [
+        {
+          label: "Should We Still Learn CS Foundations in the Age of AI Coding?",
+          href: "/en/articles/ai-basic-learning/"
+        }
+      ]
+    },
+    {
+      title: "A Brief History of quicX",
+      description: "From cppnet and hudp to a full QUIC stack — the years-long story of building quicX, a C++17 QUIC/HTTP/3 library, and how AI reshaped the pace of the journey.",
+      href: "/en/articles/quicx-history/",
+      meta: "Systems · Networking",
+      publishedAt: "2026-11-15",
+      related: [
+        {
+          label: "Why We Need QUIC",
+          href: "/en/articles/why-we-need-quic/"
+        }
+      ]
+    },
+    {
       title: "Software Ate Only Half the World: From Rule-Based to Token-Based",
       description: "A long-form reflection on why software has only ever eaten the rule-codifiable half of the world, and how tokens are opening a second industrial track for the other half.",
       href: "/en/articles/software-second-half/",
@@ -522,6 +574,19 @@ const sharedWritingGroups = {
       description: "从抽象、性能、内存和 IO 等底层约束出发，理解系统如何被组织起来。",
       items: [
           {
+                title: "quicX 简史",
+                description: "从 cppnet、hudp 到 QUIC 协议栈，记录一个个人开发者历时多年用 C++ 实现 QUIC/HTTP3 的曲折历程，以及 AI 时代开发效率的变迁与感悟。",
+                href: "/zh/articles/quicx-history/",
+                meta: "系统设计 · Networking",
+                publishedAt: "2026-11-15",
+                related: [
+                  {
+                    label: "为什么我们需要 QUIC",
+                    href: "/zh/articles/why-we-need-quic/"
+                  }
+                ]
+              },
+          {
                 title: "深入理解内存管理",
                 description: "从物理内存、虚拟内存、用户态分配器到 C/C++、Rust、Java 与 Go 的运行时回收机制，串联起整条内存管理链路的设计与权衡。",
                 href: "/zh/articles/understanding-memory/",
@@ -602,6 +667,19 @@ const sharedWritingGroups = {
       name: "AI 编程",
       description: "围绕大模型、上下文、工具调用与工程闭环，记录 AI 编程系统背后的真实机制。",
       items: [
+          {
+                title: "AI 替我们写了代码，那谁来懂代码",
+                description: "当 AI 写了九成的代码、读代码也交给了机器，谁来真正懂代码？结合 Anthropic 的 code review 实践与解释深度错觉，聊聊代码理解的困境与个人的应对。",
+                href: "/zh/articles/who-understands-the-code/",
+                meta: "AI 编程 · Code Review",
+                publishedAt: "2026-11-15",
+                related: [
+                  {
+                    label: "在 AI 编程的今天，学好数据结构等基础还有必要吗？",
+                    href: "/zh/articles/ai-basic-learning/"
+                  }
+                ]
+              },
           {
                 title: "软件吃掉了世界的一半：从规则化到 Token 化的产业轨迹",
                 description: "重读“软件吞噬世界”，剖析软件为何只吃掉了世界能被规则化的那一半，以及 Token 化如何为剩下的另一半打开新的产业轨迹。",
@@ -722,6 +800,19 @@ const sharedWritingGroups = {
       description: "Essays on abstraction, performance, memory, IO, and the constraints that shape software systems.",
       items: [
           {
+                title: "A Brief History of quicX",
+                description: "From cppnet and hudp to a full QUIC stack — the years-long story of building quicX, a C++17 QUIC/HTTP/3 library, and how AI reshaped the pace of the journey.",
+                href: "/en/articles/quicx-history/",
+                meta: "Systems · Networking",
+                publishedAt: "2026-11-15",
+                related: [
+                  {
+                    label: "Why We Need QUIC",
+                    href: "/en/articles/why-we-need-quic/"
+                  }
+                ]
+              },
+          {
                 title: "Understanding Memory Management",
                 description: "A deep dive into memory management from physical and virtual memory to user-space allocators and runtime GC designs across C/C++, Rust, Java, and Go.",
                 href: "/en/articles/understanding-memory/",
@@ -796,6 +887,19 @@ const sharedWritingGroups = {
       name: "AI Coding",
       description: "Essays on large models, context, tool use, and the engineering loops behind AI coding systems.",
       items: [
+          {
+                title: "AI Writes the Code for Us Now — So Who Understands It?",
+                description: "When AI writes ninety percent of the code and machines do most of the reading, who truly understands the code? Reflections on Anthropic's code review practices, the illusion of explanatory depth, and what AI explainers can never tell us.",
+                href: "/en/articles/who-understands-the-code/",
+                meta: "AI Coding · Code Review",
+                publishedAt: "2026-11-15",
+                related: [
+                  {
+                    label: "Should We Still Learn CS Foundations in the Age of AI Coding?",
+                    href: "/en/articles/ai-basic-learning/"
+                  }
+                ]
+              },
           {
                 title: "Software Ate Only Half the World: From Rule-Based to Token-Based",
                 description: "A long-form reflection on why software has only ever eaten the rule-codifiable half of the world, and how tokens are opening a second industrial track for the other half.",
