@@ -1,6 +1,7 @@
 ---
 import MainLayout from "../../../layouts/MainLayout.astro";
 import { siteContent, type Locale } from "../../../data/site";
+import QRCode from "qrcode";
 
 // Pre-compute which (locale, slug) combinations actually exist as article files.
 // This is used both by getStaticPaths and to decide whether a matching page
@@ -132,6 +133,43 @@ const publishedDateLabel = publishedDate
       day: "numeric"
     }).format(publishedDate)
   : null;
+
+// Calculate reading stats (word count & estimated reading time)
+const getReadingStats = (contentStr: string, currentLocale: Locale) => {
+  const clean = contentStr
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+    .replace(/<[^>]+>/g, "");
+  const cjk = (clean.match(/[\u4e00-\u9fff]/g) || []).length;
+  const words = (clean.match(/[a-zA-Z0-9_\-]+/g) || []).length;
+  const totalWords = cjk + words;
+  const minutes = Math.max(1, Math.round(cjk / 350 + words / 220));
+  const formattedCount = totalWords.toLocaleString();
+  const label = currentLocale === "zh"
+    ? `${formattedCount} 字 · 约 ${minutes} 分钟阅读`
+    : `${formattedCount} words · ~${minutes} min read`;
+  return { totalWords, minutes, label };
+};
+
+const readingStats = getReadingStats(rawContent, locale);
+blogPostingLd.wordCount = readingStats.totalWords;
+blogPostingLd.timeRequired = `PT${readingStats.minutes}M`;
+
+// Share & citation helpers
+const authorName = locale === "zh" ? "曹智轶" : "Zhiyi Cao";
+const markdownCitation = `[${title} - ${authorName}](${canonicalURL})`;
+const qrCodeSvg = locale === "zh"
+  ? await QRCode.toString(canonicalURL, {
+      type: "svg",
+      margin: 1,
+      width: 140,
+      color: {
+        dark: "#09090b",
+        light: "#ffffff"
+      }
+    })
+  : "";
 ---
 
 <MainLayout
@@ -144,6 +182,181 @@ const publishedDateLabel = publishedDate
   hasOppositeLocale={hasOppositeLocale}
 >
   <div class="article-detail-layout">
+    <!-- Floating Side Dock -->
+    <aside class="article-floating-dock" aria-label={locale === "zh" ? "快捷操作与分享" : "Quick actions & share"}>
+      <div class="dock-pill">
+        <!-- 1. Copy URL -->
+        <div class="dock-item">
+          <button
+            type="button"
+            class="dock-btn dock-btn-copy"
+            data-dock-copy-url={canonicalURL}
+            title={locale === "zh" ? "复制链接" : "Copy link"}
+            aria-label={locale === "zh" ? "复制链接" : "Copy link"}
+          >
+            <span class="dock-icon-default">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </span>
+            <span class="dock-icon-success" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </button>
+          <span class="dock-tooltip" role="tooltip">{locale === "zh" ? "复制链接" : "Copy link"}</span>
+        </div>
+
+        <!-- 2. Copy Markdown citation -->
+        <div class="dock-item">
+          <button
+            type="button"
+            class="dock-btn dock-btn-md"
+            data-dock-copy-md={markdownCitation}
+            title={locale === "zh" ? "复制 Markdown 链接" : "Copy Markdown link"}
+            aria-label={locale === "zh" ? "复制 Markdown 链接" : "Copy Markdown link"}
+          >
+            <span class="dock-icon-default">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15 13h13.69c.64 0 1.15-.52 1.15-1.15V4.15C16 3.52 15.48 3 14.85 3zM9 11H7V8l-1.5 1.9L4 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z"/></svg>
+            </span>
+            <span class="dock-icon-success" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </button>
+          <span class="dock-tooltip" role="tooltip">{locale === "zh" ? "复制 Markdown 链接" : "Copy Markdown link"}</span>
+        </div>
+
+        {locale === "zh" ? (
+          <>
+            <!-- 3. WeChat QR Popover (ZH) -->
+            <div class="dock-item dock-wechat-wrapper">
+              <button
+                type="button"
+                class="dock-btn dock-btn-wechat"
+                data-dock-wechat-toggle
+                title="微信扫码阅读"
+                aria-label="微信扫码阅读"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 2C3.8 2 0 5.3 0 9.4c0 2.3 1.2 4.4 3.1 5.8l-.8 2.5 2.9-1.5c1 .3 2.1.5 3.3.5.3 0 .7 0 1-.1-.3-.9-.5-1.8-.5-2.7 0-4.4 3.8-8 8.5-8 .5 0 1 0 1.5.1C17.6 4.3 13.4 2 8.5 2zm10 6c-3.9 0-7 2.7-7 6s3.1 6 7 6c.9 0 1.8-.2 2.6-.5l2.4 1.2-.6-2.1c1.6-1.1 2.6-2.8 2.6-4.6 0-3.3-3.1-6-7-6z"/></svg>
+              </button>
+              <span class="dock-tooltip" role="tooltip">微信扫码阅读</span>
+              <div class="dock-qr-popover" data-dock-qr-popover>
+                <div class="dock-qr-header">
+                  <span class="dock-qr-title">微信扫码阅读</span>
+                  <button type="button" class="dock-qr-close" data-dock-qr-close aria-label="关闭">×</button>
+                </div>
+                <div class="dock-qr-code" set:html={qrCodeSvg} />
+                <p class="dock-qr-desc">在微信扫码可直接在手机上阅读或转发</p>
+              </div>
+            </div>
+
+            <!-- 4. X (Twitter) -->
+            <div class="dock-item">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(canonicalURL)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="dock-btn"
+                title="分享至 X (Twitter)"
+                aria-label="分享至 X (Twitter)"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <span class="dock-tooltip" role="tooltip">分享至 X</span>
+            </div>
+
+            <!-- 5. Email Forward -->
+            <div class="dock-item">
+              <a
+                href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(canonicalURL)}`}
+                class="dock-btn"
+                title="通过邮件分享"
+                aria-label="通过邮件分享"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+              </a>
+              <span class="dock-tooltip" role="tooltip">邮件转发</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <!-- 3. X (Twitter) (EN) -->
+            <div class="dock-item">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(canonicalURL)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="dock-btn"
+                title="Share on X (Twitter)"
+                aria-label="Share on X"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <span class="dock-tooltip" role="tooltip">Share on X</span>
+            </div>
+
+            <!-- 4. Bluesky -->
+            <div class="dock-item">
+              <a
+                href={`https://bsky.app/intent/compose?text=${encodeURIComponent(title + " " + canonicalURL)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="dock-btn"
+                title="Share on Bluesky"
+                aria-label="Share on Bluesky"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566 1.01 1.6 1.62 1.6 3.65c0 1.15.54 8.7 1.06 10.15.7 1.95 2.92 2.63 4.88 2.2-2.86 1.04-4.82 3.12-2.73 5.48 2.76 3.12 6.13-.7 7.19-2.92 1.06 2.22 4.43 6.04 7.19 2.92 2.09-2.36.13-4.44-2.73-5.48 1.96.43 4.18-.25 4.88-2.2.52-1.45 1.06-9 1.06-10.15 0-2.03-.966-2.64-3.602-.845C16.046 4.747 13.087 8.686 12 10.8z"/></svg>
+              </a>
+              <span class="dock-tooltip" role="tooltip">Share on Bluesky</span>
+            </div>
+
+            <!-- 5. LinkedIn -->
+            <div class="dock-item">
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalURL)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="dock-btn"
+                title="Share on LinkedIn"
+                aria-label="Share on LinkedIn"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.69-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+              </a>
+              <span class="dock-tooltip" role="tooltip">Share on LinkedIn</span>
+            </div>
+
+            <!-- 6. Telegram -->
+            <div class="dock-item">
+              <a
+                href={`https://t.me/share/url?url=${encodeURIComponent(canonicalURL)}&text=${encodeURIComponent(title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="dock-btn"
+                title="Share on Telegram"
+                aria-label="Share on Telegram"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.77-1.18 3.35-1.38 3.73-1.39.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+              </a>
+              <span class="dock-tooltip" role="tooltip">Share on Telegram</span>
+            </div>
+          </>
+        )}
+
+        <div class="dock-divider" role="separator"></div>
+
+        <!-- Back to Top -->
+        <div class="dock-item">
+          <button
+            type="button"
+            class="dock-btn dock-btn-top"
+            data-dock-back-to-top
+            title={locale === "zh" ? "回到顶部" : "Back to top"}
+            aria-label={locale === "zh" ? "回到顶部" : "Back to top"}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </button>
+          <span class="dock-tooltip" role="tooltip">{locale === "zh" ? "回到顶部" : "Back to top"}</span>
+        </div>
+      </div>
+    </aside>
+
     <article class="page-panel article-card">
       <nav class="article-breadcrumb" aria-label="Breadcrumb">
         <a href={`/${locale}/`}>{breadcrumbLabels.home}</a>
@@ -152,13 +365,54 @@ const publishedDateLabel = publishedDate
         <span class="article-breadcrumb-sep" aria-hidden="true">›</span>
         <span class="article-breadcrumb-current">{title}</span>
       </nav>
-      {publishedDate && publishedDateLabel && (
-        <p class="article-meta-published">
+      <p class="article-meta-published">
+        {publishedDate && publishedDateLabel && (
           <time datetime={publishedAt}>{publishedDateLabel}</time>
-        </p>
-      )}
+        )}
+        {publishedDate && <span class="article-meta-sep" aria-hidden="true">·</span>}
+        <span class="article-reading-stats">{readingStats.label}</span>
+      </p>
       <div class="markdown-body">
         <Content />
+      </div>
+
+      <div class="article-share-bar">
+        <span class="share-label">{locale === 'zh' ? '分享本文' : 'Share this article'}</span>
+        <div class="share-btn-group">
+          <button class="share-btn" data-share-copy type="button" aria-label={locale === 'zh' ? '复制链接' : 'Copy link'}>
+            <svg class="share-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            <span class="share-btn-text">{locale === 'zh' ? '复制链接' : 'Copy link'}</span>
+          </button>
+          <button class="share-btn" data-share-copy-md data-md-text={markdownCitation} type="button" aria-label={locale === 'zh' ? '复制 Markdown 引用' : 'Copy Markdown link'}>
+            <svg class="share-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15 13h13.69c.64 0 1.15-.52 1.15-1.15V4.15C16 3.52 15.48 3 14.85 3zM9 11H7V8l-1.5 1.9L4 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z"/></svg>
+            <span class="share-btn-text">{locale === 'zh' ? '复制 MD' : 'Copy MD'}</span>
+          </button>
+          <a class="share-btn" href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(canonicalURL)}`} target="_blank" rel="noopener noreferrer" aria-label="Share on X">
+            <svg class="share-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span>X</span>
+          </a>
+          {locale === 'zh' ? (
+            <a class="share-btn" href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(canonicalURL)}`} aria-label="通过邮件分享">
+              <svg class="share-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+              <span>邮件</span>
+            </a>
+          ) : (
+            <>
+              <a class="share-btn" href={`https://bsky.app/intent/compose?text=${encodeURIComponent(title + " " + canonicalURL)}`} target="_blank" rel="noopener noreferrer" aria-label="Share on Bluesky">
+                <svg class="share-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566 1.01 1.6 1.62 1.6 3.65c0 1.15.54 8.7 1.06 10.15.7 1.95 2.92 2.63 4.88 2.2-2.86 1.04-4.82 3.12-2.73 5.48 2.76 3.12 6.13-.7 7.19-2.92 1.06 2.22 4.43 6.04 7.19 2.92 2.09-2.36.13-4.44-2.73-5.48 1.96.43 4.18-.25 4.88-2.2.52-1.45 1.06-9 1.06-10.15 0-2.03-.966-2.64-3.602-.845C16.046 4.747 13.087 8.686 12 10.8z"/></svg>
+                <span>Bluesky</span>
+              </a>
+              <a class="share-btn" href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalURL)}`} target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn">
+                <svg class="share-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.69-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                <span>LinkedIn</span>
+              </a>
+            </>
+          )}
+          <button class="share-btn share-btn-native" data-share-native type="button" aria-label="Native Share" style="display: none;">
+            <svg class="share-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <span>{locale === 'zh' ? '系统分享' : 'Share'}</span>
+          </button>
+        </div>
       </div>
     </article>
     {related && related.length > 0 && (
@@ -285,6 +539,147 @@ const publishedDateLabel = publishedDate
   }
 </script>
 
+<script>
+  // Floating Dock & Share interactions
+  const initDockAndShare = () => {
+    // 1. Copy URL (Dock + Bottom bar)
+    const copyUrlButtons = document.querySelectorAll('[data-dock-copy-url], [data-share-copy]');
+    copyUrlButtons.forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const url = btn.getAttribute('data-dock-copy-url') || window.location.href;
+        try {
+          await navigator.clipboard.writeText(url);
+          btn.classList.add('is-success', 'copied');
+
+          const dockItem = btn.closest('.dock-item');
+          const tooltip = dockItem?.querySelector('.dock-tooltip');
+          const origTooltipText = tooltip ? tooltip.textContent : '';
+          if (tooltip) {
+            tooltip.textContent = document.documentElement.lang.startsWith('zh') || location.pathname.includes('/zh/') ? '✓ 已复制链接' : '✓ Copied link!';
+            dockItem?.classList.add('is-copied');
+          }
+
+          const textSpan = btn.querySelector('.share-btn-text');
+          const origText = textSpan ? textSpan.textContent : '';
+          if (textSpan) {
+            textSpan.textContent = document.documentElement.lang.startsWith('zh') || location.pathname.includes('/zh/') ? '✓ 已复制' : '✓ Copied!';
+          }
+          setTimeout(() => {
+            btn.classList.remove('is-success', 'copied');
+            if (tooltip) {
+              tooltip.textContent = origTooltipText;
+              dockItem?.classList.remove('is-copied');
+            }
+            if (textSpan) textSpan.textContent = origText;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy link:', err);
+        }
+      });
+    });
+
+    // 2. Copy Markdown citation (Dock + Bottom bar)
+    const copyMdButtons = document.querySelectorAll('[data-dock-copy-md], [data-share-copy-md]');
+    copyMdButtons.forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const mdText = btn.getAttribute('data-dock-copy-md') || btn.getAttribute('data-md-text');
+        if (!mdText) return;
+        try {
+          await navigator.clipboard.writeText(mdText);
+          btn.classList.add('is-success', 'copied');
+
+          const dockItem = btn.closest('.dock-item');
+          const tooltip = dockItem?.querySelector('.dock-tooltip');
+          const origTooltipText = tooltip ? tooltip.textContent : '';
+          if (tooltip) {
+            tooltip.textContent = document.documentElement.lang.startsWith('zh') || location.pathname.includes('/zh/') ? '✓ 已复制 MD' : '✓ Copied MD!';
+            dockItem?.classList.add('is-copied');
+          }
+
+          const textSpan = btn.querySelector('.share-btn-text');
+          const origText = textSpan ? textSpan.textContent : '';
+          if (textSpan) {
+            textSpan.textContent = document.documentElement.lang.startsWith('zh') || location.pathname.includes('/zh/') ? '✓ 已复制 MD' : '✓ Copied MD!';
+          }
+          setTimeout(() => {
+            btn.classList.remove('is-success', 'copied');
+            if (tooltip) {
+              tooltip.textContent = origTooltipText;
+              dockItem?.classList.remove('is-copied');
+            }
+            if (textSpan) textSpan.textContent = origText;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy markdown citation:', err);
+        }
+      });
+    });
+
+    // 3. WeChat QR Popover toggle & outside click
+    const wechatWrapper = document.querySelector('.dock-wechat-wrapper');
+    const wechatToggle = document.querySelector('[data-dock-wechat-toggle]');
+    const qrPopover = document.querySelector('[data-dock-qr-popover]');
+    const qrClose = document.querySelector('[data-dock-qr-close]');
+
+    if (wechatToggle && qrPopover) {
+      const togglePopover = (open?: boolean) => {
+        const isOpen = open !== undefined ? open : !qrPopover.classList.contains('is-open');
+        if (isOpen) {
+          qrPopover.classList.add('is-open');
+          wechatWrapper?.classList.add('has-popover-open');
+        } else {
+          qrPopover.classList.remove('is-open');
+          wechatWrapper?.classList.remove('has-popover-open');
+        }
+      };
+
+      wechatToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePopover();
+      });
+
+      if (qrClose) {
+        qrClose.addEventListener('click', (e) => {
+          e.stopPropagation();
+          togglePopover(false);
+        });
+      }
+
+      document.addEventListener('click', (e) => {
+        if (!qrPopover.contains(e.target as Node) && !wechatToggle.contains(e.target as Node)) {
+          togglePopover(false);
+        }
+      });
+    }
+
+    // 4. Back to top (smooth scroll)
+    const backToTopBtn = document.querySelector('[data-dock-back-to-top]');
+    if (backToTopBtn) {
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // 5. Native Share API (mobile devices & supported browsers)
+    const nativeBtn = document.querySelector('[data-share-native]') as HTMLElement | null;
+    if (nativeBtn && typeof navigator.share === 'function') {
+      nativeBtn.style.display = 'inline-flex';
+      nativeBtn.addEventListener('click', async () => {
+        try {
+          await navigator.share({
+            title: document.title,
+            url: window.location.href
+          });
+        } catch (err) {
+          // User cancelled
+        }
+      });
+    }
+  };
+
+  initDockAndShare();
+</script>
+
 <style is:global>
   /* Article breadcrumb & published meta */
   .article-breadcrumb {
@@ -325,14 +720,28 @@ const publishedDateLabel = publishedDate
 
   .article-meta-published {
     margin: 0 0 24px 0;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-soft);
     font-family: var(--font-mono, inherit);
     letter-spacing: 0.02em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
   }
 
   .article-meta-published time {
     color: inherit;
+  }
+
+  .article-meta-sep {
+    color: var(--text-soft);
+    opacity: 0.5;
+    margin: 0 4px;
+  }
+
+  .article-reading-stats {
+    color: var(--text-soft);
   }
 
   /* Mermaid charts styling */
@@ -590,5 +999,304 @@ const publishedDateLabel = publishedDate
     color: var(--accent-strong);
     font-weight: 500;
     text-decoration: none;
+  }
+
+  /* Article Share Bar */
+  .article-share-bar {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px dashed var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .share-label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .share-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    background: var(--surface-subtle, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    line-height: 1;
+  }
+
+  .share-btn:hover {
+    color: var(--text-strong);
+    border-color: var(--line-strong, var(--text-soft));
+    background: var(--accent-soft);
+  }
+
+  .share-btn.copied {
+    color: var(--accent-strong, #3b82f6);
+    border-color: var(--accent-strong, #3b82f6);
+  }
+
+  .share-icon {
+    flex-shrink: 0;
+  }
+
+  /* Floating Side Dock */
+  .article-floating-dock {
+    position: fixed;
+    left: calc(50vw - 430px - 58px);
+    top: 180px;
+    z-index: 40;
+  }
+
+  .dock-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  }
+
+  :root[data-theme="dark"] .dock-pill {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  .dock-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    padding: 0;
+  }
+
+  .dock-btn:hover {
+    color: var(--text-strong);
+    background: var(--accent-soft);
+  }
+
+  .dock-btn .dock-icon-success {
+    display: none;
+    color: #10b981;
+  }
+
+  .dock-btn.is-success .dock-icon-default {
+    display: none;
+  }
+
+  .dock-btn.is-success .dock-icon-success {
+    display: inline-flex;
+  }
+
+  .dock-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Floating Tooltips */
+  .dock-tooltip {
+    position: absolute;
+    left: calc(100% + 14px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    background: #18181b;
+    color: #ffffff;
+    font-size: 0.74rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+    line-height: 1.2;
+  }
+
+  :root[data-theme="dark"] .dock-tooltip {
+    background: #27272a;
+    color: #f4f4f5;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Left arrow pointing to button */
+  .dock-tooltip::before {
+    content: "";
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #18181b transparent transparent;
+  }
+
+  :root[data-theme="dark"] .dock-tooltip::before {
+    border-color: transparent #27272a transparent transparent;
+  }
+
+  .dock-item:hover .dock-tooltip,
+  .dock-item.is-copied .dock-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  .dock-item.is-copied .dock-tooltip {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    border-color: #10b981 !important;
+  }
+
+  .dock-item.is-copied .dock-tooltip::before {
+    border-color: transparent #10b981 transparent transparent !important;
+  }
+
+  .dock-divider {
+    width: 18px;
+    height: 1px;
+    background: var(--line);
+    margin: 4px 0;
+  }
+
+  /* WeChat QR Popover */
+  .dock-wechat-wrapper {
+    position: relative;
+  }
+
+  .dock-wechat-wrapper.has-popover-open .dock-tooltip {
+    display: none !important;
+  }
+
+  .dock-qr-popover {
+    display: none;
+    position: absolute;
+    left: calc(100% + 12px);
+    top: -24px;
+    width: 172px;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 60;
+    text-align: center;
+  }
+
+  :root[data-theme="dark"] .dock-qr-popover {
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+  }
+
+  .dock-qr-popover.is-open {
+    display: block;
+    animation: popoverFadeIn 0.18s ease-out;
+  }
+
+  @keyframes popoverFadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .dock-qr-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dock-qr-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-strong);
+    font-family: var(--font-sans);
+  }
+
+  .dock-qr-close {
+    background: none;
+    border: none;
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--text-soft);
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.15s ease;
+  }
+
+  .dock-qr-close:hover {
+    color: var(--text-strong);
+  }
+
+  .dock-qr-code {
+    background: #ffffff;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .dock-qr-code svg {
+    display: block;
+    width: 128px;
+    height: 128px;
+  }
+
+  .dock-qr-desc {
+    margin: 8px 0 0 0;
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    line-height: 1.35;
+  }
+
+  /* Responsive: Hide floating dock on screens under 1080px */
+  @media (max-width: 1080px) {
+    .article-floating-dock {
+      display: none !important;
+    }
   }
 </style>

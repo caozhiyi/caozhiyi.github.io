@@ -24,8 +24,8 @@ const byPublishedDesc = <T extends { publishedAt?: string }>(a: T, b: T) => {
   return 0;
 };
 
-// "Start here" reading path: the AI engineering I do now + the protocol decade behind it.
-const featuredSlugs = ["ai-gateway-as-infra", "engineer-repricing", "why-we-need-quic"];
+// "Start here" reading path: AI engineering + the nature of LLM intelligence + the protocol decade behind it.
+const featuredSlugs = ["ai-gateway-as-infra", "llm-intelligence-blackbox", "why-we-need-quic"];
 type Writing = (typeof content.writings)[number];
 const startHere = featuredSlugs
   .map((slug) => content.writings.find((w) => w.href.includes(slug)))
@@ -47,40 +47,24 @@ const githubUrl = "https://github.com/caozhiyi";
 
 const copy = {
   zh: {
-    intro: [
-      "我是曹智轶，在腾讯做基础设施研发，此前先后在百度、滴滴与博睿宏远工作。",
-      "过去十年，我的大部分时间都花在网络协议和底层系统上。这些方向最初都来自工作——先是解决具体问题，接着生出兴趣，最后变成想亲手做点什么。于是有了 quicX 和 CppNet 两个开源协议栈，以及云网络与 AI 编程的两本书。",
-      "现在我的主要精力在 AI 工程化：AI 网关、AI 编程系统，以及大模型真正落地时冒出来的那些工程问题。如果你对协议实现、系统设计或 AI 工程化感兴趣，站里的长文可以从任何一篇读起。"
-    ],
-    ctaLatest: "最新",
-    ctaAbout: "关于我",
-    ctaGithub: "GitHub",
-    worksTitle: "作品",
-    worksBooks: "书",
-    worksProjects: "代码",
+    worksTitle: "书籍与开源项目",
+    worksBooks: "书籍",
+    worksProjects: "开源项目",
     allBooks: "全部书籍",
     allProjects: "全部项目",
     startHereTitle: "从这里开始读",
-    startHereIntro: "如果只读三篇：两篇是现在正在做的 AI 工程，一篇是过去十年的协议功底。",
+    startHereIntro: "精选长文：两篇关于 AI 的深度思考，一篇是过去十年的协议功底。",
     recentTitle: "最近更新",
     allEssays: "全部文章"
   },
   en: {
-    intro: [
-      "I'm Zhiyi Cao. I build infrastructure at Tencent, previously at Baidu, DiDi, and Bonree.",
-      "For the past decade, most of my time went into network protocols and low-level systems. Those interests grew out of the work itself — solving concrete problems first, then growing curious, then wanting to build something of my own. That impulse became two open-source stacks (quicX and CppNet) and two books on cloud networking and AI coding.",
-      "These days my main focus is AI engineering: AI gateways, AI coding systems, and the engineering problems that surface when large models actually ship. If protocols, systems design, or AI engineering interest you, the long-form writing here is a good place to start."
-    ],
-    ctaLatest: "Latest",
-    ctaAbout: "About me",
-    ctaGithub: "GitHub",
-    worksTitle: "Works",
+    worksTitle: "Works & Open Source",
     worksBooks: "Books",
-    worksProjects: "Code",
+    worksProjects: "Open Source",
     allBooks: "All books",
     allProjects: "All projects",
     startHereTitle: "Start here",
-    startHereIntro: "If you only read three: two on the AI engineering I do now, one on the protocol decade behind it.",
+    startHereIntro: "Curated long-form essays: two deep dives into AI, one on low-level protocols.",
     recentTitle: "Recent updates",
     allEssays: "All writing"
   }
@@ -116,7 +100,9 @@ const homeJsonLd = {
   ]
 };
 
-const seoDescription = copy.intro.slice(0, 2).join(" ");
+const seoDescription = locale === "zh"
+  ? "曹智轶的个人技术网站：系统架构师，深耕高性能网络协议栈与 AI 工程化。汇总精选长文、技术书籍与开源项目。"
+  : "Zhiyi Cao's personal engineering hub: systems architect focused on high-performance networking and AI engineering.";
 ---
 
 <MainLayout
@@ -128,59 +114,7 @@ const seoDescription = copy.intro.slice(0, 2).join(" ");
 >
   <div class="tech-blueprint">
     <div class="bp-grid-container">
-      <!-- ① Hero: who I am, where I came from, what I do now -->
-      <div class="bp-header tech-border">
-        <h1 class="bp-title">{content.hero.title}</h1>
-        <div class="bp-intro">
-          {copy.intro.map((paragraph, i) => (
-            <p class:list={["bp-intro-p", { lead: i === 0 }]}>{paragraph}</p>
-          ))}
-        </div>
-        <div class="bp-hero-actions">
-          {latestBook && (
-            <a class="bp-action-link bp-action-primary" href={latestBook.href}>
-              {copy.ctaLatest}：{latestBook.title} →
-            </a>
-          )}
-          <a class="bp-action-link" href={aboutPath}>{copy.ctaAbout} →</a>
-          <a class="bp-action-link" href={githubUrl} target="_blank" rel="noopener noreferrer">
-            {copy.ctaGithub} ↗
-          </a>
-        </div>
-      </div>
-
-      <!-- ② Works: all five assets, one line each, newest first -->
-      <div class="bp-section tech-border">
-        <div class="bp-sec-header">
-          <h2>{copy.worksTitle}</h2>
-        </div>
-        <div class="bp-works-grid">
-          <div class="bp-works-col">
-            <h3 class="bp-works-col-title">{copy.worksBooks}</h3>
-            {books.map((item) => (
-              <a class="bp-work-row" href={item.href}>
-                <span class="bp-work-tag">{item.meta.split(' · ')[1]}</span>
-                <strong>{item.title}</strong>
-                <span class="bp-work-arrow" aria-hidden="true">→</span>
-              </a>
-            ))}
-            <a class="bp-works-more" href={booksPath}>{copy.allBooks} →</a>
-          </div>
-          <div class="bp-works-col">
-            <h3 class="bp-works-col-title">{copy.worksProjects}</h3>
-            {projects.map((item) => (
-              <a class="bp-work-row" href={item.href} target="_blank" rel="noopener noreferrer">
-                <span class="bp-work-tag">{item.meta.split(' · ')[1] || 'C++'}</span>
-                <strong>{item.title}</strong>
-                <span class="bp-work-arrow" aria-hidden="true">↗</span>
-              </a>
-            ))}
-            <a class="bp-works-more" href={projectsPath}>{copy.allProjects} →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ③ Start here (editorial pick) + ④ Recent timeline -->
+      <!-- ① Articles: Start here (editorial pick) + Recent timeline -->
       <div class="bp-home-lower">
         <div class="bp-section tech-border">
           <div class="bp-sec-header">
@@ -227,6 +161,47 @@ const seoDescription = copy.intro.slice(0, 2).join(" ");
           </div>
         </div>
       </div>
+
+      <!-- ② Works: Books and Open Source projects -->
+      <div class="bp-section tech-border">
+        <div class="bp-sec-header">
+          <h2>{copy.worksTitle}</h2>
+        </div>
+        <div class="bp-works-grid">
+          <div class="bp-works-col">
+            <h3 class="bp-works-col-title">{copy.worksBooks}</h3>
+            <div class="bp-works-cards">
+              {books.map((item) => (
+                <a class="bp-work-card" href={item.href}>
+                  <div class="bp-work-card-header">
+                    <span class="bp-work-tag">{item.meta.split(' · ')[1] || item.meta}</span>
+                    <span class="bp-work-arrow" aria-hidden="true">→</span>
+                  </div>
+                  <strong>{item.title}</strong>
+                  <p>{item.description}</p>
+                </a>
+              ))}
+            </div>
+            <a class="bp-works-more" href={booksPath}>{copy.allBooks} →</a>
+          </div>
+          <div class="bp-works-col">
+            <h3 class="bp-works-col-title">{copy.worksProjects}</h3>
+            <div class="bp-works-cards">
+              {projects.map((item) => (
+                <a class="bp-work-card" href={item.href} target="_blank" rel="noopener noreferrer">
+                  <div class="bp-work-card-header">
+                    <span class="bp-work-tag">{item.meta.split(' · ')[1] || 'C++'}</span>
+                    <span class="bp-work-arrow" aria-hidden="true">↗</span>
+                  </div>
+                  <strong>{item.title}</strong>
+                  <p>{item.description}</p>
+                </a>
+              ))}
+            </div>
+            <a class="bp-works-more" href={projectsPath}>{copy.allProjects} →</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -236,56 +211,7 @@ const seoDescription = copy.intro.slice(0, 2).join(" ");
 </MainLayout>
 
 <style>
-  /* ① Hero intro */
-  .bp-intro {
-    display: grid;
-    gap: 12px;
-    max-width: 760px;
-  }
-
-  .bp-intro-p {
-    font-size: 0.92rem;
-    line-height: 1.75;
-    color: var(--tech-text-muted);
-    margin: 0;
-  }
-
-  .bp-intro-p.lead {
-    color: var(--tech-text);
-    font-size: 1.02rem;
-    font-weight: 500;
-  }
-
-  .bp-hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 8px 24px;
-    margin-top: 8px;
-    padding-top: 20px;
-    border-top: 1px solid var(--tech-border);
-  }
-
-  .bp-action-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.05em;
-    color: var(--tech-text-muted);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-  }
-
-  .bp-action-link:hover {
-    color: var(--tech-text);
-    border-bottom-color: var(--tech-text);
-  }
-
-  .bp-action-primary {
-    color: var(--tech-text);
-    font-weight: 600;
-  }
-
-  /* ② Works: one line per asset */
+  /* Works: 2-column cards layout */
   .bp-works-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -295,7 +221,7 @@ const seoDescription = copy.intro.slice(0, 2).join(" ");
   .bp-works-col {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 12px;
   }
 
   .bp-works-col-title {
@@ -305,23 +231,40 @@ const seoDescription = copy.intro.slice(0, 2).join(" ");
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--tech-text-muted);
-    margin: 0 0 8px 0;
+    margin: 0;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--tech-border);
   }
 
-  .bp-work-row {
+  .bp-works-cards {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding: 8px 4px;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .bp-work-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--tech-border);
     text-decoration: none;
-    border-bottom: 1px solid transparent;
     transition: border-color 0.2s ease;
   }
 
-  .bp-work-row:hover {
+  .bp-work-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .bp-work-card:hover {
     border-bottom-color: var(--tech-border-strong);
+  }
+
+  .bp-work-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .bp-work-tag {
@@ -333,28 +276,32 @@ const seoDescription = copy.intro.slice(0, 2).join(" ");
     color: var(--tech-text-muted);
     background: var(--tech-tag-bg);
     white-space: nowrap;
-    flex-shrink: 0;
   }
 
-  .bp-work-row strong {
+  .bp-work-card strong {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.02rem;
     font-weight: 500;
     color: var(--tech-text);
     line-height: 1.4;
   }
 
-  .bp-work-row:hover strong {
+  .bp-work-card:hover strong {
     text-decoration: underline;
     text-decoration-thickness: 1px;
+  }
+
+  .bp-work-card p {
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--tech-text-muted);
+    margin: 0;
   }
 
   .bp-work-arrow {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
     color: var(--tech-text-muted);
-    margin-left: auto;
-    flex-shrink: 0;
   }
 
   .bp-works-more {
@@ -362,7 +309,7 @@ const seoDescription = copy.intro.slice(0, 2).join(" ");
     font-size: 0.68rem;
     color: var(--tech-text-muted);
     text-decoration: none;
-    margin-top: 10px;
+    margin-top: 4px;
     align-self: flex-start;
     border-bottom: 1px solid transparent;
   }

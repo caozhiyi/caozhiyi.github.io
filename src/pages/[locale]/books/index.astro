@@ -17,9 +17,22 @@ if (!content) {
 
 const pageTitle = locale === "zh" ? "书" : "Books";
 const openLabel = locale === "zh" ? "打开书籍" : "Open book";
+
+const seoTitle = locale === "zh"
+  ? "技术书籍 · 曹智轶 | 《AI 编程的第一性原理》《云网络：从隔离到连接》"
+  : "Books & Long-form Writing · Zhiyi Cao | Systems, Networking & AI Coding";
+
+const seoDescription = locale === "zh"
+  ? "系统化技术书籍精选：涵盖 AI 编程底层机理与工程落地、云网络多租户隔离与架构演进，以及 QUIC/HTTP3 协议栈实践。"
+  : "Long-form technical books by Zhiyi Cao: First Principles of AI Coding, Cloud Networking, and Inside QUIC & HTTP/3.";
 ---
 
-<MainLayout content={content} pageTitle={pageTitle} description={content.sections.booksIntro}>
+<MainLayout
+  content={content}
+  pageTitle={pageTitle}
+  fullTitle={seoTitle}
+  description={seoDescription}
+>
   <section class="page-section book-grid">
     {content.books.map((item) => (
       <article class="card book-card">

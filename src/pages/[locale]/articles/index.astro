@@ -63,9 +63,13 @@ const formatPublishedAt = (value?: string) => {
   if (Number.isNaN(d.getTime())) return null;
   return dateFormatter.format(d);
 };
+
+const seoTitle = locale === "zh"
+  ? "技术文章精选 · 曹智轶 | AI 编程、大模型机制、网络协议与系统架构"
+  : "Technical Essays · Zhiyi Cao | AI Coding, Network Protocols & Systems Architecture";
 ---
 
-<MainLayout content={content} pageTitle={pageIntro.title} description={pageIntro.description}>
+<MainLayout content={content} pageTitle={pageIntro.title} fullTitle={seoTitle} description={pageIntro.description}>
 
   <div class="articles-layout">
     <!-- Main Content Area -->
@@ -97,7 +101,7 @@ const formatPublishedAt = (value?: string) => {
                   </h3>
                   <p class="art-desc">{item.description}</p>
                   <a href={item.href} class="art-link">
-                    {locale === 'zh' ? '阅读全文' : 'Read article'} [READ] →
+                    {locale === 'zh' ? '阅读全文' : 'Read article'} →
                   </a>
                 </article>
                 );

@@ -43,11 +43,15 @@ const pageContent = {
   zh: {
     title: "关于",
     paragraphs: [
-      "一名拥有十年研发经验的系统架构师与技术管理人员。长期专注于高性能网络协议栈、分布式微服务以及底层系统开发。",
-      "我热衷于从第一性原理出发解构复杂的现实逻辑，并将这些思考落实在自研协议栈（如 quicX 与 CppNet）、系统化书籍编写以及长期技术写作中。"
+      "我是曹智轶，现于一线云厂商从事基础设施研发，此前先后在百度、滴滴与博睿宏远工作。",
+      "过去十年，我的大部分时间都花在网络协议和底层系统上。这些方向最初都来自工作——先是解决具体问题，接着生出兴趣，最后变成想亲手做点什么。于是有了 quicX 和 CppNet 两个开源协议栈，以及云网络与 AI 编程的两本书。",
+      "现在我的主要精力在 AI 工程化：AI 网关、AI 编程系统，以及大模型真正落地时冒出来的那些工程问题。我热衷于从第一性原理出发解构复杂的现实逻辑，并将这些思考落实在自研系统、书籍编写以及长期技术写作中。"
     ],
+    mottoQuote: "What I cannot create, I do not understand.",
+    mottoAuthor: "— 理查德·费曼 (Richard Feynman)",
+    mottoDesc: "复杂系统和协议的细节与边界条件，往往只有亲手去实现一次，才算真正理解。无论是编写底层开源协议栈、出版专著还是做 AI 工程化落地，亲手创造始终是我探寻技术本质喜欢的方式。",
     companiesTitle: "曾服务公司",
-    companies: ["腾讯 (当前)", "百度", "滴滴", "博睿宏远"],
+    companies: ["一线云厂商 (当前)", "百度", "滴滴", "博睿宏远"],
     asideTitle: "个人快照",
     asideItems: [
       "📍 上海 | Shanghai, CN",
@@ -63,11 +67,15 @@ const pageContent = {
   en: {
     title: "About",
     paragraphs: [
-      "A systems architect and technical leader with a decade of experience in building high-performance networking stacks, distributed microservices, and low-level system infrastructures.",
-      "I focus on translating complex real-world logic into runnable code, long-form books, and structured technical writing."
+      "I'm Zhiyi Cao. I build infrastructure at a leading cloud provider, previously at Baidu, DiDi, and Bonree.",
+      "For the past decade, most of my time went into network protocols and low-level systems. Those interests grew out of the work itself — solving concrete problems first, then growing curious, then wanting to build something of my own. That impulse became two open-source stacks (quicX and CppNet) and two books on cloud networking and AI coding.",
+      "These days my main focus is AI engineering: AI gateways, AI coding systems, and the engineering problems that surface when large models actually ship. I focus on translating complex real-world logic into runnable code, long-form books, and structured technical writing."
     ],
+    mottoQuote: "What I cannot create, I do not understand.",
+    mottoAuthor: "— Richard Feynman",
+    mottoDesc: "The subtle edge cases of complex systems are truly understood only when built from scratch. Whether developing open-source protocol stacks, authoring technical books, or shipping AI systems, relentless creation remains my preferred way of exploring technology.",
     companiesTitle: "Companies",
-    companies: ["Tencent (Current)", "Baidu", "DiDi", "Bonree"],
+    companies: ["Leading Cloud Provider (Current)", "Baidu", "DiDi", "Bonree"],
     asideTitle: "Overview",
     asideItems: [
       "📍 Shanghai, CN",
@@ -81,9 +89,13 @@ const pageContent = {
     }
   }
 }[locale];
+
+const seoTitle = locale === "zh"
+  ? "关于曹智轶 | 一线云厂商系统架构师，深耕底层网络协议与 AI 工程化"
+  : "About Zhiyi Cao | Systems Architect, Cloud Infrastructure & AI Engineering";
 ---
 
-<MainLayout content={content} pageTitle={pageContent.title} description={pageContent.paragraphs[0]} jsonLd={personJsonLd}>
+<MainLayout content={content} pageTitle={pageContent.title} fullTitle={seoTitle} description={pageContent.paragraphs[0]} jsonLd={personJsonLd}>
   <div class="about-layout">
     <!-- Left Column: Bio & Companies inside a card panel -->
     <article class="page-panel about-copy">
@@ -91,6 +103,14 @@ const pageContent = {
         {pageContent.paragraphs.map((paragraph) => (
           <p>{paragraph}</p>
         ))}
+      </div>
+
+      <div class="motto-box">
+        <blockquote class="about-motto">
+          “{pageContent.mottoQuote}”
+        </blockquote>
+        <span class="motto-author">{pageContent.mottoAuthor}</span>
+        <p class="motto-desc">{pageContent.mottoDesc}</p>
       </div>
       
       <div class="companies-section">
@@ -169,6 +189,40 @@ const pageContent = {
     color: var(--text-strong);
     font-size: 1.05rem;
     font-weight: 500;
+  }
+
+  .motto-box {
+    padding: 18px 22px;
+    border-left: 3px solid var(--accent-strong, #3b82f6);
+    background: var(--surface-subtle, rgba(255, 255, 255, 0.03));
+    border-radius: 0 8px 8px 0;
+    display: grid;
+    gap: 8px;
+    margin: 4px 0;
+  }
+
+  .about-motto {
+    font-family: 'Space Grotesk', var(--font-sans), sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--text-strong);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .motto-author {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    letter-spacing: 0.05em;
+  }
+
+  .motto-desc {
+    font-size: 0.88rem !important;
+    line-height: 1.65 !important;
+    color: var(--text-soft) !important;
+    margin: 0 !important;
   }
 
   .companies-section {

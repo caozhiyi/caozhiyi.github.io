@@ -16,9 +16,22 @@ if (!content) {
 }
 
 const openLabel = locale === "zh" ? "查看仓库" : "View repository";
+
+const seoTitle = locale === "zh"
+  ? "开源项目 · 曹智轶 | quicX、CppNet 高性能网络协议栈与基础设施实践"
+  : "Open Source Projects · Zhiyi Cao | quicX, CppNet & Network Infrastructure";
+
+const seoDescription = locale === "zh"
+  ? "曹智轶的开源项目精选：quicX（自包含 C++17 QUIC 与 HTTP/3 协议栈）与 CppNet（跨平台异步网络库）。"
+  : "Open-source infrastructure projects by Zhiyi Cao: quicX (C++17 QUIC/HTTP3 stack) and CppNet (asynchronous networking library).";
 ---
 
-<MainLayout content={content} pageTitle={locale === "zh" ? "项目" : "Projects"} description={content.sections.projectsIntro}>
+<MainLayout
+  content={content}
+  pageTitle={locale === "zh" ? "项目" : "Projects"}
+  fullTitle={seoTitle}
+  description={seoDescription}
+>
   <section class="page-section project-list">
     {content.projects.map((item) => (
       <article class="card project-card">
