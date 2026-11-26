@@ -301,6 +301,14 @@
     });
   }
 
+  var runSelect = null;
+  var currentRunDir = null;
+
+  function syncRunSelect() {
+    if (runSelect && currentRunDir)
+      runSelect.value = currentRunDir;
+  }
+
   function load(dir) {
     document.getElementsByTagName("body")[0].classList.add("loading");
     document.getElementById("run-selection-msg").innerHTML = "";
@@ -320,6 +328,8 @@
       var result = xhr.response;
       var selectedRun = result.log_dir.replace("logs_", "");
       updateRunQuery(selectedRun);
+      currentRunDir = result.log_dir;
+      syncRunSelect();
       process(result);
       document.getElementsByTagName("body")[0].classList.remove("loading");
     };
@@ -339,7 +349,9 @@
         return;
       }
       var s = document.createElement("select");
-      xhr.response.reverse().forEach(function(el) {
+      // run names are ISO timestamps: sort explicitly so the order does not
+      // depend on how logs.json was written. Newest first.
+      xhr.response.slice().sort().reverse().forEach(function(el) {
         var opt = document.createElement("option");
         opt.innerHTML = el.replace("logs_", "");
         opt.value = el;
@@ -349,8 +361,10 @@
         load(ev.currentTarget.value);
       });
       runs.appendChild(s);
+      runSelect = s;
       if (selectedRun != null)
-        s.value = "logs_" + selectedRun;
+        currentRunDir = "logs_" + selectedRun;
+      syncRunSelect();
     };
     xhr.send();
   }
