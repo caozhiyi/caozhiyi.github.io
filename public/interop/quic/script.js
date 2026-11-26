@@ -15,6 +15,9 @@
     return sanitizeProtocol(segment);
   }
 
+  // No trailing slash: used both for URLs shown in the address bar and as the
+  // absolute base for data requests (relative URLs break once pushState has
+  // rewritten the address to "/interop/quic?run=...").
   function getProtocolPath(protocol) {
     return "/interop/" + sanitizeProtocol(protocol);
   }
@@ -314,7 +317,7 @@
     document.getElementById("run-selection-msg").innerHTML = "";
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.open('GET', 'logs/' + currentProtocol + '/' + dir + '/result.json');
+    xhr.open('GET', getProtocolPath(currentProtocol) + '/logs/' + currentProtocol + '/' + dir + '/result.json');
     xhr.onreadystatechange = function() {
       if(xhr.readyState !== XMLHttpRequest.DONE) return;
       if(xhr.status !== 200) {
@@ -341,7 +344,7 @@
     runs.innerHTML = "";
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.open('GET', 'logs/' + currentProtocol + '/logs.json');
+    xhr.open('GET', getProtocolPath(currentProtocol) + '/logs/' + currentProtocol + '/logs.json');
     xhr.onreadystatechange = function() {
       if(xhr.readyState !== XMLHttpRequest.DONE) return;
       if(xhr.status !== 200) {
